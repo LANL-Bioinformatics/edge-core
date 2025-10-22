@@ -1,0 +1,9 @@
+workDir="<%= nextflowOutDir %>/work"
+params {
+    //accessions
+   accessions =  <% if(typeof accessions !== 'undefined') { %><%- JSON.stringify(accessions) %><% } else { %>[]<%} %> 
+}
+
+<%- include (profiles) %>
+
+<%- include (nfReports) %>
