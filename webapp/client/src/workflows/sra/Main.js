@@ -131,10 +131,10 @@ const Main = (props) => {
             <>
               <HtmlText
                 text={
-                  workflowList[workflow].info +
-                  ' <a target="_blank" href=' +
-                  workflowList[workflow].link +
-                  ' rel="noopener noreferrer">Learn more</a>'
+                  workflowList[workflow].link
+                    ? `${workflowList[workflow].info} <a target='_blank' href='${workflowList[workflow].link}'
+                    rel='noopener noreferrer'>Learn more</a>`
+                    : workflowList[workflow].info
                 }
               />
               <br></br>
