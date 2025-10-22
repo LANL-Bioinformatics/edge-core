@@ -1,7 +1,7 @@
 ## INSTALLATION PREREQUISITES
 
-### Install Node20
-https://nodejs.org/dist/latest-v20.x/
+### Install Node20.19+
+https://nodejs.org/en/download
 
 ### Install pm2
 `npm install pm2@latest -g`
@@ -13,12 +13,11 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
 1. Move/copy edge-core folder to the installation directory
 
-2. Copy all .js.core to .js or create your own .js
-
-3. Inside edge-core/installation folder, run the installation script 
+2. Inside edge-core/installation folder, run the installation script 
 
     `./install.sh`
-4. Create environment variables
+    
+3. Create environment variables
 
     The web client and web server each rely on environment variables for their configuration.
     You can define those environment variables in `.env` files.
