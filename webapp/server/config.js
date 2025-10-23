@@ -51,7 +51,6 @@ const appServerDir = process.env.APP_SERVER_DIR ? process.env.APP_SERVER_DIR : _
 const CLIENT_BASE_DIR = path.join(appServerDir, '../client');
 const NEXTFLOW_BASE_DIR = path.join(appServerDir, '../../workflows/Nextflow');
 const CROMWELL_BASE_DIR = path.join(appServerDir, '../../workflows/Cromwell');
-const WORKFLOW_DATA_BASE_DIR = path.join(appServerDir, '../../workflows/data');
 const IO_BASE_DIR = process.env.IO_BASE_DIR || path.join(appServerDir, '../../io');
 
 const config = {
@@ -79,6 +78,7 @@ const config = {
     BUILD_DIR: process.env.CLIENT_BASE_DIR || path.join(CLIENT_BASE_DIR, 'build'),
   },
   NEXTFLOW: {
+    EXECUTOR: process.env.NEXTFLOW_EXECUTOR || 'local',
     EDGE_ROOT: process.env.NEXTFLOW_EDGE_ROOT || null,
     SLURM_EDGE_ROOT: process.env.NEXTFLOW_SLURM_EDGE_ROOT || null,
     SLURM_SSH: process.env.NEXTFLOW_SLURM_SSH || '',
@@ -89,6 +89,7 @@ const config = {
     JOBS_INPUT_MAX_SIZE_BYTES: makeIntIfDefined(process.env.NEXTFLOW_JOBS_INPUT_MAX_SIZE_BYTES) || 161061273600,
     // Directory of the workflow files.
     WORKFLOW_DIR: process.env.NEXTFLOW_WORKFLOW_DIR || NEXTFLOW_BASE_DIR,
+    WORK_DIR: process.env.NEXTFLOW_WORK_DIR || path.join(IO_BASE_DIR, 'nextflow'),
   },
   CROMWELL: {
     // Base URL at which HTTP clients can access the Cromwell API.
@@ -215,9 +216,6 @@ const config = {
     LOG_FILE_MAX_SIZE: process.env.LOG_FILE_MAX_SIZE || '20m',
     LOG_FILE_MAX_QUANTITY: process.env.LOG_FILE_MAX_QUANTITY || '14d',
   },
-  WORKFLOW: {
-    REF_LIST: process.env.WORKFLOW_REF_LIST || path.join(WORKFLOW_DATA_BASE_DIR, 'Ref_list.json'),
-  }
 };
 
 module.exports = config;

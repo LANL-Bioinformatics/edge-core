@@ -6,6 +6,8 @@ import { Row, Col } from 'reactstrap'
 // routes config
 import routes from 'src/routes'
 import privateRoutes from 'src/private-routes'
+import workflowRoutes from 'src/workflow-routes'
+import workflowPrivateRoutes from 'src/workflow-private-routes'
 import PrivateRoute from 'src/edge/common/PrivateRoute'
 
 const AppContent = () => {
@@ -28,7 +30,37 @@ const AppContent = () => {
                   )
                 )
               })}
+              {workflowRoutes.map((route, idx) => {
+                return (
+                  route.element && (
+                    <Route
+                      key={idx}
+                      path={route.path}
+                      exact={route.exact}
+                      name={route.name}
+                      element={<route.element />}
+                    />
+                  )
+                )
+              })}
               {privateRoutes.map((route, idx) => {
+                return (
+                  route.element && (
+                    <Route
+                      key={idx}
+                      path={route.path}
+                      exact={route.exact}
+                      name={route.name}
+                      element={
+                        <PrivateRoute>
+                          <route.element />
+                        </PrivateRoute>
+                      }
+                    />
+                  )
+                )
+              })}
+              {workflowPrivateRoutes.map((route, idx) => {
                 return (
                   route.element && (
                     <Route

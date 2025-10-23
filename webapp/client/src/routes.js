@@ -1,8 +1,10 @@
+/* eslint-disable prettier/prettier */
 import React from 'react'
+import config from 'src/config'
 
 const Home = React.lazy(() => import('src/edge/Home'))
 const PublicProjects = React.lazy(() => import('src/edge/um/public/Projects'))
-const PublicProjectPage = React.lazy(() => import('src/workflows/project/projectPage/Public'))
+const PublicProjectPage = React.lazy(() => import('src/workflows/common/projectPage/Public'))
 const UserLogin = React.lazy(() => import('src/edge/um/user/Login'))
 const OAuth = React.lazy(() => import('src/edge/um/user/OrcidLogin'))
 const UserRegister = React.lazy(() => import('src/edge/um/user/Register'))
@@ -14,14 +16,27 @@ const routes = [
   { path: '/home', name: 'Home', element: Home },
   { path: '/public/projects', name: 'PublicProjects', element: PublicProjects },
   { path: '/public/project', name: 'PublicProjectPage', element: PublicProjectPage },
-  // admin login
-  { path: '/edgeadminlogin', exact: true, name: 'Login', element: UserLogin },
-  { path: '/oauth', name: 'OAuth', element: OAuth },
+  config.ORCID.IS_ENABLED && { path: '/oauth', name: 'OAuth', element: OAuth },
   // user/password login
   { path: '/register', exact: true, name: 'Register', element: UserRegister },
-  { path: '/login', exact: true, name: 'Login', element: UserLogin },
-  { path: '/activate', exact: true, name: 'Activate', element: UserActivate },
-  { path: '/resetPassword', exact: true, name: 'ResetPassword', element: UserResetPassword },
+  config.APP.USER_AUTH_IS_ENABLED && {
+    path: '/login',
+    exact: true,
+    name: 'Login',
+    element: UserLogin,
+  },
+  config.APP.USER_AUTH_IS_ENABLED && config.APP.EMAIL_IS_ENABLED && {
+    path: '/activate',
+    exact: true,
+    name: 'Activate',
+    element: UserActivate,
+  },
+  config.APP.USER_AUTH_IS_ENABLED && config.APP.EMAIL_IS_ENABLED && {
+    path: '/resetPassword',
+    exact: true,
+    name: 'ResetPassword',
+    element: UserResetPassword,
+  },
 ]
 
 export default routes

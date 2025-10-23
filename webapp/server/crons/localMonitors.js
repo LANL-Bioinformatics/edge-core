@@ -4,7 +4,7 @@ const Job = require('../edge-api/models/job');
 const common = require('../utils/common');
 const logger = require('../utils/logger');
 const { abortJob, updateJobStatus } = require('../utils/local');
-const { localWorkflows, workflowList } = require('../utils/workflow');
+const { localWorkflows, workflowList, getWorkflowCommand } = require('../utils/workflow');
 
 const config = require('../config');
 
@@ -37,14 +37,7 @@ const localWorkflowMonitor = async () => {
     const runTime = `${projHome}/run_time.txt`;
     let cmd = `date > ${runTime}`;
     const log = `${projHome}/log.txt`;
-
-    if (proj.type === 'assayDesign') {
-      logger.info('Run bioAI...');
-      // create bioaiConf.json
-      const conf = `${projHome}/bioaiConf.json`;
-      fs.writeFileSync(conf, JSON.stringify({ pipeline: 'bioai', params: { ...projectConf.workflow.input, ...projectConf.genomes } }));
-      cmd += ` && ${config.WORKFLOW.BIOAI_EXEC} -i ${conf} -o ${outDir}`;
-    }
+    cmd += getWorkflowCommand(proj);
     cmd += `  && date >> ${runTime} &`;
     logger.info(cmd);
     // run local

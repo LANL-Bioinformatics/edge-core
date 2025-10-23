@@ -1,7 +1,7 @@
 const fs = require('fs');
 const moment = require('moment');
 const Job = require('../edge-api/models/job');
-const { workflowList, generateWorkflowResult } = require('./workflow');
+const { generateWorkflowResult, checkFlagFile } = require('./workflow');
 const { timeFormat, execCmd, pidIsRunning } = require('./common');
 const logger = require('./logger');
 const config = require('../config');
@@ -44,24 +44,16 @@ const abortJob = (job) => {
 };
 
 const updateJobStatus = (job, proj) => {// process request
-  const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
-  const projectConf = JSON.parse(fs.readFileSync(`${projHome}/conf.json`));
-  // create output directory
-  const outDir = `${projHome}/${workflowList[projectConf.workflow.name].outdir}`;
-
   if (pidIsRunning(job.pid)) {
     // not finished yet
   } else {
     let status = 'complete';
     let jobStatus = 'Succeeded';
-    if (proj.type === 'assayDesign') {
-      const outJson = `${outDir}/jbrowse/jbrowse_url.json`;
-      if (!fs.existsSync(outJson)) {
-        status = 'failed';
-        jobStatus = 'Failed';
-      } else {
-        generateWorkflowResult(proj);
-      }
+    if (checkFlagFile(proj) === false) {
+      status = 'failed';
+      jobStatus = 'Failed';
+    } else {
+      generateWorkflowResult(proj);
     }
     // update project status
     job.status = jobStatus;

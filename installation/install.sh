@@ -17,6 +17,7 @@ if [ ! -d  $io_home ]; then
     "public"
     "sra"
     "db"
+    "nextflow"
   )
 
   for dir in "${dirs[@]}"

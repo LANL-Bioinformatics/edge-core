@@ -12,12 +12,12 @@ const generateInputs = async (projHome, projectConf, proj) => {
   // workflowList in utils/workflow
   const workflowSettings = workflowList[projectConf.workflow.name];
   const template = String(fs.readFileSync(`${config.NEXTFLOW.WORKFLOW_DIR}/${workflowSettings.config_tmpl}`));
+
   const params = {
     ...projectConf.workflow.input,
     ...projectConf.rawReads,
     project: proj.name,
     projOutdir: `${projHome}/${workflowSettings.outdir}`,
-    nextflowOutDir: `${projHome}/nextflow`,
     workflow: projectConf.workflow.name,
     profiles: `${config.NEXTFLOW.WORKFLOW_DIR}/${nextflowConfigs.profiles}`,
     nfReports: `${config.NEXTFLOW.WORKFLOW_DIR}/${nextflowConfigs.nf_reports}`,
@@ -81,26 +81,37 @@ const generateRunStats = async (project) => {
 // submit workflow - launch nextflow run
 const submitWorkflow = async (proj, projectConf, inputsize) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
-  let slurmProjHome = projHome;
-  if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
-    slurmProjHome = slurmProjHome.replaceAll(config.NEXTFLOW.EDGE_ROOT, config.NEXTFLOW.SLURM_EDGE_ROOT);
-  }
-  // Run nextflow in <project home>/nextflow
-  const workDir = `${projHome}/nextflow/work`;
-  fs.mkdirSync(workDir, { recursive: true });
-  // in case nextflow needs permission to write to the work directory
-  fs.chmodSync(`${projHome}/nextflow/`, '777');
-  fs.chmodSync(workDir, '777');
-  if (!fs.existsSync(workDir)) {
-    logger.error(`Error creating directory ${workDir}:`);
+  // Run nextflow in work directory
+  let nfWorkDir = config.NEXTFLOW.WORK_DIR ? `${config.NEXTFLOW.WORK_DIR}/${proj.code}/work` : `${projHome}/nextflow/work`;
+  fs.mkdirSync(nfWorkDir, { recursive: true });
+  // in case nextflow needs permission to write to the directory
+  fs.chmodSync(nfWorkDir, '777');
+  if (!fs.existsSync(nfWorkDir)) {
+    logger.error(`Error creating directory ${nfWorkDir}:`);
     proj.status = 'failed';
     proj.updated = Date.now();
     proj.save();
     return;
   }
+  // Output nextflow log, reports to <project home>/nextflow
+  let nfOutDir = `${projHome}/nextflow`;
+  fs.mkdirSync(nfOutDir, { recursive: true });
+  // in case nextflow needs permission to write to the directory
+  fs.chmodSync(nfOutDir, '777');
+  if (!fs.existsSync(nfOutDir)) {
+    logger.error(`Error creating directory ${nfOutDir}:`);
+    proj.status = 'failed';
+    proj.updated = Date.now();
+    proj.save();
+    return;
+  }
+  if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
+    nfWorkDir = nfWorkDir.replaceAll(config.NEXTFLOW.EDGE_ROOT, config.NEXTFLOW.SLURM_EDGE_ROOT);
+    nfOutDir = nfOutDir.replaceAll(config.NEXTFLOW.EDGE_ROOT, config.NEXTFLOW.SLURM_EDGE_ROOT);
+  }
   // submit workflow
   const runName = `edge-${proj.code}`;
-  const cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${slurmProjHome}/nextflow/work NXF_PID_FILE=${slurmProjHome}/nextflow/.nextflow.pid NXF_LOG_FILE=${slurmProjHome}/nextflow/.nextflow.log nextflow -C ${slurmProjHome}/nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName}`;
+  const cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${nfWorkDir} NXF_PID_FILE=${nfOutDir}/.nextflow.pid NXF_LOG_FILE=${nfOutDir}/.nextflow.log nextflow -C ${nfOutDir}/../nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName}`;
 
   // Don't need to wait for the command to complete. It may take long time to finish and cause an error.
   // The updateJobStatus will catch the error if this command failed.
@@ -123,13 +134,13 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
 const updateJobStatus = async (job, proj) => {
   // get job status
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
-  let slurmProjHome = projHome;
+  let nfWorkDir = config.NEXTFLOW.WORK_DIR ? `${config.NEXTFLOW.WORK_DIR}/${proj.code}/work` : `${projHome}/nextflow/work`;
   if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
-    slurmProjHome = slurmProjHome.replaceAll(config.NEXTFLOW.EDGE_ROOT, config.NEXTFLOW.SLURM_EDGE_ROOT);
+    nfWorkDir = nfWorkDir.replaceAll(config.NEXTFLOW.EDGE_ROOT, config.NEXTFLOW.SLURM_EDGE_ROOT);
   }
   // Pipeline status. Possible values are: OK, ERR and empty
   // set env NXF_CACHE_DIR
-  let cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${slurmProjHome}/nextflow/work nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
+  let cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${nfWorkDir} nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
   let ret = await execCmd(cmd);
 
   if (!ret || ret.code !== 0) {
@@ -164,7 +175,7 @@ const updateJobStatus = async (job, proj) => {
   }
 
   // Task status. Possible values are: COMPLETED, FAILED, and ABORTED.
-  cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${slurmProjHome}/nextflow/work nextflow log ${job.id} -f name,status`;
+  cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${nfWorkDir} nextflow log ${job.id} -f name,status`;
   ret = await execCmd(cmd);
   if (!ret || ret.code !== 0) {
     // command failed

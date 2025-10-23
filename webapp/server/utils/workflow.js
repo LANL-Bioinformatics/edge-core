@@ -1,5 +1,6 @@
 const fs = require('fs');
 const config = require('../config');
+const workflowConfig = require('../workflowConfig');
 
 const cromwellWorkflows = [];
 const nextflowWorkflows = [
@@ -50,6 +51,33 @@ const generateWorkflowResult = (proj) => {
   }
 };
 
+const checkFlagFile = (proj) => {
+  const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
+  // create output directory
+  const outDir = `${projHome}/${workflowList[proj.type].outdir}`;
+  if (proj.type === 'assayDesign') {
+    const outJson = `${outDir}/jbrowse/jbrowse_url.json`;
+    if (!fs.existsSync(outJson)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const getWorkflowCommand = (proj) => {
+  const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
+  const projectConf = JSON.parse(fs.readFileSync(`${projHome}/conf.json`));
+  const outDir = `${projHome}/${workflowList[projectConf.workflow.name].outdir}`;
+  let command = '';
+  if (proj.type === 'assayDesign') {
+    // create bioaiConf.json
+    const conf = `${projHome}/bioaiConf.json`;
+    fs.writeFileSync(conf, JSON.stringify({ pipeline: 'bioai', params: { ...projectConf.workflow.input, ...projectConf.genomes } }));
+    command += ` && ${workflowConfig.WORKFLOW.BIOAI_EXEC} -i ${conf} -o ${outDir}`;
+  }
+  return command;
+};
+
 module.exports = {
   cromwellWorkflows,
   nextflowWorkflows,
@@ -57,4 +85,6 @@ module.exports = {
   workflowList,
   generateNextflowWorkflowParams,
   generateWorkflowResult,
+  checkFlagFile,
+  getWorkflowCommand,
 };
