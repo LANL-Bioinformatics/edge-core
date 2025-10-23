@@ -20,13 +20,12 @@ import {
 } from '@mui/icons-material'
 import moment from 'moment'
 
-import { updateProjectAdmin } from '../../../redux/reducers/edge/adminSlice'
-import { updateProject } from '../../../redux/reducers/edge/userSlice'
-import { setSubmittingForm } from '../../../redux/reducers/pageSlice'
-import { cleanError } from '../../../redux/reducers/messageSlice'
+import { updateProjectAdmin } from 'src/redux/reducers/edge/adminSlice'
+import { updateProject } from 'src/redux/reducers/edge/userSlice'
+import { setSubmittingForm } from 'src/redux/reducers/pageSlice'
+import { cleanError } from 'src/redux/reducers/messageSlice'
 import { ConfirmDialog } from '../../common/Dialogs'
 import { notify, getData, apis, isValidProjectName } from '../../common/util'
-import { workflowList } from 'src/util'
 import {
   theme,
   projectStatusColors,

@@ -51,6 +51,28 @@ do
   fi
 done
 
+#copy .js.core to .js
+files=(
+  # client files
+  "webapp/client/src/_nav.js"
+  "webapp/client/src/workflows/common/ProjectResult.js"
+  "webapp/client/src/workflows/common/private-routes.js"
+  "webapp/client/src/workflows/common/routes.js"
+  "webapp/client/src/workflows/common/util.js"
+  # server files
+  "webapp/server/workflow/config.js"
+  "webapp/server/workflow/indexRouter.js"
+  "webapp/server/workflow/util.js"
+)
+for file in "${files[@]}"
+do
+  cp $app_home/${file}.core $app_home/${file}
+  if [ "$?" != "0" ]; then
+    echo "Cannot copy $app_home/${file}.core to $app_home/${file}!" 1>&2
+    exit 1
+  fi
+done
+
 echo "Setup LANL EDGE webapp ..."
 #install client
 echo "install client..."

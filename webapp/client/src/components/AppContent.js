@@ -3,12 +3,12 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react'
 import { Row, Col } from 'reactstrap'
 
+import PrivateRoute from 'src/edge/common/PrivateRoute'
 // routes config
 import routes from 'src/routes'
 import privateRoutes from 'src/private-routes'
-import workflowRoutes from 'src/workflow-routes'
-import workflowPrivateRoutes from 'src/workflow-private-routes'
-import PrivateRoute from 'src/edge/common/PrivateRoute'
+import workflowRoutes from 'src/workflows/common/routes'
+import workflowPrivateRoutes from 'src/workflows/common/private-routes'
 
 const AppContent = () => {
   return (

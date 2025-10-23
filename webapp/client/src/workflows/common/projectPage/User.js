@@ -33,7 +33,7 @@ const User = (props) => {
           setLoading(false)
         })
         .catch((err) => {
-          setError(err)
+          setError('Failed to load project')
           setLoading(false)
         })
     }
@@ -52,8 +52,6 @@ const User = (props) => {
           <hr />
           <p className="text-muted float-left">
             The project might be deleted or you have no permission to acces it.
-            <br></br>
-            {error}
           </p>
         </div>
       ) : (

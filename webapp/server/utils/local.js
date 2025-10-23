@@ -1,7 +1,7 @@
 const fs = require('fs');
 const moment = require('moment');
 const Job = require('../edge-api/models/job');
-const { generateWorkflowResult, checkFlagFile } = require('./workflow');
+const { generateWorkflowResult, checkFlagFile } = require('../workflow/util');
 const { timeFormat, execCmd, pidIsRunning } = require('./common');
 const logger = require('./logger');
 const config = require('../config');

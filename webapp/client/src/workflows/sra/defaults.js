@@ -1,4 +1,4 @@
-import { workflowList } from 'src/util'
+import { workflowList } from '../common/util'
 
 export const workflowOptions = [{ value: 'sra2fastq', label: workflowList['sra2fastq'].label }]
 

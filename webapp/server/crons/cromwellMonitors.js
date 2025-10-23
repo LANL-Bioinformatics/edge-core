@@ -4,7 +4,7 @@ const Job = require('../edge-api/models/job');
 const { abortJob, updateJobStatus } = require('../utils/cromwell');
 const logger = require('../utils/logger');
 const common = require('../utils/common');
-const { cromwellWorkflows, workflowList } = require('../utils/workflow');
+const { cromwellWorkflows, workflowList } = require('../workflow/util');
 const { generateWDL, generateInputs, submitWorkflow } = require('../utils/cromwell');
 
 const config = require('../config');

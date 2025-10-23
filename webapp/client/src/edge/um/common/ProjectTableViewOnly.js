@@ -8,7 +8,7 @@ import { Refresh, Explore } from '@mui/icons-material'
 import moment from 'moment'
 import { theme, projectStatusColors, projectStatusNames } from '../common/tableUtil'
 import { getData } from '../../common/util'
-import { workflowList } from 'src/util'
+import { workflowList } from 'src/workflows/common/util'
 
 const ProjectTableViewOnly = (props) => {
   const navigate = useNavigate()

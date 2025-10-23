@@ -5,6 +5,7 @@ import CreatableSelect from 'react-select/creatable'
 import { WindowedMenuList } from 'react-windowed-select'
 import { clone } from 'lodash'
 import { colors, isValidFolder, postData } from './util'
+
 const selectStyles = {
   control: (provided) => ({
     ...provided,
@@ -16,6 +17,7 @@ const selectStyles = {
     zIndex: 999999,
   }),
 }
+
 export const MyCreatableSelect = (props) => {
   const [value, setValue] = useState(props.value)
 

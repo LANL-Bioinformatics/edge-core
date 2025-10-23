@@ -4,7 +4,7 @@ const Job = require('../models/job');
 const { getAllFiles } = require('../../utils/common');
 const { generateRunStats } = require('../../utils/cromwell');
 const { generateRunStats: generateNextflowRunStats } = require('../../utils/nextflow');
-const { generateWorkflowResult } = require('../../utils/workflow');
+const { generateWorkflowResult } = require('../../workflow/util');
 const config = require('../../config');
 
 const getProject = async (code, type, user) => {

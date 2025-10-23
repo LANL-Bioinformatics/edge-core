@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { DNA } from 'react-loader-spinner'
 import ReactJson from 'react-json-view'

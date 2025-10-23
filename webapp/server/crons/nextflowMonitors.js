@@ -5,7 +5,7 @@ const Job = require('../edge-api/models/job');
 const { abortJob, updateJobStatus } = require('../utils/nextflow');
 const common = require('../utils/common');
 const logger = require('../utils/logger');
-const { nextflowWorkflows, workflowList } = require('../utils/workflow');
+const { nextflowWorkflows, workflowList } = require('../workflow/util');
 const { generateInputs, submitWorkflow } = require('../utils/nextflow');
 
 const config = require('../config');

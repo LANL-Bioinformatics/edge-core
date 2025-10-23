@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Col, Row } from 'reactstrap'
 
 import { login } from 'src/redux/reducers/edge/userSlice'
-import { cleanMessage, cleanError } from '../../../redux/reducers/messageSlice'
+import { cleanMessage, cleanError } from 'src/redux/reducers/messageSlice'
 import LoginForm from './forms/LoginForm'
 import config from 'src/config'
 

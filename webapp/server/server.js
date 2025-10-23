@@ -12,6 +12,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./edge-api/swagger/swaggerSpec');
 const logger = require('./utils/logger');
 const indexRouter = require('./indexRouter');
+const indexWorkflowRouter = require('./workflow/indexRouter');
 const { uploadMonitor } = require('./crons/uploadMonitor');
 const { localWorkflowMonitor, localJobMonitor } = require('./crons/localMonitors');
 const { cromwellWorkflowMonitor } = require('./crons/cromwellMonitors');
@@ -47,6 +48,8 @@ app.use(passport.initialize());
 require('./edge-api/utils/passport')(passport);
 // APIs
 app.use('/api', indexRouter);
+// workflow APIs
+app.use('/workflow', indexWorkflowRouter);
 // API docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: false }));
 

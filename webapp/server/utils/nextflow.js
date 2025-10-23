@@ -2,14 +2,12 @@ const fs = require('fs');
 const ejs = require('ejs');
 const Papa = require('papaparse');
 const Job = require('../edge-api/models/job');
-const { nextflowConfigs, workflowList, generateNextflowWorkflowParams, generateWorkflowResult } = require('./workflow');
+const { nextflowConfigs, workflowList, generateNextflowWorkflowParams, generateWorkflowResult } = require('../workflow/util');
 const { write2log, execCmd, sleep, pidIsRunning } = require('./common');
 const logger = require('./logger');
 const config = require('../config');
 
 const generateInputs = async (projHome, projectConf, proj) => {
-  // projectConf: project conf.js
-  // workflowList in utils/workflow
   const workflowSettings = workflowList[projectConf.workflow.name];
   const template = String(fs.readFileSync(`${config.NEXTFLOW.WORKFLOW_DIR}/${workflowSettings.config_tmpl}`));
 

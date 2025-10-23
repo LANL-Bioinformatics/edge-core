@@ -1,5 +1,3 @@
-import React from 'react'
-
 const HtmlToReactParser = require('html-to-react').Parser
 let htmlToReactParser = new HtmlToReactParser()
 

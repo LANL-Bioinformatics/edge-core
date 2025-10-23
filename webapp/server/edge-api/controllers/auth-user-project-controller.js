@@ -4,7 +4,7 @@ const moment = require('moment');
 const Project = require('../models/project');
 const { getProject, getProjectConf, updateProject, getProjectOutputs, getProjectBatchOutputs, getProjectResult, getProjectRunStats } = require('../utils/project');
 const { getAllFiles } = require('../../utils/common');
-const { workflowList } = require('../../utils/workflow');
+const { workflowList } = require('../../workflow/util');
 const logger = require('../../utils/logger');
 const config = require('../../config');
 

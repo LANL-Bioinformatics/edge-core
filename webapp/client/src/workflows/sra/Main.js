@@ -3,11 +3,11 @@ import { Button, Form } from 'reactstrap'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { workflowList } from 'src/util'
 import { postData, getData, notify, apis } from 'src/edge/common/util'
 import { LoaderDialog, MessageDialog } from 'src/edge/common/Dialogs'
 import { HtmlText } from 'src/edge/common/HtmlText'
 import SraDataTable from 'src/edge/um/common/SraDataTable'
+import { workflowList } from '../common/util'
 import { Sra2fastq } from './forms/Sra2fastq'
 import { workflowOptions } from './defaults'
 
