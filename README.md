@@ -1,3 +1,3 @@
-# EDGE CORE
+# EDGE
 
 EDGE web app framework
