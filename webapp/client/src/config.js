@@ -91,6 +91,8 @@ const config = {
   APP: {
     // The user-facing name of the application.
     NAME: import.meta.env.VITE_NAME || 'EDGE',
+    // Note about the distribution of this application. Can be shown in the login page.
+    DISTRIBUTION_NOTE: import.meta.env.VITE_DISTRIBUTION_NOTE,
     // user/password authentication
     USER_AUTH_IS_ENABLED: makeBoolean(import.meta.env.VITE_USER_AUTH_ENABLED, 'USER'),
     // Boolean flag indicating whether the client will request that the server send emails to the user.
