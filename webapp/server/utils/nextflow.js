@@ -10,12 +10,15 @@ const config = require('../config');
 const generateInputs = async (projHome, projectConf, proj) => {
   const workflowSettings = workflowList[projectConf.workflow.name];
   const template = String(fs.readFileSync(`${config.NEXTFLOW.WORKFLOW_DIR}/${workflowSettings.config_tmpl}`));
+  const nfWorkDir = config.NEXTFLOW.WORK_DIR ? `${config.NEXTFLOW.WORK_DIR}/${proj.code}/work` : `${projHome}/nextflow/work`;
 
   const params = {
     ...projectConf.workflow.input,
     ...projectConf.rawReads,
     project: proj.name,
     projOutdir: `${projHome}/${workflowSettings.outdir}`,
+    nextflowWorkDir: nfWorkDir,
+    nextflowOutDir: `${projHome}/nextflow`,
     workflow: projectConf.workflow.name,
     profiles: `${config.NEXTFLOW.WORKFLOW_DIR}/${nextflowConfigs.profiles}`,
     nfReports: `${config.NEXTFLOW.WORKFLOW_DIR}/${nextflowConfigs.nf_reports}`,
