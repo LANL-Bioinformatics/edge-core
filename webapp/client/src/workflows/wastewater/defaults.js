@@ -32,6 +32,7 @@ export const workflows = {
         isOptional: false,
         cleanupInput: false,
         maxInput: 1,
+        isPaired: true,
       },
     },
   },
