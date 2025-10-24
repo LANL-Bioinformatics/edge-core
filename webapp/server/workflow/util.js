@@ -5,6 +5,7 @@ const workflowConfig = require('../config');
 const cromwellWorkflows = [];
 const nextflowWorkflows = [
   'sra2fastq',
+  'wastewater',
 ];
 const nextflowConfigs = {
   profiles: 'common/profiles.nf',
@@ -16,6 +17,11 @@ const workflowList = {
     outdir: 'output/sra2fastq',
     nextflow_main: 'sra2fastq/nextflow/main.nf -profile local',
     config_tmpl: 'sra2fastq/workflow_config.tmpl',
+  },
+  wastewater: {
+    outdir: 'output/WasteWater',
+    nextflow_main: 'wastewater/nextflow/main.nf -profile local',
+    config_tmpl: 'wastewater/workflow_config.tmpl',
   },
 };
 

@@ -32,22 +32,12 @@ const _nav = [
     component: CNavTitle,
     name: 'Workflows',
   },
-  /* {
-    component: CNavGroup,
-    name: 'Metagenomics',
-    icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Run a Single Workflow',
-        to: '/workflow/metagenomics',
-        badge: {
-          color: 'info',
-          text: '9',
-        },
-      },
-    ],
-  }, */
+  {
+    component: CNavItem,
+    name: 'Wastewater Workflow',
+    to: '/workflow/wastewater',
+    icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
+  },
 ]
 
 export default _nav
