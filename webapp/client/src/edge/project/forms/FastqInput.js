@@ -55,7 +55,7 @@ export const FastqInput = (props) => {
 
   useEffect(() => {
     //set paired
-    if (props.isPaired != null) {
+    if (props.isPaired != null && form.platform.toLowerCase() === 'illumina') {
       setNewState2('paired', props.isPaired)
     }
   }, [props.isPaired]) // eslint-disable-line react-hooks/exhaustive-deps
