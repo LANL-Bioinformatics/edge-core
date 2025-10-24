@@ -206,6 +206,11 @@ export const InputRawReads = (props) => {
                     ? props.fastqSettings?.isOptional
                     : components[componentName].fastqInput.isOptional
                 }
+                isPaired={
+                  props.fastqSettings?.isPaired !== null
+                    ? props.fastqSettings?.isPaired
+                    : components[componentName].fastqInput.isPaired
+                }
                 cleanupInput={
                   props.fastqSettings?.cleanupInput !== null
                     ? props.fastqSettings?.cleanupInput
