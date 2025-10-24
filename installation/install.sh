@@ -66,6 +66,10 @@ files=(
 )
 for file in "${files[@]}"
 do
+  if [ -f "$file" ]; then
+  # do nothing, skip existing files
+    continue
+  fi
   cp $app_home/${file}.core $app_home/${file}
   if [ "$?" != "0" ]; then
     echo "Cannot copy $app_home/${file}.core to $app_home/${file}!" 1>&2
