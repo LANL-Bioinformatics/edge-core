@@ -38,7 +38,7 @@ fi
 
 echo "Generate Cromwell wdl imports.zip"
 workflows=(
-  "sra2fastq"
+  # "sra2fastq"
 )
 
 for workflow in "${workflows[@]}"
