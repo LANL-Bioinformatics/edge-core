@@ -28,6 +28,8 @@ export const FastqInput = (props) => {
   const setPlatform = (inForm, name) => {
     if (inForm.option.toLowerCase() !== 'illumina') {
       form.paired = false
+    } else if (props.isPaired != null) {
+      form.paired = props.isPaired
     }
     form['platform'] = inForm.option
     form['platform_display'] = inForm.display ? inForm.display : inForm.option
