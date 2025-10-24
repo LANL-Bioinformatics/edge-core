@@ -2,7 +2,6 @@
 import React from 'react'
 import config from 'src/config'
 
-const Home = React.lazy(() => import('src/edge/Home'))
 const PublicProjects = React.lazy(() => import('src/edge/um/public/Projects'))
 const PublicProjectPage = React.lazy(() => import('src/workflows/common/projectPage/Public'))
 const UserLogin = React.lazy(() => import('src/edge/um/user/Login'))
@@ -13,7 +12,6 @@ const UserResetPassword = React.lazy(() => import('src/edge/um/user/ResetPasswor
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/home', name: 'Home', element: Home },
   { path: '/public/projects', name: 'PublicProjects', element: PublicProjects },
   { path: '/public/project', name: 'PublicProjectPage', element: PublicProjectPage },
   config.ORCID.IS_ENABLED && { path: '/oauth', name: 'OAuth', element: OAuth },
