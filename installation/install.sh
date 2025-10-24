@@ -66,7 +66,7 @@ files=(
 )
 for file in "${files[@]}"
 do
-  if [ -f "$file" ]; then
+  if [ -f "$app_home/$file" ]; then
   # do nothing, skip existing files
     continue
   fi
