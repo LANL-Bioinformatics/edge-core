@@ -1,6 +1,24 @@
 workDir="<%= nextflowWorkDir %>"
 params {
+	time='100h' //needs parameter specification for the moment, since it's used in the main script
+	threads=12
+	read_dir="<%= inputDir %>"
+	output_dir="<%= projOutdir %>"
+	gunc_db='/dbs/gunc_db/gunc_db_progenomes2.1.dmnd' //container bind in profiles should put all databases in /dbs/
+	gtdbtk_data='/dbs/gtdb-tk_226/release226'
+	checkv_db='/dbs/checkv-db-v1.5'
+    genomad_db='/dbs/genomad_db_v1.9'
    
+}
+
+apptainer { 
+    enabled = true 
+    runOptions = '-v /panfs/biopan04/refdb:/dbs'
+}
+
+process {
+    cpus = 12            // default CPU threads for processes
+    time = '100h'       // default max runtime
 }
 
 <%- include (profiles) %>
