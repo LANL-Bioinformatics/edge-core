@@ -1,13 +1,18 @@
 workDir="<%= nextflowWorkDir %>"
 params {
-	time='100h' //needs parameter specification for the moment, since it's used in the main script
+    read_type= <% if(typeof readType !== 'undefined') { %>"<%= readType %>"<% } else { %>null<%} %> //for the workflow version that specifies read type
+    metadata = <% if(typeof metadata !== 'undefined') { %>"<%= metadata %>"<% } else { %>null<%} %> //for the workflow version that uses a metadata file instead of specifying read type
+	time='100h' //resources need parameter specification for the moment, since it's used in the main script
 	threads=12
 	read_dir="<%= inputDir %>"
 	output_dir="<%= projOutdir %>"
-	gunc_db='/dbs/gunc_db/gunc_db_progenomes2.1.dmnd' //container bind in profiles should put all databases in /dbs/
+	gunc_db='/dbs/gunc_db/gunc_db_progenomes2.1.dmnd' //container bind (below) should put all databases in /dbs/
 	gtdbtk_data='/dbs/gtdb-tk_226/release226'
 	checkv_db='/dbs/checkv-db-v1.5'
     genomad_db='/dbs/genomad_db_v1.9'
+    chimeracutter_db=null //not available in installation
+    rrna_db=null
+	human_db=null
    
 }
 
@@ -16,11 +21,13 @@ apptainer {
     runOptions = '-v /panfs/biopan04/refdb:/dbs'
 }
 
+
+<%- include (profiles) %>
+
 process {
     cpus = 12            // default CPU threads for processes
     time = '100h'       // default max runtime
+    errorStrategy = { (task.attempt <= 3) ? 'retry' : 'ignore' } //allow workflow to continue if some processes don't complete
 }
-
-<%- include (profiles) %>
 
 <%- include (nfReports) %>
