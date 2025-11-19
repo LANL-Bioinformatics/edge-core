@@ -1,18 +1,18 @@
 const router = require('express').Router()
 const {
   validationRules: bulkSubmissionCodeValidationRules,
-  validate: bulkSubmissionCodeValidate
+  validate: bulkSubmissionCodeValidate,
 } = require('../validations/bulkSubmission-code-validator')
 const {
   validationRules: updateValidationRules,
-  validate: updateValidate
+  validate: updateValidate,
 } = require('../validations/bulkSubmission-update-validator')
 const {
   getOne,
   updateOne,
   getConf,
   getAll,
-  getProjects
+  getProjects,
 } = require('../controllers/admin-bulkSubmission-controller')
 
 /**
@@ -94,7 +94,7 @@ router.put(
   updateValidate,
   async (req, res) => {
     await updateOne(req, res)
-  }
+  },
 )
 
 /**
@@ -138,7 +138,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getOne(req, res)
-  }
+  },
 )
 
 /**
@@ -182,7 +182,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getConf(req, res)
-  }
+  },
 )
 
 /**
@@ -226,7 +226,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getProjects(req, res)
-  }
+  },
 )
 
 module.exports = router

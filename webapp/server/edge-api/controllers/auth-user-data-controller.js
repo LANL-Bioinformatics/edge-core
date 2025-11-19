@@ -16,19 +16,19 @@ const getPublicFiles = async (req, res) => {
       req.body.fileTypes,
       'publicdata',
       'publicdata',
-      dataDir
+      dataDir,
     )
 
     return res.send({
       fileData: files,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`List public data failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -45,24 +45,24 @@ const getGlobusFiles = async (req, res) => {
         req.body.fileTypes,
         'globus',
         'globus',
-        dataDir
+        dataDir,
       )
     }
     return res.send({
       fileData: files,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`List globus data failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
 
 module.exports = {
   getPublicFiles,
-  getGlobusFiles
+  getGlobusFiles,
 }

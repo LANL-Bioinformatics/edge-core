@@ -15,7 +15,7 @@ const nextflowWorkflowMonitor = async () => {
     // only process one job at each time based on job updated time
     const jobs = await Job.find({
       queue: 'nextflow',
-      status: { $in: ['Submitted', 'Running'] }
+      status: { $in: ['Submitted', 'Running'] },
     }).sort({ updated: 1 })
     // submit request only when the current nextflow running jobs less than the max allowed jobs
     if (jobs.length >= config.NEXTFLOW.NUM_JOBS_MAX) {
@@ -29,7 +29,7 @@ const nextflowWorkflowMonitor = async () => {
     // only process one request at each time
     const projs = await Project.find({
       type: { $in: nextflowWorkflows },
-      status: 'in queue'
+      status: 'in queue',
     }).sort({ updated: 1 })
     const proj = projs[0]
     if (!proj) {
@@ -50,7 +50,7 @@ const nextflowWorkflowMonitor = async () => {
       proj.save()
       common.write2log(
         `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
-        'input size exceeded the limit.'
+        'input size exceeded the limit.',
       )
       return
     }
@@ -68,17 +68,17 @@ const nextflowWorkflowMonitor = async () => {
     // create output directory
     fs.mkdirSync(
       `${projHome}/${workflowList[projectConf.workflow.name].outdir}`,
-      { recursive: true }
+      { recursive: true },
     )
     // in case nextflow needs permission to write to the output directory
     fs.chmodSync(
       `${projHome}/${workflowList[projectConf.workflow.name].outdir}`,
-      '777'
+      '777',
     )
     // Generate nextflow.config
     common.write2log(
       `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
-      'Generate nextflow.config'
+      'Generate nextflow.config',
     )
     logger.info('Generate nextflow.config')
     await generateInputs(projHome, projectConf, proj)
@@ -86,7 +86,7 @@ const nextflowWorkflowMonitor = async () => {
     const now = new Date()
     common.write2log(
       `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
-      `[${now.toLocaleString()}] Submit workflow to nextflow`
+      `[${now.toLocaleString()}] Submit workflow to nextflow`,
     )
     logger.info('Submit workflow to nextflow')
     submitWorkflow(proj, projectConf, inputsize)
@@ -102,7 +102,7 @@ const nextflowJobMonitor = async () => {
     // only process one job at each time based on job updated time
     const jobs = await Job.find({
       queue: 'nextflow',
-      status: { $in: ['Submitted', 'Running'] }
+      status: { $in: ['Submitted', 'Running'] },
     }).sort({ updated: 1 })
     const job = jobs[0]
     if (!job) {
@@ -134,5 +134,5 @@ const nextflowJobMonitor = async () => {
 
 module.exports = {
   nextflowWorkflowMonitor,
-  nextflowJobMonitor
+  nextflowJobMonitor,
 }

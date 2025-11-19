@@ -10,11 +10,11 @@ const fileUploadMonitor = async () => {
     // delete file after deleteGracePeriod
     const deleteGracePeriod = moment().subtract(
       config.FILE_UPLOADS.DELETION_GRACE_PERIOD_DAYS,
-      'days'
+      'days',
     )
     let uploads = await Upload.find({
       status: 'delete',
-      updated: { $lte: deleteGracePeriod }
+      updated: { $lte: deleteGracePeriod },
     })
     let i
     for (i = 0; i < uploads.length; i += 1) {
@@ -40,7 +40,7 @@ const fileUploadMonitor = async () => {
     // change status to 'delete' if upload is older than daysKept
     const daysKept = moment().subtract(
       config.FILE_UPLOADS.FILE_LIFETIME_DAYS,
-      'days'
+      'days',
     )
     uploads = await Upload.find({ status: 'live', created: { $lte: daysKept } })
     for (i = 0; i < uploads.length; i += 1) {
@@ -67,5 +67,5 @@ const fileUploadMonitor = async () => {
 }
 
 module.exports = {
-  fileUploadMonitor
+  fileUploadMonitor,
 }

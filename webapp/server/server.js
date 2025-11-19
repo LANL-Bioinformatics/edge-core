@@ -16,17 +16,17 @@ const indexWorkflowRouter = require('./workflow/indexRouter')
 const { uploadMonitor } = require('./crons/uploadMonitor')
 const {
   localWorkflowMonitor,
-  localJobMonitor
+  localJobMonitor,
 } = require('./crons/localMonitors')
 const { cromwellWorkflowMonitor } = require('./crons/cromwellMonitors')
 const {
   nextflowJobMonitor,
-  nextflowWorkflowMonitor
+  nextflowWorkflowMonitor,
 } = require('./crons/nextflowMonitors')
 const {
   projectDeletionMonitor,
   projectStatusMonitor,
-  projectRerunMonitor
+  projectRerunMonitor,
 } = require('./crons/projectMonitors')
 const { dbBackup, dbBackupClean } = require('./crons/dbMonitors')
 const config = require('./config')
@@ -35,7 +35,7 @@ const app = express()
 app.use(cors({ origin: '*' }))
 // Helmet helps to secure Express apps by setting various HTTP headers.
 app.use(
-  helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false })
+  helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }),
 )
 app.use(express.json())
 app.use(
@@ -44,14 +44,14 @@ app.use(
     abortOnLimit: true,
     debug: false,
     useTempFiles: true,
-    tempFileDir: config.IO.UPLOADED_FILES_TEMP_DIR
-  })
+    tempFileDir: config.IO.UPLOADED_FILES_TEMP_DIR,
+  }),
 )
 // Bodyparser middleware
 app.use(
   bodyParser.urlencoded({
-    extended: false
-  })
+    extended: false,
+  }),
 )
 
 app.use(bodyParser.json())
@@ -68,13 +68,13 @@ app.use('/workflow', indexWorkflowRouter)
 app.use(
   '/api-docs',
   swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, { explorer: false })
+  swaggerUi.setup(swaggerSpec, { explorer: false }),
 )
 
 // Serving static files in Express
 app.use(
   '/projects',
-  express.static(config.IO.PROJECT_BASE_DIR, { dotfiles: 'allow' })
+  express.static(config.IO.PROJECT_BASE_DIR, { dotfiles: 'allow' }),
 )
 app.use('/uploads', express.static(config.IO.UPLOADED_FILES_DIR))
 app.use('/publicdata', express.static(config.IO.PUBLIC_BASE_DIR))
@@ -144,8 +144,8 @@ const runApp = async () => {
     // start server
     app.listen(config.APP.SERVER_PORT, () =>
       logger.info(
-        `HTTP ${config.NODE_ENV} server up and running on port ${config.APP.SERVER_PORT} !`
-      )
+        `HTTP ${config.NODE_ENV} server up and running on port ${config.APP.SERVER_PORT} !`,
+      ),
     )
   } catch (err) {
     logger.error(err)

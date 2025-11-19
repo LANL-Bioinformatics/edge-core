@@ -14,17 +14,17 @@ const getReflist = async (req, res) => {
     return res.json({
       reflist,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`/api/workflow/data/reflist failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
 
 module.exports = {
-  getReflist
+  getReflist,
 }

@@ -26,7 +26,7 @@ const projectMonitor = async () => {
                   projectCreated: proj.created,
                   projectType: proj.label,
                   projectStatus: proj.status,
-                  projectPageURL: `${config.APP.UI_BASE_URL}/user/project?code=${proj.code}`
+                  projectPageURL: `${config.APP.UI_BASE_URL}/user/project?code=${proj.code}`,
                 }
                 // logger.debug(`Notify user: ${user.notification.email}`);
                 projectStatusSender(user.notification.email, data)
@@ -56,11 +56,11 @@ const projectDeletionMonitor = async () => {
     // delete project after deleteGracePeriod
     const deleteGracePeriod = moment().subtract(
       config.CRON.PROJECT_DELETION_GRACE_PERIOD_DAYS,
-      'days'
+      'days',
     )
     const projs = await Project.find({
       status: 'delete',
-      updated: { $lte: deleteGracePeriod }
+      updated: { $lte: deleteGracePeriod },
     })
     let i
     for (i = 0; i < projs.length; i += 1) {
@@ -153,5 +153,5 @@ const projectRerunMonitor = async () => {
 module.exports = {
   projectMonitor,
   projectDeletionMonitor,
-  projectRerunMonitor
+  projectRerunMonitor,
 }

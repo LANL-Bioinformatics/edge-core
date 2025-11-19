@@ -9,7 +9,7 @@ const {
   getProjectOutputs,
   getProjectBatchOutputs,
   getProjectResult,
-  getProjectRunStats
+  getProjectRunStats,
 } = require('../utils/project')
 const { getAllFiles } = require('../../utils/common')
 const { workflowList } = require('../../workflow/util')
@@ -63,7 +63,7 @@ const addOne = async (req, res) => {
           return res.status(400).json({
             error: { conf: 'The config file you selected does not exist.' },
             message: 'Action failed',
-            success: false
+            success: false,
           })
         }
       }
@@ -88,20 +88,20 @@ const addOne = async (req, res) => {
       desc: projDesc,
       type: projType,
       owner: req.user.email,
-      code
+      code,
     })
     const project = await newProject.save()
     return res.send({
       project,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Add project failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -117,23 +117,23 @@ const getOne = async (req, res) => {
       logger.error(`project ${req.params.code} not found or access denied.`)
       return res.status(400).json({
         error: {
-          project: `project ${req.params.code} not found or access denied`
+          project: `project ${req.params.code} not found or access denied`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     return res.send({
       project,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Get project failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -145,7 +145,7 @@ const updateOne = async (req, res) => {
     const query = {
       code: { $eq: req.params.code },
       status: { $ne: 'delete' },
-      owner: { $eq: req.user.email }
+      owner: { $eq: req.user.email },
     }
     const project = await updateProject(query, req)
 
@@ -153,23 +153,23 @@ const updateOne = async (req, res) => {
       logger.error(`project ${req.params.code} not found or access denied.`)
       return res.status(400).json({
         error: {
-          project: `project ${req.params.code} not found or access denied`
+          project: `project ${req.params.code} not found or access denied`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     return res.send({
       project,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Update project failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -183,15 +183,15 @@ const getConf = async (req, res) => {
     return res.json({
       conf,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/auth-user/projects/${req.params.code}/conf failed: ${err}`
+      `/api/auth-user/projects/${req.params.code}/conf failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -205,15 +205,15 @@ const getResult = async (req, res) => {
     return res.json({
       result,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/auth-user/projects/${req.params.code}/result failed: ${err}`
+      `/api/auth-user/projects/${req.params.code}/result failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -227,15 +227,15 @@ const getRunStats = async (req, res) => {
     return res.json({
       runStats,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/auth-user/projects/${req.params.code}/runStats failed: ${err}`
+      `/api/auth-user/projects/${req.params.code}/runStats failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -247,19 +247,19 @@ const getOwn = async (req, res) => {
     const projects = await Project.find({
       type: { $ne: 'sra2fastq' },
       status: { $ne: 'delete' },
-      owner: { $eq: req.user.email }
+      owner: { $eq: req.user.email },
     }).sort([['updated', -1]])
 
     return res.send({
       projects,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`List user projects failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -274,20 +274,20 @@ const getAll = async (req, res) => {
       $or: [
         { owner: { $eq: req.user.email } },
         { sharedTo: req.user.email },
-        { public: true }
-      ]
+        { public: true },
+      ],
     }).sort([['updated', -1]])
 
     return res.send({
       projects,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`List all projects failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -298,18 +298,18 @@ const getQueue = async (req, res) => {
     logger.debug(`/api/auth-user/projects/queue: ${req.user.email}`)
     const projects = await Project.find(
       { status: { $in: ['in queue', 'running', 'processing', 'submitted'] } },
-      { name: 1, owner: 1, type: 1, status: 1, created: 1, updated: 1 }
+      { name: 1, owner: 1, type: 1, status: 1, created: 1, updated: 1 },
     ).sort([['created', 1]])
     return res.send({
       projects,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`List project queue failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -328,18 +328,18 @@ const getFiles = async (req, res) => {
       $or: [
         { owner: req.user.email },
         { sharedto: req.user.email },
-        { public: true }
-      ]
+        { public: true },
+      ],
     }
     if (req.body.projectScope === 'self') {
       query = {
         status: { $in: projStatuses },
-        $or: [{ owner: req.user.email }]
+        $or: [{ owner: req.user.email }],
       }
     } else if (req.body.projectScope === 'self+shared') {
       query = {
         status: { $in: projStatuses },
-        $or: [{ owner: req.user.email }, { sharedto: req.user.email }]
+        $or: [{ owner: req.user.email }, { sharedto: req.user.email }],
       }
     }
     if (req.body.projectTypes) {
@@ -373,7 +373,7 @@ const getFiles = async (req, res) => {
           `sradata/${projName}`,
           `/sradata/${proj.code}/${outdir}`,
           `${projDir}/${proj.code}/${outdir}`,
-          req.body.endsWith
+          req.body.endsWith,
         )
       } else {
         projName += ` (${proj.type}, ${moment(proj.created).format('YYYY-MM-DD, h:mm:ss A')})`
@@ -384,7 +384,7 @@ const getFiles = async (req, res) => {
           `projects/${projName}`,
           `/projects/${proj.code}/${outdir}`,
           `${projDir}/${proj.code}/${outdir}`,
-          req.body.endsWith
+          req.body.endsWith,
         )
       }
     }
@@ -392,13 +392,13 @@ const getFiles = async (req, res) => {
     return res.json({
       fileData: files,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`/api/auth-user/projects/files failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -412,15 +412,15 @@ const getOutputs = async (req, res) => {
     return res.json({
       fileData: files,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/auth-user/projects/${req.params.code}/outputs failed: ${err}`
+      `/api/auth-user/projects/${req.params.code}/outputs failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -434,15 +434,15 @@ const getBatchOutputs = async (req, res) => {
     return res.json({
       fileData: files,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/auth-user/projects/${req.params.code}/batch/outputs failed: ${err}`
+      `/api/auth-user/projects/${req.params.code}/batch/outputs failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -454,19 +454,19 @@ const getProjectsByType = async (req, res) => {
     const projects = await Project.find({
       status: { $ne: 'delete' },
       type: { $eq: req.params.type },
-      owner: { $eq: req.user.email }
+      owner: { $eq: req.user.email },
     }).sort([['updated', -1]])
 
     return res.send({
       projects,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`List user projects failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -484,5 +484,5 @@ module.exports = {
   getBatchOutputs,
   getResult,
   getRunStats,
-  getProjectsByType
+  getProjectsByType,
 }

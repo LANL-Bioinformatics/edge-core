@@ -9,7 +9,7 @@ const config = require('../config')
 const generateRunStats = async project => {
   const job = await Job.findOne({ project: project.code })
   const ms = moment(job.updated, 'YYYY-MM-DD HH:mm:ss').diff(
-    moment(job.created, 'YYYY-MM-DD HH:mm:ss')
+    moment(job.created, 'YYYY-MM-DD HH:mm:ss'),
   )
   const d = moment.duration(ms)
   const stats = []
@@ -18,11 +18,11 @@ const generateRunStats = async project => {
     Status: job.status,
     'Running Time': timeFormat(d),
     Start: moment(job.created).format('YYYY-MM-DD HH:mm:ss'),
-    End: moment(job.updated).format('YYYY-MM-DD HH:mm:ss')
+    End: moment(job.updated).format('YYYY-MM-DD HH:mm:ss'),
   })
   fs.writeFileSync(
     `${config.IO.PROJECT_BASE_DIR}/${project.code}/run_stats.json`,
-    JSON.stringify({ stats })
+    JSON.stringify({ stats }),
   )
 }
 
@@ -42,7 +42,7 @@ const abortJob = job => {
     job.save()
     logger.info(
       `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
-      'Local job aborted.'
+      'Local job aborted.',
     )
   } catch (err) {
     logger.error(`Abort local job ${job.id} failed: ${err}`)
@@ -75,5 +75,5 @@ const updateJobStatus = (job, proj) => {
 module.exports = {
   generateRunStats,
   abortJob,
-  updateJobStatus
+  updateJobStatus,
 }

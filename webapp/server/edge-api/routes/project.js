@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {
   validationRules: projectCodeValidationRules,
-  validate: projectCodeValidate
+  validate: projectCodeValidate,
 } = require('../validations/project-code-validator')
 const {
   getAll,
@@ -9,7 +9,7 @@ const {
   getConf,
   getOutputs,
   getResult,
-  getRunStats
+  getRunStats,
 } = require('../controllers/project-controller')
 
 /**
@@ -81,7 +81,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getOne(req, res)
-  }
+  },
 )
 
 /**
@@ -123,7 +123,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getConf(req, res)
-  }
+  },
 )
 
 /**
@@ -165,7 +165,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getOutputs(req, res)
-  }
+  },
 )
 
 /**
@@ -207,7 +207,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getResult(req, res)
-  }
+  },
 )
 
 /**
@@ -249,7 +249,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getRunStats(req, res)
-  }
+  },
 )
 
 module.exports = router

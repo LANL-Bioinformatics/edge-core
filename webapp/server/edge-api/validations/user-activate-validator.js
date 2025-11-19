@@ -6,7 +6,7 @@ const validationRules = () => [
     .normalizeEmail()
     .isEmail()
     .withMessage('Invalid email address.'),
-  body('token').trim().notEmpty().withMessage('Token should not be empty.')
+  body('token').trim().notEmpty().withMessage('Token should not be empty.'),
 ]
 
 const validate = (req, res, next) => {
@@ -18,7 +18,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -28,5 +28,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

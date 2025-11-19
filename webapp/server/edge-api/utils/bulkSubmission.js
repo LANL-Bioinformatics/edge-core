@@ -7,7 +7,7 @@ const getBulkSubmission = async (code, type, user) => {
     // Use $eq to prevent query selector injections
     const bulkSubmission = await BulkSubmission.findOne({
       status: { $ne: 'delete' },
-      code: { $eq: code }
+      code: { $eq: code },
     })
     if (bulkSubmission === null) {
       return null
@@ -89,5 +89,5 @@ const getBulkSubmissionConf = async (code, type, req) => {
 module.exports = {
   getBulkSubmission,
   updateBulkSubmission,
-  getBulkSubmissionConf
+  getBulkSubmissionConf,
 }

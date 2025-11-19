@@ -16,7 +16,7 @@ const validationRules = () => [
     .withMessage('Invalid lastName.'),
   body(
     'password',
-    'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.'
+    'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.',
   )
     .isLength({ min: 8 })
     .trim()
@@ -35,7 +35,7 @@ const validationRules = () => [
     .optional()
     .trim()
     .isBoolean()
-    .withMessage('Invalid active. Must be true or false.')
+    .withMessage('Invalid active. Must be true or false.'),
 ]
 
 const validate = (req, res, next) => {
@@ -47,7 +47,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -57,5 +57,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

@@ -20,37 +20,37 @@ router.use('/public/projects', projectRoutes)
 router.use(
   '/auth-user',
   passport.authenticate('user', { session: false }),
-  authUserRoutes
+  authUserRoutes,
 )
 router.use(
   '/auth-user',
   passport.authenticate('user', { session: false }),
-  authUserProjectRoutes
+  authUserProjectRoutes,
 )
 router.use(
   '/auth-user',
   passport.authenticate('user', { session: false }),
-  authUserUploadRoutes
+  authUserUploadRoutes,
 )
 router.use(
   '/auth-user',
   passport.authenticate('user', { session: false }),
-  authUserDataRoutes
+  authUserDataRoutes,
 )
 router.use(
   '/admin',
   passport.authenticate('admin', { session: false }),
-  adminUserRoutes
+  adminUserRoutes,
 )
 router.use(
   '/admin',
   passport.authenticate('admin', { session: false }),
-  adminProjectRoutes
+  adminProjectRoutes,
 )
 router.use(
   '/admin',
   passport.authenticate('admin', { session: false }),
-  adminUploadRoutes
+  adminUploadRoutes,
 )
 
 module.exports = router

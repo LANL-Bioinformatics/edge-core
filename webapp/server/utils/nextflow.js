@@ -6,7 +6,7 @@ const {
   nextflowConfigs,
   workflowList,
   generateNextflowWorkflowParams,
-  generateWorkflowResult
+  generateWorkflowResult,
 } = require('../workflow/util')
 const { write2log, execCmd, sleep, pidIsRunning } = require('./common')
 const logger = require('./logger')
@@ -16,8 +16,8 @@ const generateInputs = async (projHome, projectConf, proj) => {
   const workflowSettings = workflowList[projectConf.workflow.name]
   const template = String(
     fs.readFileSync(
-      `${config.NEXTFLOW.WORKFLOW_DIR}/${workflowSettings.config_tmpl}`
-    )
+      `${config.NEXTFLOW.WORKFLOW_DIR}/${workflowSettings.config_tmpl}`,
+    ),
   )
   const nfWorkDir = config.NEXTFLOW.WORK_DIR
     ? `${config.NEXTFLOW.WORK_DIR}/${proj.code}/work`
@@ -32,7 +32,7 @@ const generateInputs = async (projHome, projectConf, proj) => {
     nextflowOutDir: `${projHome}/nextflow`,
     workflow: projectConf.workflow.name,
     profiles: `${config.NEXTFLOW.WORKFLOW_DIR}/${nextflowConfigs.profiles}`,
-    nfReports: `${config.NEXTFLOW.WORKFLOW_DIR}/${nextflowConfigs.nf_reports}`
+    nfReports: `${config.NEXTFLOW.WORKFLOW_DIR}/${nextflowConfigs.nf_reports}`,
   }
   // get workflow specific params
   const workflowParams = generateNextflowWorkflowParams(projectConf, projHome)
@@ -41,7 +41,7 @@ const generateInputs = async (projHome, projectConf, proj) => {
   if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
     inputs = inputs.replaceAll(
       config.NEXTFLOW.EDGE_ROOT,
-      config.NEXTFLOW.SLURM_EDGE_ROOT
+      config.NEXTFLOW.SLURM_EDGE_ROOT,
     )
   }
   await fs.promises.writeFile(`${projHome}/nextflow.config`, inputs)
@@ -87,7 +87,7 @@ const getJobMetadata = async proj => {
   const jobMetadata = Papa.parse(fs.readFileSync(traceFile).toString(), {
     delimiter: '\t',
     header: true,
-    skipEmptyLines: true
+    skipEmptyLines: true,
   }).data
   return jobMetadata
 }
@@ -96,7 +96,7 @@ const generateRunStats = async project => {
   const stats = await getJobMetadata(project)
   fs.writeFileSync(
     `${config.IO.PROJECT_BASE_DIR}/${project.code}/run_stats.json`,
-    JSON.stringify({ stats })
+    JSON.stringify({ stats }),
   )
 }
 
@@ -132,11 +132,11 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
   if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
     nfWorkDir = nfWorkDir.replaceAll(
       config.NEXTFLOW.EDGE_ROOT,
-      config.NEXTFLOW.SLURM_EDGE_ROOT
+      config.NEXTFLOW.SLURM_EDGE_ROOT,
     )
     nfOutDir = nfOutDir.replaceAll(
       config.NEXTFLOW.EDGE_ROOT,
-      config.NEXTFLOW.SLURM_EDGE_ROOT
+      config.NEXTFLOW.SLURM_EDGE_ROOT,
     )
   }
   // submit workflow
@@ -153,7 +153,7 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
     type: proj.type,
     inputSize: inputsize,
     queue: 'nextflow',
-    status: 'Running'
+    status: 'Running',
   })
   newJob.save().catch(err => {
     logger.error('falied to save to nextflowjob: ', err)
@@ -172,7 +172,7 @@ const updateJobStatus = async (job, proj) => {
   if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
     nfWorkDir = nfWorkDir.replaceAll(
       config.NEXTFLOW.EDGE_ROOT,
-      config.NEXTFLOW.SLURM_EDGE_ROOT
+      config.NEXTFLOW.SLURM_EDGE_ROOT,
     )
   }
   // Pipeline status. Possible values are: OK, ERR and empty
@@ -350,5 +350,5 @@ module.exports = {
   generateRunStats,
   abortJob,
   getJobMetadata,
-  updateJobStatus
+  updateJobStatus,
 }

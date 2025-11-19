@@ -8,7 +8,7 @@ const { cromwellWorkflows, workflowList } = require('../workflow/util')
 const {
   generateWDL,
   generateInputs,
-  submitWorkflow
+  submitWorkflow,
 } = require('../utils/cromwell')
 
 const config = require('../config')
@@ -19,7 +19,7 @@ const cromWellWorkflowMonitor = async () => {
     // only process one job at each time based on job updated time
     const jobs = await Job.find({
       queue: 'cromwell',
-      status: { $in: ['Submitted', 'Running'] }
+      status: { $in: ['Submitted', 'Running'] },
     }).sort({ updated: 1 })
 
     // submit request only when the current cromwell running jobs less than the max allowed jobs
@@ -35,7 +35,7 @@ const cromWellWorkflowMonitor = async () => {
     // only process one request at each time
     const projs = await Project.find({
       type: { $in: cromwellWorkflows },
-      status: 'in queue'
+      status: 'in queue',
     }).sort({ updated: 1 })
     const proj = projs[0]
     if (!proj) {
@@ -56,7 +56,7 @@ const cromWellWorkflowMonitor = async () => {
       await proj.save()
       common.write2log(
         `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
-        'input size exceeded the limit.'
+        'input size exceeded the limit.',
       )
       return
     }
@@ -74,19 +74,19 @@ const cromWellWorkflowMonitor = async () => {
       .then(() => {
         common.write2log(
           `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
-          'Generate WDL and inputs json'
+          'Generate WDL and inputs json',
         )
         logger.info('Generate WDL and inputs json')
         // process request
         // create output directory
         fs.mkdirSync(
           `${projHome}/${workflowList[projectConf.workflow.name].outdir}`,
-          { recursive: true }
+          { recursive: true },
         )
         // in case cromwell needs permission to write to the output directory
         fs.chmodSync(
           `${projHome}/${workflowList[projectConf.workflow.name].outdir}`,
-          '777'
+          '777',
         )
         // get workflow system settings
         const workflowConf = JSON.parse(fs.readFileSync(config.CROMWELL.CONF))
@@ -106,15 +106,15 @@ const cromWellWorkflowMonitor = async () => {
             projHome,
             projectConf,
             workflowConf,
-            proj
+            proj,
           )
           if (inputs) {
             resolve(proj)
           } else {
             reject(
               new Error(
-                `Failed to generate inputs.json for project ${proj.code}`
-              )
+                `Failed to generate inputs.json for project ${proj.code}`,
+              ),
             )
           }
         })
@@ -124,7 +124,7 @@ const cromWellWorkflowMonitor = async () => {
             // submit workflow to cromwell
             common.write2log(
               `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
-              'submit workflow to cromwell'
+              'submit workflow to cromwell',
             )
             logger.info('submit workflow to cromwell')
             submitWorkflow(proj, projectConf, inputsize)
@@ -135,7 +135,7 @@ const cromWellWorkflowMonitor = async () => {
             proj.save()
             common.write2log(
               `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
-              err
+              err,
             )
             logger.error(err)
           })
@@ -146,7 +146,7 @@ const cromWellWorkflowMonitor = async () => {
         proj.save()
         common.write2log(
           `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
-          err
+          err,
         )
         logger.error(err)
       })
@@ -161,7 +161,7 @@ const cromWellJobMonitor = async () => {
     // only process one job at each time based on job updated time
     const jobs = await Job.find({
       queue: 'cromwell',
-      status: { $in: ['Submitted', 'Running'] }
+      status: { $in: ['Submitted', 'Running'] },
     }).sort({ updated: 1 })
 
     const job = jobs[0]
@@ -190,5 +190,5 @@ const cromWellJobMonitor = async () => {
 
 module.exports = {
   cromWellWorkflowMonitor,
-  cromWellJobMonitor
+  cromWellJobMonitor,
 }

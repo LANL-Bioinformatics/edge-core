@@ -74,7 +74,7 @@ const getAllFiles = (
   extentions,
   displayPath,
   apiPath,
-  fileRelPath
+  fileRelPath,
 ) => {
   const files = fs.readdirSync(dirPath)
 
@@ -89,7 +89,7 @@ const getAllFiles = (
           extentions,
           `${displayPath}/${file}`,
           `${apiPath}/${file}`,
-          `${fileRelPath}/${file}`
+          `${fileRelPath}/${file}`,
         )
       } else {
         let pass = false
@@ -118,7 +118,7 @@ const getAllFiles = (
             url: newApiPath,
             filePath: newFileRelPath,
             size: stats.size,
-            modified: Number(new Date(stats.mtime))
+            modified: Number(new Date(stats.mtime)),
           })
         }
       }
@@ -159,7 +159,7 @@ const findInputsize = async projectConf => {
         const stats = await fileStats(file)
         size += stats.size
       }
-    })
+    }),
   )
   return size
 }
@@ -188,7 +188,7 @@ const spawnCmd = (cmd, outLog) => {
   const child = spawn(cmd, {
     shell: true, // have to use shell, otherwise the trame instance will be stopped when restarting the webapp
     stdio: ['ignore', out, err], // piping stdout and stderr to out.log
-    detached: true
+    detached: true,
   })
   child.unref()
   return child.pid
@@ -266,5 +266,5 @@ module.exports = {
   spawnCmd,
   sleep,
   pidIsRunning,
-  linkCopyFile
+  linkCopyFile,
 }

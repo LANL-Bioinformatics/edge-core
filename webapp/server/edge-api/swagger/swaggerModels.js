@@ -5,27 +5,27 @@ const registerUserExample = {
     email: 'my@edge.lanl',
     password: 'my#4EDGE',
     confirmPassword: 'my#4EDGE',
-    active: true
-  }
+    active: true,
+  },
 }
 const activateUserExample = {
   example: {
     email: 'my@edge.lanl',
-    token: '$2a$10$5S/XP1bN0BOdj/MSYNhPO.Ee1TCb176IylCgDM5nz6dZ0vuKDr3Bu'
-  }
+    token: '$2a$10$5S/XP1bN0BOdj/MSYNhPO.Ee1TCb176IylCgDM5nz6dZ0vuKDr3Bu',
+  },
 }
 const resetPasswordExample = {
   example: {
     email: 'my@edge.lanl',
     token: '$2a$10$5S/XP1bN0BOdj/MSYNhPO.Ee1TCb176IylCgDM5nz6dZ0vuKDr3Bu',
-    newPassword: 'my#4EDGE'
-  }
+    newPassword: 'my#4EDGE',
+  },
 }
 const getActionLinkExample = {
-  example: { email: 'my@edge.lanl', actionURL: 'http://my.edge/activate' }
+  example: { email: 'my@edge.lanl', actionURL: 'http://my.edge/activate' },
 }
 const loginExample = {
-  example: { email: 'my@edge.lanl', password: 'my#4EDGE' }
+  example: { email: 'my@edge.lanl', password: 'my#4EDGE' },
 }
 const oauthLoginExample = {
   example: {
@@ -33,64 +33,64 @@ const oauthLoginExample = {
     lastName: 'lanl',
     email: '0000-1111-1111-1111@orcid.org',
     oauth: 'orcid',
-    token: 'cAjCpnNzbZQ4V3GU'
-  }
+    token: 'cAjCpnNzbZQ4V3GU',
+  },
 }
 const updateUserExample = {
   example: {
     firstName: 'edge',
     lastName: 'lanl',
     password: 'my#4EDGE',
-    confirmPassword: 'my#4EDGE'
-  }
+    confirmPassword: 'my#4EDGE',
+  },
 }
 const addProjectExample = {
   example: {
     project: {
       name: 'project-name',
-      desc: 'project-desc'
+      desc: 'project-desc',
     },
-    pipeline: 'edge pipeline'
-  }
+    pipeline: 'edge pipeline',
+  },
 }
 const updateProjectExample = {
   example: {
     name: 'newproject-name',
     desc: 'newproject-desc',
     public: false,
-    sharedTo: ['test@my.edge']
-  }
+    sharedTo: ['test@my.edge'],
+  },
 }
 const addUploadExample = {
   example: {
     name: 'test.fa',
     desc: 'test',
     type: 'fa',
-    size: 150
-  }
+    size: 150,
+  },
 }
 const updateUploadExample = {
   example: {
     name: 'newUpload-name',
     desc: 'newUpload-desc',
     public: true,
-    sharedTo: ['test@my.edge']
-  }
+    sharedTo: ['test@my.edge'],
+  },
 }
 const projectFilesExample = {
   example: {
-    fileTypes: ['fa', 'fa.gz', 'fasta', 'fasta.gz']
-  }
+    fileTypes: ['fa', 'fa.gz', 'fasta', 'fasta.gz'],
+  },
 }
 const projectActionExample = { example: { code: 'some' } }
 const actionSuccessfulExample = {
-  example: { message: 'Action successful', success: true }
+  example: { message: 'Action successful', success: true },
 }
 const actionFailedExample = {
-  example: { message: 'Action failed', success: false }
+  example: { message: 'Action failed', success: false },
 }
 const serverErrorExample = {
-  example: { message: 'API server error', success: false }
+  example: { message: 'API server error', success: false },
 }
 
 module.exports = {
@@ -98,318 +98,318 @@ module.exports = {
     properties: {
       firstName: {
         description: 'user first name',
-        type: 'string'
+        type: 'string',
       },
       lastName: {
         description: 'user last name',
-        type: 'string'
+        type: 'string',
       },
       email: {
         description: 'user email',
-        type: 'string'
+        type: 'string',
       },
       password: {
         description: 'password',
-        type: 'string'
+        type: 'string',
       },
       confirmPassword: {
         description: 'confirm password',
-        type: 'string'
+        type: 'string',
       },
       active: {
         description: 'user status, default false',
-        type: 'boolean'
+        type: 'boolean',
       },
       actionURL: {
         description: 'the URL of the activation page',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['firstName', 'lastName', 'email', 'password', 'confirmPassword'],
-    ...registerUserExample
+    ...registerUserExample,
   },
   activateUser: {
     properties: {
       email: {
         description: 'user email',
-        type: 'string'
+        type: 'string',
       },
       token: {
         description: 'encoded password',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['email', 'token'],
-    ...activateUserExample
+    ...activateUserExample,
   },
   resetPassword: {
     properties: {
       email: {
         description: 'user email',
-        type: 'string'
+        type: 'string',
       },
       token: {
         description: 'encoded password',
-        type: 'string'
+        type: 'string',
       },
       newPassword: {
         description: 'new password',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['email', 'token'],
-    ...resetPasswordExample
+    ...resetPasswordExample,
   },
   getActionLink: {
     properties: {
       email: {
         description: 'user email',
-        type: 'string'
+        type: 'string',
       },
       actionURL: {
         description: 'the URL of the client side action page',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['email'],
-    ...getActionLinkExample
+    ...getActionLinkExample,
   },
   login: {
     properties: {
       email: {
         description: 'user email',
-        type: 'string'
+        type: 'string',
       },
       password: {
         description: 'password',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['email', 'password'],
-    ...loginExample
+    ...loginExample,
   },
   oauthLogin: {
     properties: {
       email: {
         description: 'user email',
-        type: 'string'
+        type: 'string',
       },
       oauth: {
         description: 'Third-Party Authentication (orcid, google, facebook ...)',
-        type: 'string'
+        type: 'string',
       },
       token: {
         description:
           'Our secret key. You have to obtain this key to access this api',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['email', 'oauth'],
-    ...oauthLoginExample
+    ...oauthLoginExample,
   },
   updateUser: {
     properties: {
       firstName: {
         description: 'user first name',
-        type: 'string'
+        type: 'string',
       },
       lastName: {
         description: 'user last name',
-        type: 'string'
+        type: 'string',
       },
       password: {
         description: 'password',
-        type: 'string'
+        type: 'string',
       },
       confirmPassword: {
         description: 'confirm password',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['firstName', 'lastName', 'password', 'confirmPassword'],
-    ...updateUserExample
+    ...updateUserExample,
   },
   addProject: {
     properties: {
       project: {
         name: {
           description: 'project name',
-          type: 'string'
+          type: 'string',
         },
         desc: {
           description: 'project description',
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
       pipeline: {
         description: 'pipeline type',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['project', 'pipeline'],
-    ...addProjectExample
+    ...addProjectExample,
   },
   updateProject: {
     properties: {
       name: {
         description: 'project name',
-        type: 'string'
+        type: 'string',
       },
       desc: {
         description: 'project description',
-        type: 'string'
+        type: 'string',
       },
       public: {
         description: 'is a public project?',
-        type: 'boolean'
+        type: 'boolean',
       },
       sharedTo: {
         description: 'other users',
-        type: 'array'
-      }
+        type: 'array',
+      },
     },
     required: [],
-    ...updateProjectExample
+    ...updateProjectExample,
   },
   projectAction: {
     properties: {
       code: {
         description: 'project unique id',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     required: ['code'],
-    ...projectActionExample
+    ...projectActionExample,
   },
   projectActionSuccessful: {
     properties: {
       project: {
         description: 'project json',
-        type: 'object'
+        type: 'object',
       },
       message: {
         description: 'action successful message',
-        type: 'string'
+        type: 'string',
       },
       success: {
         description: 'true or false',
-        type: 'boolean'
-      }
+        type: 'boolean',
+      },
     },
-    ...actionSuccessfulExample
+    ...actionSuccessfulExample,
   },
   projectsActionSuccessful: {
     properties: {
       projects: {
         description: 'list of projects',
-        type: 'array'
+        type: 'array',
       },
       message: {
         description: 'action successful message',
-        type: 'string'
+        type: 'string',
       },
       success: {
         description: 'true or false',
-        type: 'boolean'
-      }
+        type: 'boolean',
+      },
     },
-    ...actionSuccessfulExample
+    ...actionSuccessfulExample,
   },
   addUpload: {
     properties: {
       file: {
         description: 'File',
-        type: 'string'
+        type: 'string',
       },
       name: {
         description: 'File name',
-        type: 'string'
+        type: 'string',
       },
       desc: {
         description: 'File description',
-        type: 'string'
+        type: 'string',
       },
       type: {
         description: 'File type',
-        type: 'string'
+        type: 'string',
       },
       size: {
         description: 'File size',
-        type: 'integer'
-      }
+        type: 'integer',
+      },
     },
     required: ['name', 'type', 'size'],
-    ...addUploadExample
+    ...addUploadExample,
   },
   updateUpload: {
     properties: {
       name: {
         description: 'File name',
-        type: 'string'
+        type: 'string',
       },
       desc: {
         description: 'File description',
-        type: 'string'
+        type: 'string',
       },
       public: {
         description: 'is a public file?',
-        type: 'boolean'
+        type: 'boolean',
       },
       sharedTo: {
         description: 'other users',
-        type: 'array'
-      }
+        type: 'array',
+      },
     },
     required: [],
-    ...updateUploadExample
+    ...updateUploadExample,
   },
   projectFiles: {
     properties: {
       fileTypes: {
         description: 'File extensions',
-        type: 'array'
-      }
+        type: 'array',
+      },
     },
     required: [],
-    ...projectFilesExample
+    ...projectFilesExample,
   },
   actionSuccessful: {
     properties: {
       message: {
         description: 'action successful message',
-        type: 'string'
+        type: 'string',
       },
       success: {
         description: 'true or false',
-        type: 'boolean'
-      }
+        type: 'boolean',
+      },
     },
-    ...actionSuccessfulExample
+    ...actionSuccessfulExample,
   },
   actionFailed: {
     properties: {
       message: {
         description: 'action failed message',
-        type: 'string'
+        type: 'string',
       },
       success: {
         description: 'true or false',
-        type: 'boolean'
-      }
+        type: 'boolean',
+      },
     },
-    ...actionFailedExample
+    ...actionFailedExample,
   },
   serverError: {
     properties: {
       message: {
         description: 'error message',
-        type: 'string'
+        type: 'string',
       },
       success: {
         description: 'true or false',
-        type: 'boolean'
-      }
+        type: 'boolean',
+      },
     },
-    ...serverErrorExample
-  }
+    ...serverErrorExample,
+  },
 }

@@ -20,7 +20,7 @@ const addOne = async (req, res) => {
       return res.status(400).json({
         error: { email: `Email ${data.email} already exists` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // encode password and add new user to DB
@@ -30,7 +30,7 @@ const addOne = async (req, res) => {
       ...data,
       password: hashedPassword,
       code,
-      notification: { email: data.email }
+      notification: { email: data.email },
     })
 
     await newUser.save()
@@ -38,7 +38,7 @@ const addOne = async (req, res) => {
     // success
     const result = {
       message: 'Action successful',
-      success: true
+      success: true,
     }
     // return user for other api tests
     if (data.test) {
@@ -52,7 +52,7 @@ const addOne = async (req, res) => {
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -66,12 +66,12 @@ const updateOne = async (req, res) => {
     const user = await User.findOne({ email: req.params.user })
     if (!user) {
       logger.debug(
-        `Admin update user failed: Email ${req.params.user} not found`
+        `Admin update user failed: Email ${req.params.user} not found`,
       )
       return res.status(400).json({
         error: { update: `Email ${req.params.user} not found` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // encode password
@@ -113,7 +113,7 @@ const updateOne = async (req, res) => {
 
     return res.json({
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin update user failed: ${err}`)
@@ -122,7 +122,7 @@ const updateOne = async (req, res) => {
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -135,56 +135,56 @@ const removeOne = async (req, res) => {
     const user = await User.findOne({ email: req.params.user })
     if (!user) {
       logger.debug(
-        `Admin delete user failed: Email ${req.params.user} not found`
+        `Admin delete user failed: Email ${req.params.user} not found`,
       )
       return res.status(400).json({
         error: { delete: `Email ${req.params.user} not found` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // find all projects associated with this user
     const projects = await Project.find({
       status: { $ne: 'delete' },
-      owner: user.email
+      owner: user.email,
     }).count()
     if (projects === 1) {
       return res.status(400).json({
         error: {
-          delete: `There is 1 project associated with user ${req.params.user}`
+          delete: `There is 1 project associated with user ${req.params.user}`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     if (projects > 1) {
       return res.status(400).json({
         error: {
-          delete: `There are ${projects} projects associated with user ${req.params.user}`
+          delete: `There are ${projects} projects associated with user ${req.params.user}`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // check uploaded files
     const uploads = await Upload.find({
       status: { $ne: 'delete' },
-      owner: user.email
+      owner: user.email,
     }).count()
     if (uploads === 1) {
       return res.status(400).json({
         delete: `There is 1 upload associated with user ${req.params.user}`,
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     if (uploads > 1) {
       return res.status(400).json({
         error: {
-          delete: `There are ${uploads} uploads associated with user ${req.params.user}`
+          delete: `There are ${uploads} uploads associated with user ${req.params.user}`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // delete user
@@ -192,7 +192,7 @@ const removeOne = async (req, res) => {
 
     return res.json({
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin delete user failed: ${err}`)
@@ -201,7 +201,7 @@ const removeOne = async (req, res) => {
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -214,13 +214,13 @@ const getAll = async (req, res) => {
     return res.send({
       users,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin get users failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -229,5 +229,5 @@ module.exports = {
   addOne,
   updateOne,
   removeOne,
-  getAll
+  getAll,
 }

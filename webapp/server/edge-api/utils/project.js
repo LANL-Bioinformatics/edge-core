@@ -4,7 +4,7 @@ const Job = require('../models/job')
 const { getAllFiles } = require('../../utils/common')
 const { generateRunStats } = require('../../utils/cromwell')
 const {
-  generateRunStats: generateNextflowRunStats
+  generateRunStats: generateNextflowRunStats,
 } = require('../../utils/nextflow')
 const { generateWorkflowResult } = require('../../workflow/util')
 const config = require('../../config')
@@ -14,7 +14,7 @@ const getProject = async (code, type, user) => {
     // Use $eq to prevent query selector injections
     const project = await Project.findOne({
       status: { $ne: 'delete' },
-      code: { $eq: code }
+      code: { $eq: code },
     })
     if (project === null) {
       return null
@@ -99,7 +99,7 @@ const getProjectOutputs = async (code, type, req) => {
         req.body.fileTypes,
         '',
         `/projects/${proj.code}/output`,
-        `${projDir}/${proj.code}/output`
+        `${projDir}/${proj.code}/output`,
       )
     }
     return files
@@ -159,5 +159,5 @@ module.exports = {
   getProjectConf,
   getProjectOutputs,
   getProjectResult,
-  getProjectRunStats
+  getProjectRunStats,
 }

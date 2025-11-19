@@ -15,7 +15,7 @@ const workflowConfig = {
   data: {
     REF_LIST:
       process.env.WORKFLOW_REF_LIST ||
-      path.join(WORKFLOW_DATA_BASE_DIR, 'Ref_list.json')
+      path.join(WORKFLOW_DATA_BASE_DIR, 'Ref_list.json'),
   },
   assayDesign: {
     SPECIES_JSON:
@@ -24,8 +24,8 @@ const workflowConfig = {
     SPECIES_TREE_JSON:
       process.env.SPECIES_TREE_JSON ||
       path.join(WORKFLOW_DATA_BASE_DIR, 'speciesTree4UI.json'),
-    BIOAI_EXEC: process.env.BIOAI_EXEC || '/opt/bioai/pipeline/bioai_runner.py'
-  }
+    BIOAI_EXEC: process.env.BIOAI_EXEC || '/opt/bioai/pipeline/bioai_runner.py',
+  },
   // Add more workflow-specific configuration settings here
 }
 

@@ -6,15 +6,15 @@ const cromwellWorkflows = []
 const nextflowWorkflows = ['sra2fastq']
 const nextflowConfigs = {
   profiles: 'common/profiles.nf',
-  nf_reports: 'common/nf_reports.tmpl'
+  nf_reports: 'common/nf_reports.tmpl',
 }
 
 const workflowList = {
   sra2fastq: {
     outdir: 'output/sra2fastq',
     nextflow_main: 'sra2fastq/nextflow/main.nf -profile local',
-    config_tmpl: 'sra2fastq/workflow_config.tmpl'
-  }
+    config_tmpl: 'sra2fastq/workflow_config.tmpl',
+  },
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -73,8 +73,8 @@ const getWorkflowCommand = proj => {
       conf,
       JSON.stringify({
         pipeline: 'bioai',
-        params: { ...projectConf.workflow.input, ...projectConf.genomes }
-      })
+        params: { ...projectConf.workflow.input, ...projectConf.genomes },
+      }),
     )
     command += ` && ${workflowConfig.WORKFLOW.BIOAI_EXEC} -i ${conf} -o ${outDir}`
   }
@@ -89,5 +89,5 @@ module.exports = {
   generateNextflowWorkflowParams,
   generateWorkflowResult,
   checkFlagFile,
-  getWorkflowCommand
+  getWorkflowCommand,
 }

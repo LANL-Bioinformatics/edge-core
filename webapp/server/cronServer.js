@@ -7,20 +7,20 @@ const logger = require('./utils/logger')
 const { uploadMonitor } = require('./crons/uploadMonitor')
 const {
   localWorkflowMonitor,
-  localJobMonitor
+  localJobMonitor,
 } = require('./crons/localMonitors')
 const {
   cromwellJobMonitor,
-  cromwellWorkflowMonitor
+  cromwellWorkflowMonitor,
 } = require('./crons/cromwellMonitors')
 const {
   nextflowJobMonitor,
-  nextflowWorkflowMonitor
+  nextflowWorkflowMonitor,
 } = require('./crons/nextflowMonitors')
 const {
   projectDeletionMonitor,
   projectStatusMonitor,
-  projectRerunMonitor
+  projectRerunMonitor,
 } = require('./crons/projectMonitors')
 const { dbBackup, dbBackupClean } = require('./crons/dbMonitors')
 const config = require('./config')
@@ -92,8 +92,8 @@ const runApp = async () => {
     // start server
     app.listen(config.CRON.SERVER_PORT, () =>
       logger.info(
-        `HTTP CRON server up and running on port ${config.CRON.SERVER_PORT} !`
-      )
+        `HTTP CRON server up and running on port ${config.CRON.SERVER_PORT} !`,
+      ),
     )
   } catch (err) {
     logger.error(err)

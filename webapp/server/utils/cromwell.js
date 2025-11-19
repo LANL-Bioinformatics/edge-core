@@ -26,13 +26,13 @@ const generateInputs = async (projHome, projectConf, workflowConf) => {
   const workflowSettings = workflowList[projectConf.workflow.name]
   const template = String(
     fs.readFileSync(
-      `${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.inputs_tmpl}`
-    )
+      `${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.inputs_tmpl}`,
+    ),
   )
   const params = {
     ...workflowConf,
     ...projectConf.workflow.input,
-    outdir: `${projHome}/${workflowSettings.outdir}`
+    outdir: `${projHome}/${workflowSettings.outdir}`,
   }
 
   if (projectConf.workflow.name === 'sra2fastq') {
@@ -45,13 +45,13 @@ const generateInputs = async (projHome, projectConf, workflowConf) => {
   // render options template and write to pipeline_options.json
   if (
     fs.existsSync(
-      `${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.options_tmpl}`
+      `${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.options_tmpl}`,
     )
   ) {
     const optionsTemplate = String(
       fs.readFileSync(
-        `${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.options_tmpl}`
-      )
+        `${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.options_tmpl}`,
+      ),
     )
     const options = ejs.render(optionsTemplate, params)
     await fs.promises.writeFile(`${projHome}/pipeline_options.json`, options)
@@ -65,12 +65,12 @@ const submitWorkflow = (proj, projectConf, inputsize) => {
   const formData = new FormData()
   formData.append(
     'workflowSource',
-    fs.createReadStream(`${projHome}/pipeline.wdl`)
+    fs.createReadStream(`${projHome}/pipeline.wdl`),
   )
   // logger.debug(`workflowSource: ${projHome}/pipeline.wdl`);
   formData.append(
     'workflowInputs',
-    fs.createReadStream(`${projHome}/pipeline_inputs.json`)
+    fs.createReadStream(`${projHome}/pipeline_inputs.json`),
   )
   // logger.debug(`workflowInputs${projHome}/pipeline_inputs.json`);
 
@@ -90,7 +90,7 @@ const submitWorkflow = (proj, projectConf, inputsize) => {
   }
   formData.append('workflowTypeVersion', wdlVersion)
   formData.append('workflowDependencies', fs.createReadStream(imports), {
-    contentType: 'application/zip'
+    contentType: 'application/zip',
   })
   logger.debug(`workflowDependencies: ${imports}`)
 
@@ -100,8 +100,8 @@ const submitWorkflow = (proj, projectConf, inputsize) => {
   postData(config.CROMWELL.API_BASE_URL, formData, {
     headers: {
       ...formHeaders,
-      formBoundary
-    }
+      formBoundary,
+    },
   })
     .then(response => {
       logger.debug(JSON.stringify(response))
@@ -111,7 +111,7 @@ const submitWorkflow = (proj, projectConf, inputsize) => {
         type: proj.type,
         inputsize,
         queue: 'cromwell',
-        status: 'Submitted'
+        status: 'Submitted',
       })
       newJob.save().catch(err => {
         logger.error('falied to save to cromwelljob: ', err)
@@ -145,7 +145,7 @@ const abortJob = job => {
       job.save()
       write2log(
         `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
-        'Cromwell job aborted.'
+        'Cromwell job aborted.',
       )
     })
     .catch(error => {
@@ -162,7 +162,7 @@ const abortJob = job => {
         job.save()
         write2log(
           `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
-          'Cromwell job aborted.'
+          'Cromwell job aborted.',
         )
       }
     })
@@ -175,11 +175,11 @@ const getJobMetadata = job => {
     .then(metadata => {
       // logger.debug(JSON.stringify(metadata));
       logger.debug(
-        `${config.IO.PROJECT_BASE_DIR}/${job.project}/cromwell_job_metadata.json`
+        `${config.IO.PROJECT_BASE_DIR}/${job.project}/cromwell_job_metadata.json`,
       )
       fs.writeFileSync(
         `${config.IO.PROJECT_BASE_DIR}/${job.project}/cromwell_job_metadata.json`,
-        JSON.stringify(metadata)
+        JSON.stringify(metadata),
       )
 
       // dump error logs
@@ -195,7 +195,7 @@ const getJobMetadata = job => {
               logger.debug(JSON.stringify(logs))
               fs.writeFileSync(
                 `${config.IO.PROJECT_BASE_DIR}/${job.project}/${callkey}.cromwell_job_logs.json`,
-                JSON.stringify(logs)
+                JSON.stringify(logs),
               )
               // dump stderr to log.txt
               Object.keys(logs.calls).forEach(call => {
@@ -207,11 +207,11 @@ const getJobMetadata = job => {
                     const errs = fs.readFileSync(stderr)
                     write2log(
                       `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
-                      call
+                      call,
                     )
                     write2log(
                       `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
-                      errs
+                      errs,
                     )
                   }
                 })
@@ -233,7 +233,7 @@ const getWorkflowStats = (
   cromwellCalls,
   workflow,
   workflowStats,
-  stats
+  stats,
 ) => {
   workflowStats.Status = ''
   workflowStats['Running Time'] = ''
@@ -263,7 +263,7 @@ const getWorkflowStats = (
 
   if (myStart && myEnd) {
     const ms = moment(myEnd, 'YYYY-MM-DD HH:mm:ss').diff(
-      moment(myStart, 'YYYY-MM-DD HH:mm:ss')
+      moment(myStart, 'YYYY-MM-DD HH:mm:ss'),
     )
     const d = moment.duration(ms)
     workflowStats['Running Time'] = timeFormat(d)
@@ -292,14 +292,14 @@ const generateRunStats = project => {
         cromwellCalls,
         conf.workflow,
         workflowStats,
-        stats
+        stats,
       )
     }
   }
 
   fs.writeFileSync(
     `${config.IO.PROJECT_BASE_DIR}/${project.code}/run_stats.json`,
-    JSON.stringify({ stats })
+    JSON.stringify({ stats }),
   )
 }
 
@@ -340,7 +340,7 @@ const updateJobStatus = (job, proj) => {
         proj.save()
         write2log(
           `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
-          `Cromwell job status: ${response.status}`
+          `Cromwell job status: ${response.status}`,
         )
       }
       // update job even its status unchanged. We need set new updated time for this job.
@@ -375,5 +375,5 @@ module.exports = {
   generateRunStats,
   abortJob,
   getJobMetadata,
-  updateJobStatus
+  updateJobStatus,
 }

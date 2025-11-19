@@ -22,7 +22,7 @@ module.exports = passport => {
         .catch(err => {
           logger.error(err)
         })
-    })
+    }),
   )
 
   passport.use(
@@ -38,6 +38,6 @@ module.exports = passport => {
         .catch(err => {
           logger.error(err)
         })
-    })
+    }),
   )
 }

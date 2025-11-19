@@ -33,7 +33,7 @@ const validationRules = () => [
     .trim()
     .normalizeEmail()
     .isEmail()
-    .withMessage('Invalid email address')
+    .withMessage('Invalid email address'),
 ]
 
 const validate = (req, res, next) => {
@@ -45,7 +45,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -55,5 +55,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

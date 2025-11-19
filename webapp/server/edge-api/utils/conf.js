@@ -8,7 +8,7 @@ const projectStatus = [
   'interrupted',
   'complete',
   'processing',
-  'submitted'
+  'submitted',
 ]
 const uploadStatus = ['live', 'delete']
 const jobStatus = ['Submitted', 'Running', 'Failed', 'Aborted', 'Succeeded']
@@ -22,7 +22,7 @@ const bulkSubmissionStatus = [
   'interrupted',
   'complete',
   'processing',
-  'submitted'
+  'submitted',
 ]
 
 module.exports = {
@@ -30,5 +30,5 @@ module.exports = {
   uploadStatus,
   jobStatus,
   queueTypes,
-  bulkSubmissionStatus
+  bulkSubmissionStatus,
 }

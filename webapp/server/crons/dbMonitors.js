@@ -10,7 +10,7 @@ const dbBackupClean = () => {
   const result = findRemoveSync(config.DATABASE.BACKUP_DIR, {
     dir: '^db-backup_',
     regex: true,
-    age: { seconds: config.DATABASE.BACKUP_LIFETIME_SECONDS }
+    age: { seconds: config.DATABASE.BACKUP_LIFETIME_SECONDS },
   })
   logger.info(result)
 }
@@ -35,5 +35,5 @@ const dbBackup = () => {
 
 module.exports = {
   dbBackup,
-  dbBackupClean
+  dbBackupClean,
 }

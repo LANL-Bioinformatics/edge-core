@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator')
 const validationRules = () => [
   // disabled for sra project name (list of accessions)
   // body('project.name').trim().isLength({ min: 3, max: 30 }).escape().withMessage('Invalid project name, at least 3 but less than 30 characters.'),
-  body('project.desc').optional()
+  body('project.desc').optional(),
 ]
 
 const validate = (req, res, next) => {
@@ -15,7 +15,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -25,5 +25,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

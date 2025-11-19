@@ -1,12 +1,12 @@
 const router = require('express').Router()
 const {
   validationRules: updateValidationRules,
-  validate: updateValidate
+  validate: updateValidate,
 } = require('../validations/user-update-validator')
 const {
   info,
   updateOne,
-  getUsers
+  getUsers,
 } = require('../controllers/auth-user-controller')
 
 /**

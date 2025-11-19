@@ -22,18 +22,18 @@ const signToken = async payload =>
       payload,
       config.AUTH.JWT_SECRET,
       {
-        expiresIn: 31556926 // 1 year in seconds
+        expiresIn: 31556926, // 1 year in seconds
       },
       (err, token) => {
         if (err) {
           return reject(err)
         }
         return resolve(token)
-      }
+      },
     )
   })
 
 module.exports = {
   encodePassword,
-  signToken
+  signToken,
 }

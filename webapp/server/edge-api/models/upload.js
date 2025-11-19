@@ -7,54 +7,54 @@ const uploadSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     desc: {
       type: String,
-      trim: true
+      trim: true,
     },
     folder: {
       type: String,
-      required: true
+      required: true,
     },
     size: {
       type: Number,
-      required: true
+      required: true,
     },
     type: {
       type: String,
-      required: true
+      required: true,
     },
     code: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     status: {
       type: String,
       default: uploadStatus[0],
-      enum: uploadStatus
+      enum: uploadStatus,
     },
     public: {
       type: Boolean,
-      default: false
+      default: false,
     },
     owner: {
       type: String,
-      required: true
+      required: true,
     },
     sharedTo: [
       {
-        type: String
-      }
-    ]
+        type: String,
+      },
+    ],
   },
   {
     timestamps: {
       createdAt: 'created', // Use `created` to store the created date
-      updatedAt: 'updated' // and `updated` to store the last updated date
-    }
-  }
+      updatedAt: 'updated', // and `updated` to store the last updated date
+    },
+  },
 )
 
 module.exports = mongoose.model('Upload', uploadSchema)

@@ -7,54 +7,54 @@ const projectSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     desc: {
       type: String,
-      trim: true
+      trim: true,
     },
     status: {
       type: String,
       default: projectStatus[0],
-      enum: projectStatus
+      enum: projectStatus,
     },
     type: {
       type: String,
-      required: true
+      required: true,
     },
     code: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     public: {
       type: Boolean,
-      default: false
+      default: false,
     },
     notified: {
       type: Boolean,
-      default: false
+      default: false,
     },
     owner: {
       type: String,
-      required: true
+      required: true,
     },
     jobPriority: {
       type: Number,
-      default: 0
+      default: 0,
     },
     sharedTo: [
       {
-        type: String
-      }
-    ]
+        type: String,
+      },
+    ],
   },
   {
     timestamps: {
       createdAt: 'created', // Use `created` to store the created date
-      updatedAt: 'updated' // and `updated` to store the last updated date
-    }
-  }
+      updatedAt: 'updated', // and `updated` to store the last updated date
+    },
+  },
 )
 
 module.exports = mongoose.model('Project', projectSchema)

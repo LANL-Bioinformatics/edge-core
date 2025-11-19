@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Form, Row, Col } from 'reactstrap'
-
-import { getData, postData, notify } from '../../../common/util'
-import { LoaderDialog, MessageDialog } from '../../../common/Dialogs'
-import MySelect from '../../../common/MySelect'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { workflowlist } from '../../Defaults'
-import { Project } from '../../Common/Forms/Project'
-import { FileUpload } from '../../Common/Forms/FileUpload'
-import config from '../../../config'
+import { workflowList } from 'src/workflows/common/util'
+import config from 'src/config'
+
+import { getData, postData, notify, apis } from '../../../common/util'
+import { LoaderDialog, MessageDialog } from '../../../common/Dialogs'
+import MySelect from '../../../common/MySelect'
+import { Project } from '../../project/forms/Project'
+import { FileUpload } from '../../project/forms/FileUpload'
+
 const HtmlToReactParser = require('html-to-react').Parser
 let htmlToReactParser = new HtmlToReactParser()
 
@@ -45,14 +46,14 @@ function BulkSubmission(props) {
   const onSubmit = () => {
     let formData = new FormData()
 
-    formData.append('pipeline', workflowlist[workflow].title)
+    formData.append('pipeline', workflowList[workflow].title)
     formData.append(
       'project',
       JSON.stringify({ name: projectParams.proj_name, desc: projectParams.proj_desc }),
     )
 
     let inputDisplay = {}
-    inputDisplay.type = workflowlist[workflow].title
+    inputDisplay.type = workflowList[workflow].title
     inputDisplay.input = {}
     formData.append('file', uploadParams.file)
     formData.append('bulkfile', JSON.stringify({ name: uploadParams.file.name }))
@@ -61,7 +62,7 @@ function BulkSubmission(props) {
     formData.append('inputDisplay', JSON.stringify(inputDisplay))
 
     //console.log("formdata", JSON.stringify(workflowParams))
-    postData('/auth-api/user/bulkSubmission/add', formData)
+    postData(apis.userBulkSubmissions, formData)
       .then((data) => {
         notify('success', 'Your bulk submission request was submitted successfully!', 2000)
         setTimeout(() => props.history.push('/user/bulkSubmission/list'), 2000)
@@ -88,7 +89,7 @@ function BulkSubmission(props) {
   }, [workflow]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    let url = '/auth-api/user/info'
+    let url = apis.userInfo
     getData(url)
       .then((data) => {
         if (data.info.allowNewRuns) {
@@ -102,7 +103,7 @@ function BulkSubmission(props) {
       .catch((err) => {
         alert(err)
       })
-  }, [props])
+  }, [])
 
   return (
     <div
@@ -160,14 +161,14 @@ function BulkSubmission(props) {
               <br></br>
               {workflow && (
                 <>
-                  {workflowlist[workflow] && workflowlist[workflow].info ? (
+                  {workflowList[workflow] && workflowList[workflow].info ? (
                     <>
-                      {workflowlist[workflow].doclink ? (
+                      {workflowList[workflow].doclink ? (
                         <>
-                          {htmlToReactParser.parse(workflowlist[workflow].info)} &nbsp;
+                          {htmlToReactParser.parse(workflowList[workflow].info)} &nbsp;
                           <a
                             target="_blank"
-                            href={workflowlist[workflow].doclink}
+                            href={workflowList[workflow].doclink}
                             rel="noopener noreferrer"
                           >
                             Learn more
@@ -177,7 +178,7 @@ function BulkSubmission(props) {
                         </>
                       ) : (
                         <>
-                          {htmlToReactParser.parse(workflowlist[workflow].info)} &nbsp;
+                          {htmlToReactParser.parse(workflowList[workflow].info)} &nbsp;
                           <br></br>
                           <br></br>
                         </>
@@ -190,7 +191,7 @@ function BulkSubmission(props) {
                   <a
                     style={{ color: 'blue', textDecoration: 'underline' }}
                     rel="noreferrer"
-                    href={config.API.BASE_URI + workflowlist[workflow].bulk_submission_template}
+                    href={config.API.BASE_URI + workflowList[workflow].bulk_submission_template}
                     target="_blank"
                   >
                     Template
@@ -201,8 +202,8 @@ function BulkSubmission(props) {
                     setParams={setFileUpload}
                     text="Bulk Excel File"
                     upload_tip={
-                      workflowlist[workflow]['bulk_file_tip']
-                        ? workflowlist[workflow]['bulk_file_tip']
+                      workflowList[workflow]['bulk_file_tip']
+                        ? workflowList[workflow]['bulk_file_tip']
                         : 'Required'
                     }
                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"

@@ -6,7 +6,7 @@ const {
   getProjectOutputs,
   getProjectBatchOutputs,
   getProjectResult,
-  getProjectRunStats
+  getProjectRunStats,
 } = require('../utils/project')
 const logger = require('../../utils/logger')
 const config = require('../../config')
@@ -24,23 +24,23 @@ const getOne = async (req, res) => {
       logger.error(`project ${req.params.code} not found or access denied.`)
       return res.status(400).json({
         error: {
-          project: `project ${req.params.code} not found or access denied`
+          project: `project ${req.params.code} not found or access denied`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     return res.send({
       project,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin get project failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -56,23 +56,23 @@ const updateOne = async (req, res) => {
       logger.error(`project ${req.params.code} not found or access denied.`)
       return res.status(400).json({
         error: {
-          project: `project ${req.params.code} not found or access denied`
+          project: `project ${req.params.code} not found or access denied`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     return res.send({
       project,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin update project failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -86,13 +86,13 @@ const getConf = async (req, res) => {
     return res.json({
       conf,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`/api/admin/projects/${req.params.code}/conf failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -106,13 +106,13 @@ const getResult = async (req, res) => {
     return res.json({
       result,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`/api/admin/projects/${req.params.code}/result failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -126,15 +126,15 @@ const getRunStats = async (req, res) => {
     return res.json({
       runStats,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/admin/projects/${req.params.code}/runStats failed: ${err}`
+      `/api/admin/projects/${req.params.code}/runStats failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -144,19 +144,19 @@ const getAll = async (req, res) => {
   try {
     logger.debug('/api/admin/projects')
     const projects = await Project.find({ status: { $ne: 'delete' } }).sort([
-      ['updated', -1]
+      ['updated', -1],
     ])
 
     return res.send({
       projects,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin get all projects failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -170,15 +170,15 @@ const getOutputs = async (req, res) => {
     return res.json({
       fileData: files,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/admin/projects/${req.params.code}/outputs failed: ${err}`
+      `/api/admin/projects/${req.params.code}/outputs failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -192,15 +192,15 @@ const getBatchOutputs = async (req, res) => {
     return res.json({
       fileData: files,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/admin/projects/${req.params.code}/batch/outputs failed: ${err}`
+      `/api/admin/projects/${req.params.code}/batch/outputs failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -213,5 +213,5 @@ module.exports = {
   getOutputs,
   getBatchOutputs,
   getResult,
-  getRunStats
+  getRunStats,
 }

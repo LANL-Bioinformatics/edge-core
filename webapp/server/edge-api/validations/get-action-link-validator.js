@@ -9,7 +9,7 @@ const validationRules = () => [
   body('actionURL')
     .trim()
     .isURL({ require_tld: false })
-    .withMessage('Invalid action URL.')
+    .withMessage('Invalid action URL.'),
 ]
 
 const validate = (req, res, next) => {
@@ -21,7 +21,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -31,5 +31,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

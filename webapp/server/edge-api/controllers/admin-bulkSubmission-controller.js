@@ -3,7 +3,7 @@ const Project = require('../models/project')
 const {
   getBulkSubmission,
   getBulkSubmissionConf,
-  updateBulkSubmission
+  updateBulkSubmission,
 } = require('../utils/bulkSubmission')
 const logger = require('../../utils/logger')
 const config = require('../../config')
@@ -18,32 +18,32 @@ const getOne = async (req, res) => {
     const bulkSubmission = await getBulkSubmission(
       req.params.code,
       'admin',
-      req.user
+      req.user,
     )
 
     if (!bulkSubmission) {
       logger.error(
-        `bulkSubmission ${req.params.code} not found or access denied.`
+        `bulkSubmission ${req.params.code} not found or access denied.`,
       )
       return res.status(400).json({
         error: {
-          bulkSubmission: `bulkSubmission ${req.params.code} not found or access denied`
+          bulkSubmission: `bulkSubmission ${req.params.code} not found or access denied`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     return res.send({
       bulkSubmission,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin get bulkSubmission failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -57,27 +57,27 @@ const updateOne = async (req, res) => {
 
     if (!bulkSubmission) {
       logger.error(
-        `bulkSubmission ${req.params.code} not found or access denied.`
+        `bulkSubmission ${req.params.code} not found or access denied.`,
       )
       return res.status(400).json({
         error: {
-          bulkSubmission: `bulkSubmission ${req.params.code} not found or access denied`
+          bulkSubmission: `bulkSubmission ${req.params.code} not found or access denied`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     return res.send({
       bulkSubmission,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin update bulkSubmission failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -91,15 +91,15 @@ const getConf = async (req, res) => {
     return res.json({
       conf,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/admin/bulkSubmissions/${req.params.code}/conf failed: ${err}`
+      `/api/admin/bulkSubmissions/${req.params.code}/conf failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -109,19 +109,19 @@ const getAll = async (req, res) => {
   try {
     logger.debug('/api/admin/bulkSubmissions')
     const bulkSubmissions = await BulkSubmission.find({
-      status: { $ne: 'delete' }
+      status: { $ne: 'delete' },
     }).sort([['updated', -1]])
 
     return res.send({
       bulkSubmissions,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Admin get all bulkSubmissions failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -133,19 +133,19 @@ const getProjects = async (req, res) => {
     const bulkSubmission = await getBulkSubmission(
       req.params.code,
       'admin',
-      req.user
+      req.user,
     )
 
     if (!bulkSubmission) {
       logger.error(
-        `bulkSubmission ${req.params.code} not found or access denied.`
+        `bulkSubmission ${req.params.code} not found or access denied.`,
       )
       return res.status(400).json({
         error: {
-          projects: `bulkSubmission ${req.params.code} not found or access denied`
+          projects: `bulkSubmission ${req.params.code} not found or access denied`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
 
@@ -153,22 +153,22 @@ const getProjects = async (req, res) => {
     let projects = []
     if (bulkSubmission.projects && bulkSubmission.projects.length > 0) {
       projects = await Project.find({
-        code: { $in: bulkSubmission.projects }
+        code: { $in: bulkSubmission.projects },
       }).sort([['updated', -1]])
     }
 
     return res.json({
       projects,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(
-      `/api/admin/bulkSubmissions/${req.params.code}/projects failed: ${err}`
+      `/api/admin/bulkSubmissions/${req.params.code}/projects failed: ${err}`,
     )
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -178,5 +178,5 @@ module.exports = {
   updateOne,
   getConf,
   getAll,
-  getProjects
+  getProjects,
 }

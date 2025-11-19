@@ -4,7 +4,7 @@ const validationRules = () => [
   param('code')
     .trim()
     .isLength({ min: 16, max: 16 })
-    .withMessage('Invalid bulkSubmission code.')
+    .withMessage('Invalid bulkSubmission code.'),
 ]
 
 const validate = (req, res, next) => {
@@ -16,7 +16,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -26,5 +26,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

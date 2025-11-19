@@ -6,83 +6,83 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     lastName: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
       description: 'Same as user id',
-      trim: true
+      trim: true,
     },
     password: {
       type: String,
       required: true,
       description: 'At least 8 characters',
-      trim: true
+      trim: true,
     },
     code: {
       type: String,
       required: true,
-      unique: false
+      unique: false,
     },
     role: {
       type: String,
       default: 'user',
-      enum: ['user', 'admin']
+      enum: ['user', 'admin'],
     },
     active: {
       type: Boolean,
-      default: false
+      default: false,
     },
     oauth: {
       type: String,
       required: false,
       description: 'Third-Party Authentication (orcid, google, facebook ...)',
-      trim: true
+      trim: true,
     },
     notification: {
       isOn: {
         type: Boolean,
-        default: false
+        default: false,
       },
       email: {
         type: String,
         required: false,
-        trim: true
-      }
+        trim: true,
+      },
     },
     job: {
       limit: {
         type: Number,
-        default: 100
+        default: 100,
       },
       priority: {
         type: Number,
-        default: 0
-      }
-    }
+        default: 0,
+      },
+    },
   },
   {
     timestamps: {
       createdAt: 'created', // Use `created` to store the created date
-      updatedAt: 'updated' // and `updated` to store the last updated date
-    }
+      updatedAt: 'updated', // and `updated` to store the last updated date
+    },
   },
   {
     virtuals: {
       fullName: {
         get() {
           return `${this.firstName} ${this.lastName}`
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 )
 
 module.exports = mongoose.model('User', userSchema)

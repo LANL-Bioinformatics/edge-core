@@ -73,17 +73,17 @@ const config = {
     // Version identifier of the application.
     VERSION: process.env.EDGE_WEB_APP_VERSION || 'v3.0.0-default',
     API_ERROR: process.env.API_ERROR || 'system error',
-    SYSTEM_MESSAGE: process.env.SYSTEM_MESSAGE || null
+    SYSTEM_MESSAGE: process.env.SYSTEM_MESSAGE || null,
   },
   AUTH: {
     // A secret string with which the web server will sign JWTs (JSON Web Tokens).
     // Note: You can generate one via: $ node -e 'console.log(require("crypto").randomBytes(20).toString("hex"))'
-    JWT_SECRET: process.env.JWT_SECRET
+    JWT_SECRET: process.env.JWT_SECRET,
   },
   CLIENT: {
     // Path to the client's "build" directory on the filesystem.
     BUILD_DIR:
-      process.env.CLIENT_BASE_DIR || path.join(CLIENT_BASE_DIR, 'build')
+      process.env.CLIENT_BASE_DIR || path.join(CLIENT_BASE_DIR, 'build'),
   },
   NEXTFLOW: {
     EXECUTOR: process.env.NEXTFLOW_EXECUTOR || 'local',
@@ -100,7 +100,7 @@ const config = {
     // Directory of the workflow files.
     WORKFLOW_DIR: process.env.NEXTFLOW_WORKFLOW_DIR || NEXTFLOW_BASE_DIR,
     WORK_DIR:
-      process.env.NEXTFLOW_WORK_DIR || path.join(IO_BASE_DIR, 'nextflow')
+      process.env.NEXTFLOW_WORK_DIR || path.join(IO_BASE_DIR, 'nextflow'),
   },
   CROMWELL: {
     // Base URL at which HTTP clients can access the Cromwell API.
@@ -123,10 +123,11 @@ const config = {
     WDL_DIR: process.env.CROMWELL_WDL_DIR || CROMWELL_BASE_DIR,
     // Directory of the workflow templates. The Workflow templates are used for creating cromwell inputs.
     TEMPLATE_DIR: process.env.CROMWELL_TEMPLATE_DIR || CROMWELL_BASE_DIR,
-    CONF: process.env.CROMWELL_CONF || path.join(CROMWELL_BASE_DIR, 'conf.json')
+    CONF:
+      process.env.CROMWELL_CONF || path.join(CROMWELL_BASE_DIR, 'conf.json'),
   },
   LOCAL: {
-    NUM_JOBS_MAX: makeIntIfDefined(process.env.LOCAL_NUM_JOBS_MAX) || 2
+    NUM_JOBS_MAX: makeIntIfDefined(process.env.LOCAL_NUM_JOBS_MAX) || 2,
   },
   CRON: {
     // Port number on which the cron web server will listen for HTTP requests.
@@ -172,8 +173,8 @@ const config = {
         process.env.CRON_DATABASE_BACKUP_CREATOR_SCHEDULE || '0 1 * * *',
       // delete old db backups every day at 2 am
       DATABASE_BACKUP_PRUNER:
-        process.env.CRON_DATABASE_BACKUP_PRUNER_SCHEDULE || '0 2 * * *'
-    }
+        process.env.CRON_DATABASE_BACKUP_PRUNER_SCHEDULE || '0 2 * * *',
+    },
   },
   DATABASE: {
     // Host at which web server can access MongoDB server.
@@ -191,7 +192,7 @@ const config = {
     BACKUP_DIR: process.env.DATABASE_BACKUP_DIR || path.join(IO_BASE_DIR, 'db'),
     // Duration for which database backups will be preserved after their creation (note: 604800 seconds is 1 week).
     BACKUP_LIFETIME_SECONDS:
-      makeIntIfDefined(process.env.DATABASE_BACKUP_LIFETIME_SECONDS) || 604800
+      makeIntIfDefined(process.env.DATABASE_BACKUP_LIFETIME_SECONDS) || 604800,
   },
   // Parameters related to sending email.
   // Reference: https://nodemailer.com/smtp/proxies/
@@ -218,10 +219,10 @@ const config = {
       'Someone requested a password reset for your account. If this was not you, please disregard this email. If you would like to continue, click the button to reset your password.',
     // project status
     SEND_PROJECT_STATUS_EMAILS: makeBoolean(
-      process.env.SEND_PROJECT_STATUS_EMAILS
+      process.env.SEND_PROJECT_STATUS_EMAILS,
     ),
     PROJECT_STATUS_SUBJECT:
-      process.env.PROJECT_STATUS_SUBJECT || 'Your EDGE project status'
+      process.env.PROJECT_STATUS_SUBJECT || 'Your EDGE project status',
   },
   FILE_UPLOADS: {
     // Note: 10737418200 Bytes is 10 Gibibytes (10.7 Gigabytes).
@@ -238,7 +239,7 @@ const config = {
     DELETION_GRACE_PERIOD_DAYS:
       makeIntIfDefined(process.env.FILE_UPLOADS_DELETION_GRACE_PERIOD_DAYS) ||
       5,
-    ALLOWED_EXTENSIONS: process.env.FILEUPLOAD_ALLOWED_EXTENSIONS || ''
+    ALLOWED_EXTENSIONS: process.env.FILEUPLOAD_ALLOWED_EXTENSIONS || '',
   },
   IO: {
     // Directory to store workflow results.
@@ -263,7 +264,7 @@ const config = {
     // Globus
     GLOBUG_DATA_HOME_DIR: process.env.GLOBUS_DATA_HOME_DIR,
     // Directory to store workflow docs
-    WORKFLOW_DOCS_DIR: process.env.WORKFLOW_DOCS_DIR || WORKFLOW_DOCS_BASE_DIR
+    WORKFLOW_DOCS_DIR: process.env.WORKFLOW_DOCS_DIR || WORKFLOW_DOCS_BASE_DIR,
   },
   // Parameters that influence the behavior of `Winston.js`, a logging library.
   // Reference: https://github.com/winstonjs/winston-daily-rotate-file#options
@@ -274,8 +275,8 @@ const config = {
       process.env.LOG_FILE_NAME_TEMPLATE || 'EDGE-workflows-%DATE%.log',
     LOG_DATE_TEMPLATE: process.env.LOG_DATE_TEMPLATE || 'YYYY-MM-DD',
     LOG_FILE_MAX_SIZE: process.env.LOG_FILE_MAX_SIZE || '20m',
-    LOG_FILE_MAX_QUANTITY: process.env.LOG_FILE_MAX_QUANTITY || '14d'
-  }
+    LOG_FILE_MAX_QUANTITY: process.env.LOG_FILE_MAX_QUANTITY || '14d',
+  },
 }
 
 module.exports = config

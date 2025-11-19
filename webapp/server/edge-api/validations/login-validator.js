@@ -8,11 +8,11 @@ const validationRules = () => [
     .withMessage('Invalid email address.'),
   body(
     'password',
-    'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.'
+    'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.',
   )
     .isLength({ min: 8 })
     .trim()
-    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%*#?&]/)
+    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%*#?&]/),
 ]
 
 const validate = (req, res, next) => {
@@ -24,7 +24,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -34,5 +34,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

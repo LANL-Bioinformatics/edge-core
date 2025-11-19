@@ -7,8 +7,8 @@ const logFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.align(),
   winston.format.printf(
-    info => `${info.timestamp} ${info.level}: ${info.message}`
-  )
+    info => `${info.timestamp} ${info.level}: ${info.message}`,
+  ),
 )
 
 const transport = new DailyRotateFile({
@@ -18,7 +18,7 @@ const transport = new DailyRotateFile({
   maxSize: config.LOGGING.LOG_FILE_MAX_SIZE,
   maxFiles: config.LOGGING.LOG_FILE_MAX_QUANTITY,
   prepend: true,
-  level: config.LOGGING.LOG_LEVEL
+  level: config.LOGGING.LOG_LEVEL,
 })
 
 const logger = winston.createLogger({
@@ -26,9 +26,9 @@ const logger = winston.createLogger({
   transports: [
     transport,
     new winston.transports.Console({
-      level: 'debug'
-    })
-  ]
+      level: 'debug',
+    }),
+  ],
 })
 
 module.exports = logger

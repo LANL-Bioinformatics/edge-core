@@ -6,9 +6,9 @@ const validationRules = () => [
     .isLength({ min: 3, max: 30 })
     .escape()
     .withMessage(
-      'Invalid bulkSubmission name, at least 3 but less than 30 characters.'
+      'Invalid bulkSubmission name, at least 3 but less than 30 characters.',
     ),
-  body('bulkSubmission.desc').optional()
+  body('bulkSubmission.desc').optional(),
 ]
 
 const validate = (req, res, next) => {
@@ -20,7 +20,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -30,5 +30,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

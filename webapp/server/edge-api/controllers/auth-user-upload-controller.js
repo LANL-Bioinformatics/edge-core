@@ -4,7 +4,7 @@ const Upload = require('../models/upload')
 const {
   updateUpload,
   getUploadedSize,
-  getUploadFolderOptions
+  getUploadFolderOptions,
 } = require('../utils/upload')
 const logger = require('../../utils/logger')
 const config = require('../../config')
@@ -28,7 +28,7 @@ const addOne = async (req, res) => {
       return res.status(400).json({
         error: { upload: 'Storage limit exceeded.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
 
@@ -56,19 +56,19 @@ const addOne = async (req, res) => {
       type: data.type,
       size: data.size,
       owner: req.user.email,
-      code
+      code,
     })
     await newData.save()
     return res.send({
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Add upload failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -81,7 +81,7 @@ const updateOne = async (req, res) => {
     const query = {
       status: { $ne: 'delete' },
       code: { $eq: req.params.code },
-      owner: { $eq: req.user.email }
+      owner: { $eq: req.user.email },
     }
     const upload = await updateUpload(query, req)
 
@@ -89,23 +89,23 @@ const updateOne = async (req, res) => {
       logger.error(`upload ${req.params.code} not found or access denied.`)
       return res.status(400).json({
         error: {
-          upload: `upload ${req.params.code} not found or access denied`
+          upload: `upload ${req.params.code} not found or access denied`,
         },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     return res.send({
       upload,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Update upload failed: ${err}`)
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -116,19 +116,19 @@ const getOwn = async (req, res) => {
     logger.debug(`/api/auth-user/uploads: ${req.user.email}`)
     const uploads = await Upload.find({
       status: { $ne: 'delete' },
-      owner: { $eq: req.user.email }
+      owner: { $eq: req.user.email },
     }).sort([['updated', -1]])
 
     return res.send({
       uploads,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Get user uploads failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -151,13 +151,13 @@ const getInfo = async (req, res) => {
       allowedExtensions: config.FILE_UPLOADS.ALLOWED_EXTENSIONS,
       folderOptions: options,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Get upload info failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -173,8 +173,8 @@ const getAll = async (req, res) => {
       $or: [
         { owner: { $eq: req.user.email } },
         { sharedTo: req.user.email },
-        { public: true }
-      ]
+        { public: true },
+      ],
     }
     if (req.body.fileTypes) {
       if (req.body.endsWith) {
@@ -209,7 +209,7 @@ const getAll = async (req, res) => {
           path: `uploads/${upload.code}`,
           filePath: `${uploadDir}/${upload.code}`,
           size: stats.size,
-          modified: Number(new Date(stats.mtime))
+          modified: Number(new Date(stats.mtime)),
         }
         files.push(dfile)
       }
@@ -218,13 +218,13 @@ const getAll = async (req, res) => {
     return res.json({
       fileData: files,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Get all uploads failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -234,5 +234,5 @@ module.exports = {
   updateOne,
   getOwn,
   getInfo,
-  getAll
+  getAll,
 }

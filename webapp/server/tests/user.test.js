@@ -21,7 +21,7 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       expect(response.status).toEqual(200)
       expect(response.body.user.notification.email).toEqual(
-        testData.userSuccess.email
+        testData.userSuccess.email,
       )
     })
     it('/api/user/register failed: Email already exists', async () => {
@@ -31,7 +31,7 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       expect(response.status).toEqual(400)
       expect(response.body.error.email).toEqual(
-        'Email my@edge.lanl already exists'
+        'Email my@edge.lanl already exists',
       )
     })
     it('/api/user/register failed: Invaid input', async () => {
@@ -43,13 +43,13 @@ describe('Test user APIs', () => {
       expect(response.body.error.lastName).toEqual('Invalid lastName.')
       expect(response.body.error.email).toEqual('Invalid email address.')
       expect(response.body.error.password).toEqual(
-        'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.'
+        'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.',
       )
       expect(response.body.error.confirmPassword).toEqual(
-        'Password confirmation does not match with password.'
+        'Password confirmation does not match with password.',
       )
       expect(response.body.error.active).toEqual(
-        'Invalid active. Must be true or false.'
+        'Invalid active. Must be true or false.',
       )
     })
   })
@@ -60,7 +60,7 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       const response2 = await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: response.body.user.password
+        token: response.body.user.password,
       })
       expect(response2.status).toEqual(200)
     })
@@ -80,7 +80,7 @@ describe('Test user APIs', () => {
         .send(testData.activateUserNotFound)
       expect(response.status).toEqual(400)
       expect(response.body.error.activate).toEqual(
-        'Account notfound@edge.lanl not found'
+        'Account notfound@edge.lanl not found',
       )
       expect(response.body.message).toEqual('Action failed')
       expect(response.body.success).toEqual(false)
@@ -91,7 +91,7 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       const response2 = await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: 'wrongpassword'
+        token: 'wrongpassword',
       })
       expect(response2.status).toEqual(400)
       expect(response2.body.error.activate).toEqual('Invalid token.')
@@ -104,15 +104,15 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: response.body.user.password
+        token: response.body.user.password,
       })
       const response2 = await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: response.body.user.password
+        token: response.body.user.password,
       })
       expect(response2.status).toEqual(400)
       expect(response2.body.error.activate).toEqual(
-        'Your account has already been activated.'
+        'Your account has already been activated.',
       )
       expect(response2.body.message).toEqual('Action failed')
       expect(response2.body.success).toEqual(false)
@@ -127,7 +127,7 @@ describe('Test user APIs', () => {
       const response2 = await agent.post('/api/user/getActivationLink').send({
         email: response.body.user.email,
         actionURL: 'http://my.edge/activate',
-        test: true
+        test: true,
       })
       expect(response2.status).toEqual(200)
     })
@@ -147,7 +147,7 @@ describe('Test user APIs', () => {
         .send(testData.getActionLinkNotFound)
       expect(response.status).toEqual(400)
       expect(response.body.error.getActivationLink).toEqual(
-        'Account notfound@edge.lanl not found'
+        'Account notfound@edge.lanl not found',
       )
       expect(response.body.message).toEqual('Action failed')
       expect(response.body.success).toEqual(false)
@@ -158,15 +158,15 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: response.body.user.password
+        token: response.body.user.password,
       })
       const response2 = await agent.post('/api/user/getActivationLink').send({
         email: response.body.user.email,
-        actionURL: 'http://my.edge/activate'
+        actionURL: 'http://my.edge/activate',
       })
       expect(response2.status).toEqual(400)
       expect(response2.body.error.getActivationLink).toEqual(
-        'Your account has already been activated.'
+        'Your account has already been activated.',
       )
       expect(response2.body.message).toEqual('Action failed')
       expect(response2.body.success).toEqual(false)
@@ -179,12 +179,12 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: response.body.user.password
+        token: response.body.user.password,
       })
       const response2 = await agent.put('/api/user/resetPassword').send({
         email: response.body.user.email,
         token: response.body.user.password,
-        newPassword: 'new#4EDGE'
+        newPassword: 'new#4EDGE',
       })
       expect(response2.status).toEqual(200)
     })
@@ -196,7 +196,7 @@ describe('Test user APIs', () => {
       expect(response.body.error.email).toEqual('Invalid email address.')
       expect(response.body.error.token).toEqual('Token should not be empty.')
       expect(response.body.error.newPassword).toEqual(
-        'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.'
+        'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.',
       )
       expect(response.body.message).toEqual('Validation failed')
       expect(response.body.success).toEqual(false)
@@ -207,7 +207,7 @@ describe('Test user APIs', () => {
         .send(testData.resetPasswordUserNotFound)
       expect(response.status).toEqual(400)
       expect(response.body.error.resetPassword).toEqual(
-        'Account notfound@edge.lanl not found'
+        'Account notfound@edge.lanl not found',
       )
       expect(response.body.message).toEqual('Action failed')
       expect(response.body.success).toEqual(false)
@@ -219,11 +219,11 @@ describe('Test user APIs', () => {
       const response2 = await agent.put('/api/user/resetPassword').send({
         email: response.body.user.email,
         token: response.body.user.password,
-        newPassword: 'new#4EDGE'
+        newPassword: 'new#4EDGE',
       })
       expect(response2.status).toEqual(400)
       expect(response2.body.error.resetPassword).toEqual(
-        'Your account is not active.'
+        'Your account is not active.',
       )
       expect(response2.body.message).toEqual('Action failed')
       expect(response2.body.success).toEqual(false)
@@ -234,12 +234,12 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: response.body.user.password
+        token: response.body.user.password,
       })
       const response2 = await agent.put('/api/user/resetPassword').send({
         email: response.body.user.email,
         token: 'wrongpassword',
-        newPassword: 'new#4EDGE'
+        newPassword: 'new#4EDGE',
       })
       expect(response2.status).toEqual(400)
       expect(response2.body.error.resetPassword).toEqual('Invalid token.')
@@ -254,7 +254,7 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: response.body.user.password
+        token: response.body.user.password,
       })
       // use 'test: true' to disable sendmail
       const response2 = await agent
@@ -262,7 +262,7 @@ describe('Test user APIs', () => {
         .send({
           email: response.body.user.email,
           actionURL: 'http://my.edge/activate',
-          test: true
+          test: true,
         })
       expect(response2.status).toEqual(200)
     })
@@ -282,7 +282,7 @@ describe('Test user APIs', () => {
         .send(testData.getActionLinkNotFound)
       expect(response.status).toEqual(400)
       expect(response.body.error.getResetPasswordLink).toEqual(
-        'Account notfound@edge.lanl not found'
+        'Account notfound@edge.lanl not found',
       )
       expect(response.body.message).toEqual('Action failed')
       expect(response.body.success).toEqual(false)
@@ -295,11 +295,11 @@ describe('Test user APIs', () => {
         .post('/api/user/getResetPasswordLink')
         .send({
           email: response.body.user.email,
-          actionURL: 'http://my.edge/activate'
+          actionURL: 'http://my.edge/activate',
         })
       expect(response2.status).toEqual(400)
       expect(response2.body.error.getResetPasswordLink).toEqual(
-        'Your account is not active.'
+        'Your account is not active.',
       )
       expect(response2.body.message).toEqual('Action failed')
       expect(response2.body.success).toEqual(false)
@@ -312,11 +312,11 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       await agent.put('/api/user/activate').send({
         email: response.body.user.email,
-        token: response.body.user.password
+        token: response.body.user.password,
       })
       const response2 = await agent.post('/api/user/login').send({
         email: response.body.user.email,
-        password: testData.userSuccess.password
+        password: testData.userSuccess.password,
       })
       expect(response2.status).toEqual(200)
     })
@@ -327,7 +327,7 @@ describe('Test user APIs', () => {
       expect(response.status).toEqual(400)
       expect(response.body.error.email).toEqual('Invalid email address.')
       expect(response.body.error.password).toEqual(
-        'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.'
+        'Password must be at least 8 characters long and contain at least one uppercase, at least one lower case and at least one special character.',
       )
       expect(response.body.message).toEqual('Validation failed')
       expect(response.body.success).toEqual(false)
@@ -338,7 +338,7 @@ describe('Test user APIs', () => {
         .send(testData.loginUserNotFound)
       expect(response.status).toEqual(400)
       expect(response.body.error.login).toEqual(
-        'Account notfound@edge.lanl not found'
+        'Account notfound@edge.lanl not found',
       )
       expect(response.body.message).toEqual('Action failed')
       expect(response.body.success).toEqual(false)
@@ -349,7 +349,7 @@ describe('Test user APIs', () => {
         .send(testData.userSuccess)
       const response2 = await agent.post('/api/user/login').send({
         email: response.body.user.email,
-        password: testData.userSuccess.password
+        password: testData.userSuccess.password,
       })
       expect(response2.status).toEqual(400)
       expect(response2.body.error.login).toEqual('Your account is not active.')
@@ -383,7 +383,7 @@ describe('Test user APIs', () => {
         .send(testData.oauthLoginUserNotActive)
       expect(response.status).toEqual(400)
       expect(response.body.error.oauthLogin).toEqual(
-        'Your account is not active.'
+        'Your account is not active.',
       )
       expect(response.body.message).toEqual('Action failed')
       expect(response.body.success).toEqual(false)

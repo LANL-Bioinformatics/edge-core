@@ -20,18 +20,18 @@ const getActionLink = async (req, res, action) => {
       return res.status(400).json({
         error: { [action]: `Account ${data.email} not found` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // Is active user?
     if (action === 'getActivationLink' && user.active) {
       logger.error(
-        `${action}: Account ${data.email} has already been activated.`
+        `${action}: Account ${data.email} has already been activated.`,
       )
       return res.status(400).json({
         error: { [action]: 'Your account has already been activated.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     if (action === 'getResetPasswordLink' && !user.active) {
@@ -39,7 +39,7 @@ const getActionLink = async (req, res, action) => {
       return res.status(400).json({
         error: { [action]: 'Your account is not active.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
 
@@ -51,13 +51,13 @@ const getActionLink = async (req, res, action) => {
     // success
     return res.json({
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`${action} failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -74,7 +74,7 @@ const register = async (req, res) => {
       return res.status(400).json({
         error: { email: `Email ${data.email} already exists` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // encode password and add new user to DB
@@ -84,7 +84,7 @@ const register = async (req, res) => {
       ...data,
       password: hashedPassword,
       code,
-      notification: { email: data.email }
+      notification: { email: data.email },
     })
 
     await newUser.save()
@@ -96,13 +96,13 @@ const register = async (req, res) => {
         newUser.email,
         'getActivationLink',
         newUser.firstName,
-        link
+        link,
       )
     }
     // success
     const result = {
       message: 'Action successful',
-      success: true
+      success: true,
     }
     // return user for other api tests
     if (data.test) {
@@ -116,7 +116,7 @@ const register = async (req, res) => {
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -135,18 +135,18 @@ const activate = async (req, res) => {
       return res.status(400).json({
         error: { activate: `Account ${data.email} not found` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // Is active user
     if (user.active) {
       logger.error(
-        `activate: Account ${data.email} has already been activated.`
+        `activate: Account ${data.email} has already been activated.`,
       )
       return res.status(400).json({
         error: { activate: 'Your account has already been activated.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
 
@@ -156,7 +156,7 @@ const activate = async (req, res) => {
       return res.status(400).json({
         error: { activate: 'Invalid token.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
 
@@ -165,13 +165,13 @@ const activate = async (req, res) => {
     logger.info('Activation successful')
     return res.json({
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Activation failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -195,7 +195,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({
         error: { resetPassword: `Account ${data.email} not found` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // Not active user
@@ -204,7 +204,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({
         error: { resetPassword: 'Your account is not active.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // Not a valid token
@@ -213,7 +213,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({
         error: { resetPassword: 'Invalid token.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // Hash password before saving in database
@@ -223,18 +223,18 @@ const resetPassword = async (req, res) => {
     await User.updateOne(
       { email: data.email },
       { password: hashedPassword },
-      { code }
+      { code },
     )
     logger.info('ResetPassword successful')
     return res.json({
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`ResetPassword failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -258,7 +258,7 @@ const login = async (req, res) => {
       return res.status(400).json({
         error: { login: `Account ${data.email} not found` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // Is active user?
@@ -267,7 +267,7 @@ const login = async (req, res) => {
       return res.status(400).json({
         error: { login: 'Your account is not active.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
 
@@ -278,7 +278,7 @@ const login = async (req, res) => {
       return res.status(400).json({
         error: { login: 'Your password is incorrect.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // Create JWT Payload
@@ -290,20 +290,20 @@ const login = async (req, res) => {
       role: user.role,
       active: user.active,
       code: user.code,
-      notification: user.notification
+      notification: user.notification,
     }
     // Sign token
     const token = await signToken(payload)
     return res.json({
       token: `Bearer ${token}`,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Login failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -322,13 +322,13 @@ const oauthLogin = async (req, res) => {
       return res.status(400).json({
         error: { oauthLogin: 'Your account is not active.' },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // If user not exists, encode password and add new user to DB
     if (!user) {
       logger.info(
-        `Create account from oauth login: ${data.email} authenticated by ${data.oauth}`
+        `Create account from oauth login: ${data.email} authenticated by ${data.oauth}`,
       )
       const hashedPassword = await encodePassword(randomize('Aa0!', 12))
       const code = randomize('0', 6)
@@ -339,7 +339,7 @@ const oauthLogin = async (req, res) => {
         oauth: data.oauth,
         password: hashedPassword,
         code,
-        active: true
+        active: true,
       })
 
       await newUser.save()
@@ -357,7 +357,7 @@ const oauthLogin = async (req, res) => {
       oauth: user.oauth,
       active: user.active,
       code: user.code,
-      notification: user.notification
+      notification: user.notification,
     }
 
     // Sign token
@@ -365,13 +365,13 @@ const oauthLogin = async (req, res) => {
     return res.json({
       token: `Bearer ${token}`,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`oauthLogin failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -383,5 +383,5 @@ module.exports = {
   getActivationLink,
   getResetPasswordLink,
   login,
-  oauthLogin
+  oauthLogin,
 }

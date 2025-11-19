@@ -10,15 +10,15 @@ const userActionSender = (recipient, action, userName, link) => {
     .send({
       template: 'user_action',
       message: {
-        to: recipient
+        to: recipient,
       },
       locals: {
         subject,
         userName,
         actionName,
         link,
-        actionMessage
-      }
+        actionMessage,
+      },
     })
     .then(res => {
       logger.info(res)
@@ -36,12 +36,12 @@ const projectStatusSender = (recipient, data) => {
     .send({
       template: 'project_notification',
       message: {
-        to: recipient
+        to: recipient,
       },
       locals: {
         subject,
-        ...data
-      }
+        ...data,
+      },
     })
     .then(res => {
       logger.info(res)
@@ -53,5 +53,5 @@ const projectStatusSender = (recipient, data) => {
 
 module.exports = {
   userActionSender,
-  projectStatusSender
+  projectStatusSender,
 }

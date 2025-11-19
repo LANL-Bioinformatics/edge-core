@@ -13,7 +13,7 @@
   "insertPragma": false,
   "requirePragma": false,
   "quoteProps": "as-needed",
-  "trailingComma": "none",
+  "trailingComma": "all",
   "eslintIntegration": true,
   "parser": "babel",
   "jsxSingleQuote": false,

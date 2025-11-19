@@ -25,7 +25,7 @@ const bulkSubmissionMonitor = async () => {
     logger.debug('bulkSubmission monitor')
     // only process one request at each time
     const bulkSubmissions = await BulkSubmission.find({
-      status: 'in queue'
+      status: 'in queue',
     }).sort({ updated: 1 })
     const bulkSubmission = bulkSubmissions[0]
     if (!bulkSubmission) {
@@ -35,7 +35,7 @@ const bulkSubmissionMonitor = async () => {
     // parse conf.json
     const bulkSubmissionHome = path.join(
       config.PROJECTS.BULK_DIR,
-      bulkSubmission.code
+      bulkSubmission.code,
     )
     const confFile = `${bulkSubmissionHome}/conf.json`
     const rawdata = fs.readFileSync(confFile)
@@ -43,7 +43,7 @@ const bulkSubmissionMonitor = async () => {
     const log = path.join(
       config.PROJECTS.BULK_DIR,
       bulkSubmission.code,
-      'log.txt'
+      'log.txt',
     )
 
     logger.info(`Processing bulkSubmission request: ${bulkSubmission.code}`)
@@ -61,8 +61,8 @@ const bulkSubmissionMonitor = async () => {
       // Check if all cells in the row are empty (null, undefined, or empty string after trim)
       row.some(
         cell =>
-          cell !== null && cell !== undefined && String(cell).trim() !== ''
-      )
+          cell !== null && cell !== undefined && String(cell).trim() !== '',
+      ),
     )
     // Remove header
     rows.shift()
@@ -123,7 +123,7 @@ const bulkSubmissionMonitor = async () => {
             // it's uploaded file
             const file = await Upload.findOne({
               name: { $eq: fq },
-              status: { $ne: 'delete' }
+              status: { $ne: 'delete' },
             })
             if (!file) {
               validInput = false
@@ -173,7 +173,7 @@ const bulkSubmissionMonitor = async () => {
                 // it's uploaded file
                 const file = await Upload.findOne({
                   name: { $eq: fq },
-                  status: { $ne: 'delete' }
+                  status: { $ne: 'delete' },
                 })
                 if (!file) {
                   validInput = false
@@ -210,7 +210,7 @@ const bulkSubmissionMonitor = async () => {
                 // it's uploaded file
                 const file = await Upload.findOne({
                   name: { $eq: fq },
-                  status: { $ne: 'delete' }
+                  status: { $ne: 'delete' },
                 })
                 if (!file) {
                   validInput = false
@@ -234,7 +234,7 @@ const bulkSubmissionMonitor = async () => {
               submission.input_fastqs.push({ fq1: pairFq1[i], fq2: pairFq2[i] })
               submission.input_fastqsDisplay.push({
                 fq1: paireFq1Display[i],
-                fq2: paireFq2Display[i]
+                fq2: paireFq2Display[i],
               })
             }
           }
@@ -262,8 +262,8 @@ const bulkSubmissionMonitor = async () => {
         // create conf.json
         const template = String(
           fs.readFileSync(
-            `${config.PROJECTS.CONF_TEMPLATE_DIR}/${workflowSettings[bulkSubmission.type].project_conf_tmpl}`
-          )
+            `${config.PROJECTS.CONF_TEMPLATE_DIR}/${workflowSettings[bulkSubmission.type].project_conf_tmpl}`,
+          ),
         )
         // render project conf template and write to conf.json
         const inputs = ejs.render(template, submission)
@@ -275,7 +275,7 @@ const bulkSubmissionMonitor = async () => {
           desc: submission.proj_desc,
           type: conf.pipeline,
           owner: bulkSubmission.owner,
-          code
+          code,
         })
         await newProject.save()
       })

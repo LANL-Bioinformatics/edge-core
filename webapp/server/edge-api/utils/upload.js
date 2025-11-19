@@ -38,16 +38,18 @@ const getUploadedSize = async owner => {
     // find size of all uploaded files owned by user
     const result = await Upload.aggregate([
       {
-        $match: { $and: [{ status: { $ne: 'delete' }, owner: { $eq: owner } }] }
+        $match: {
+          $and: [{ status: { $ne: 'delete' }, owner: { $eq: owner } }],
+        },
       },
       {
         $group: {
           _id: null,
           total: {
-            $sum: '$size'
-          }
-        }
-      }
+            $sum: '$size',
+          },
+        },
+      },
     ])
     let size = 0
     if (result[0]) {
@@ -64,7 +66,7 @@ const getUploadFolderOptions = async owner => {
     // get folder options
     const folders = await Upload.distinct('folder', {
       status: { $ne: 'delete' },
-      owner: { $eq: owner }
+      owner: { $eq: owner },
     })
     const options = []
     if (folders.length > 0) {
@@ -84,5 +86,5 @@ module.exports = {
   getRealName,
   updateUpload,
   getUploadedSize,
-  getUploadFolderOptions
+  getUploadFolderOptions,
 }

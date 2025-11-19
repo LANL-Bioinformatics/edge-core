@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {
   validationRules: updateValidationRules,
-  validate: updateValidate
+  validate: updateValidate,
 } = require('../validations/upload-update-validator')
 const { updateOne, getAll } = require('../controllers/admin-upload-controller')
 
@@ -84,7 +84,7 @@ router.put(
   updateValidate,
   async (req, res) => {
     await updateOne(req, res)
-  }
+  },
 )
 
 module.exports = router

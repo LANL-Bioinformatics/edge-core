@@ -1,27 +1,27 @@
 const router = require('express').Router()
 const {
   validationRules: registerValidationRules,
-  validate: registerValidate
+  validate: registerValidate,
 } = require('../validations/user-validator')
 const {
   validationRules: activateValidationRules,
-  validate: activateValidate
+  validate: activateValidate,
 } = require('../validations/user-activate-validator')
 const {
   validationRules: getActionLinkValidationRules,
-  validate: getActionLinkValidate
+  validate: getActionLinkValidate,
 } = require('../validations/get-action-link-validator')
 const {
   validationRules: resetPasswordValidationRules,
-  validate: resetPasswordValidate
+  validate: resetPasswordValidate,
 } = require('../validations/reset-password-validator')
 const {
   validationRules: loginValidationRules,
-  validate: loginValidate
+  validate: loginValidate,
 } = require('../validations/login-validator')
 const {
   validationRules: oauthLoginValidationRules,
-  validate: oauthLoginValidate
+  validate: oauthLoginValidate,
 } = require('../validations/oauth-login-validator')
 const {
   register,
@@ -30,7 +30,7 @@ const {
   resetPassword,
   getResetPasswordLink,
   login,
-  oauthLogin
+  oauthLogin,
 } = require('../controllers/user-controller')
 
 /**
@@ -71,7 +71,7 @@ router.post(
   registerValidate,
   async (req, res) => {
     await register(req, res)
-  }
+  },
 )
 
 /**
@@ -113,7 +113,7 @@ router.put(
   activateValidate,
   async (req, res) => {
     await activate(req, res)
-  }
+  },
 )
 
 /**
@@ -155,7 +155,7 @@ router.post(
   getActionLinkValidate,
   async (req, res) => {
     await getActivationLink(req, res)
-  }
+  },
 )
 
 /**
@@ -197,7 +197,7 @@ router.put(
   resetPasswordValidate,
   async (req, res) => {
     await resetPassword(req, res)
-  }
+  },
 )
 
 /**
@@ -239,7 +239,7 @@ router.post(
   getActionLinkValidate,
   async (req, res) => {
     await getResetPasswordLink(req, res)
-  }
+  },
 )
 
 /**
@@ -281,7 +281,7 @@ router.post(
   loginValidate,
   async (req, res) => {
     await login(req, res)
-  }
+  },
 )
 
 /**
@@ -323,7 +323,7 @@ router.post(
   oauthLoginValidate,
   async (req, res) => {
     await oauthLogin(req, res)
-  }
+  },
 )
 
 module.exports = router

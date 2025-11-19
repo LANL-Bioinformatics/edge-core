@@ -1,21 +1,21 @@
 const router = require('express').Router()
 const {
   validationRules: registerValidationRules,
-  validate: registerValidate
+  validate: registerValidate,
 } = require('../validations/user-validator')
 const {
   validationRules: updateValidationRules,
-  validate: updateValidate
+  validate: updateValidate,
 } = require('../validations/user-update-validator')
 const {
   validationRules: deleteValidationRules,
-  validate: deleteValidate
+  validate: deleteValidate,
 } = require('../validations/admin-user-validator')
 const {
   addOne,
   updateOne,
   removeOne,
-  getAll
+  getAll,
 } = require('../controllers/admin-user-controller')
 
 /**
@@ -90,7 +90,7 @@ router.post(
   registerValidate,
   async (req, res) => {
     await addOne(req, res)
-  }
+  },
 )
 
 /**
@@ -140,7 +140,7 @@ router.put(
   updateValidate,
   async (req, res) => {
     await updateOne(req, res)
-  }
+  },
 )
 
 /**
@@ -184,7 +184,7 @@ router.delete(
   deleteValidate,
   async (req, res) => {
     await removeOne(req, res)
-  }
+  },
 )
 
 module.exports = router

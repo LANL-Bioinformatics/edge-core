@@ -9,7 +9,7 @@ let mongoServer
 
 const opts = {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 }
 mongoose.set('strictQuery', false)
 // Provide connection to a new in-memory database server.
@@ -47,5 +47,5 @@ const clear = async () => {
 module.exports = {
   connect,
   close,
-  clear
+  clear,
 }

@@ -1,11 +1,11 @@
 const router = require('express').Router()
 const {
   validationRules: projectCodeValidationRules,
-  validate: projectCodeValidate
+  validate: projectCodeValidate,
 } = require('../validations/project-code-validator')
 const {
   validationRules: updateValidationRules,
-  validate: updateValidate
+  validate: updateValidate,
 } = require('../validations/project-update-validator')
 const {
   getOne,
@@ -15,7 +15,7 @@ const {
   getOutputs,
   getBatchOutputs,
   getResult,
-  getRunStats
+  getRunStats,
 } = require('../controllers/admin-project-controller')
 
 /**
@@ -97,7 +97,7 @@ router.put(
   updateValidate,
   async (req, res) => {
     await updateOne(req, res)
-  }
+  },
 )
 
 /**
@@ -141,7 +141,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getOne(req, res)
-  }
+  },
 )
 
 /**
@@ -185,7 +185,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getConf(req, res)
-  }
+  },
 )
 
 /**
@@ -229,7 +229,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getOutputs(req, res)
-  }
+  },
 )
 
 /**
@@ -273,7 +273,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getBatchOutputs(req, res)
-  }
+  },
 )
 
 /**
@@ -317,7 +317,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getResult(req, res)
-  }
+  },
 )
 
 /**
@@ -361,7 +361,7 @@ router.get(
   projectCodeValidate,
   async (req, res) => {
     await getRunStats(req, res)
-  }
+  },
 )
 
 module.exports = router

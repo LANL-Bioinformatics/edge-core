@@ -20,11 +20,11 @@ module.exports = {
       'jobPriority',
       'sharedTo',
       'parent',
-      'children'
-    ]
+      'children',
+    ],
   }),
   upload: m2s(Upload, {
-    omitFields: ['_id', 'created', 'updated', 'sharedTo']
+    omitFields: ['_id', 'created', 'updated', 'sharedTo'],
   }),
-  job: m2s(Job, { omitFields: ['_id', 'created', 'updated'] })
+  job: m2s(Job, { omitFields: ['_id', 'created', 'updated'] }),
 }

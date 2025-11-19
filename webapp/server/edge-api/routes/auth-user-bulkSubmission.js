@@ -1,15 +1,15 @@
 const router = require('express').Router()
 const {
   validationRules: bulkSubmissionCodeValidationRules,
-  validate: bulkSubmissionCodeValidate
+  validate: bulkSubmissionCodeValidate,
 } = require('../validations/bulkSubmission-code-validator')
 const {
   validationRules: addValidationRules,
-  validate: addValidate
+  validate: addValidate,
 } = require('../validations/bulkSubmission-validator')
 const {
   validationRules: updateValidationRules,
-  validate: updateValidate
+  validate: updateValidate,
 } = require('../validations/bulkSubmission-update-validator')
 const {
   addOne,
@@ -24,7 +24,7 @@ const {
   getBatchOutputs,
   getResult,
   getRunStats,
-  getBulkSubmissionsByType
+  getBulkSubmissionsByType,
 } = require('../controllers/auth-user-bulkSubmission-controller')
 
 /**
@@ -201,7 +201,7 @@ router.post(
   addValidate,
   async (req, res) => {
     await addOne(req, res)
-  }
+  },
 )
 
 /**
@@ -251,7 +251,7 @@ router.put(
   updateValidate,
   async (req, res) => {
     await updateOne(req, res)
-  }
+  },
 )
 
 /**
@@ -295,7 +295,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getOne(req, res)
-  }
+  },
 )
 
 /**
@@ -378,7 +378,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getConf(req, res)
-  }
+  },
 )
 
 /**
@@ -422,7 +422,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getOutputs(req, res)
-  }
+  },
 )
 
 /**
@@ -467,7 +467,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getBatchOutputs(req, res)
-  }
+  },
 )
 
 /**
@@ -511,7 +511,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getResult(req, res)
-  }
+  },
 )
 
 /**
@@ -555,7 +555,7 @@ router.get(
   bulkSubmissionCodeValidate,
   async (req, res) => {
     await getRunStats(req, res)
-  }
+  },
 )
 
 module.exports = router

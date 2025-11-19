@@ -27,6 +27,7 @@ export const apis = {
   adminUsers: '/api/admin/users',
   adminUploads: '/api/admin/uploads',
   adminBulkSubmissions: '/api/admin/bulkSubmissions',
+  workflowDocs: '/workflow-docs',
 }
 
 // match colors in scss/_custom.scss

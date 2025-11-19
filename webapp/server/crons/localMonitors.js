@@ -7,7 +7,7 @@ const { abortJob, updateJobStatus } = require('../utils/local')
 const {
   localWorkflows,
   workflowList,
-  getWorkflowCommand
+  getWorkflowCommand,
 } = require('../workflow/util')
 
 const config = require('../config')
@@ -18,7 +18,7 @@ const localWorkflowMonitor = async () => {
     // only process one job at each time based on job updated time
     const jobs = await Job.find({
       queue: 'local',
-      status: { $in: ['Submitted', 'Running'] }
+      status: { $in: ['Submitted', 'Running'] },
     }).sort({ updated: 1 })
     // submit request only when the current local running jobs less than the max allowed jobs
     if (jobs.length >= config.LOCAL.NUM_JOBS_MAX) {
@@ -28,7 +28,7 @@ const localWorkflowMonitor = async () => {
     // only process one request at each time
     const projs = await Project.find({
       type: { $in: localWorkflows },
-      status: 'in queue'
+      status: 'in queue',
     }).sort({ updated: 1 })
     const proj = projs[0]
     if (!proj) {
@@ -61,7 +61,7 @@ const localWorkflowMonitor = async () => {
         project: proj.code,
         type: proj.type,
         queue: 'local',
-        status: 'Running'
+        status: 'Running',
       })
       newJob.save()
       proj.status = 'running'
@@ -84,7 +84,7 @@ const localJobMonitor = async () => {
     // only process one job at each time based on job updated time
     const jobs = await Job.find({
       queue: 'local',
-      status: { $in: ['Submitted', 'Running'] }
+      status: { $in: ['Submitted', 'Running'] },
     }).sort({ updated: 1 })
     const job = jobs[0]
     if (!job) {
@@ -118,5 +118,5 @@ const localJobMonitor = async () => {
 
 module.exports = {
   localWorkflowMonitor,
-  localJobMonitor
+  localJobMonitor,
 }

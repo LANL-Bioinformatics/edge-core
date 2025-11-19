@@ -10,14 +10,14 @@ const validationRules = () => [
     .trim()
     .isLength({ min: 3, max: 30 })
     .withMessage(
-      'Invalid bulkSubmission name, at least 3 but less than 30 characters.'
+      'Invalid bulkSubmission name, at least 3 but less than 30 characters.',
     ),
   body('desc').optional(),
   body('type')
     .trim()
     .isLength({ min: 3, max: 30 })
     .withMessage(
-      'Invalid bulkSubmission type, at least 3 but less than 30 characters.'
+      'Invalid bulkSubmission type, at least 3 but less than 30 characters.',
     ),
   body('filename').trim().isLength({ min: 1 }).withMessage('Invalid filename.'),
   body('status')
@@ -48,7 +48,7 @@ const validationRules = () => [
     .optional()
     .trim()
     .isLength({ min: 16, max: 16 })
-    .withMessage('Invalid project code.')
+    .withMessage('Invalid project code.'),
 ]
 
 const validate = (req, res, next) => {
@@ -60,7 +60,7 @@ const validate = (req, res, next) => {
   const resultErrors = {
     error: {},
     message: 'Validation failed',
-    success: false
+    success: false,
   }
   errors.array().forEach(err => {
     resultErrors.error[err.param] = err.msg
@@ -70,5 +70,5 @@ const validate = (req, res, next) => {
 
 module.exports = {
   validationRules,
-  validate
+  validate,
 }

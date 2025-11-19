@@ -15,41 +15,41 @@ const info = async (req, res) => {
       return res.send({
         info: {
           allowNewRuns: false,
-          message: config.APP.SYSTEM_MESSAGE
+          message: config.APP.SYSTEM_MESSAGE,
         },
         message: 'Action successful',
-        success: true
+        success: true,
       })
     }
     // Get all projects with status in ('in queue', 'running', 'submitted')
     const projects = await Project.find({
       owner: req.user.email,
-      status: { $in: ['in queue', 'running', 'processing', 'submitted'] }
+      status: { $in: ['in queue', 'running', 'processing', 'submitted'] },
     })
     if (projects.length >= req.user.job.limit) {
       return res.send({
         info: {
           allowNewRuns: false,
           message:
-            'You have reached the maximum number of running projects allowed. Please wait for running projects to complete before submitting a new project.'
+            'You have reached the maximum number of running projects allowed. Please wait for running projects to complete before submitting a new project.',
         },
         message: 'Action successful',
-        success: true
+        success: true,
       })
     }
     return res.send({
       info: {
         allowNewRuns: true,
-        jobLimit: req.user.job.limit - projects.length
+        jobLimit: req.user.job.limit - projects.length,
       },
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`System check failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -66,7 +66,7 @@ const updateOne = async (req, res) => {
       return res.status(400).json({
         error: { update: `Email ${req.user.email} not found` },
         message: 'Action failed',
-        success: false
+        success: false,
       })
     }
     // encode password
@@ -114,14 +114,14 @@ const updateOne = async (req, res) => {
       role: user.role,
       active: user.active,
       code: user.code,
-      notification: user.notification
+      notification: user.notification,
     }
     // Sign token
     const token = await signToken(payload)
     return res.json({
       token: `Bearer ${token}`,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Update user failed: ${err}`)
@@ -130,7 +130,7 @@ const updateOne = async (req, res) => {
 
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -141,21 +141,21 @@ const getUsers = async (req, res) => {
     logger.debug(`/api/auth-user/users: ${JSON.stringify(req.user.email)}`)
     const users = await User.find(
       { active: true, email: { $ne: req.user.email } },
-      { firstName: 1, lastName: 1, email: 1, _id: 0 }
+      { firstName: 1, lastName: 1, email: 1, _id: 0 },
     ).sort([
       ['firstName', 1],
-      ['lastName', 1]
+      ['lastName', 1],
     ])
     return res.send({
       users,
       message: 'Action successful',
-      success: true
+      success: true,
     })
   } catch (err) {
     logger.error(`Get users failed: ${err}`)
     return res.status(500).json({
       message: sysError,
-      success: false
+      success: false,
     })
   }
 }
@@ -163,5 +163,5 @@ const getUsers = async (req, res) => {
 module.exports = {
   info,
   updateOne,
-  getUsers
+  getUsers,
 }

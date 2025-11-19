@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {
   getPublicFiles,
-  getGlobusFiles
+  getGlobusFiles,
 } = require('../controllers/auth-user-data-controller')
 
 /**
