@@ -1,6 +1,12 @@
-const router = require('express').Router();
-const { validationRules: projectCodeValidationRules, validate: projectCodeValidate } = require('../validations/project-code-validator');
-const { validationRules: updateValidationRules, validate: updateValidate } = require('../validations/project-update-validator');
+const router = require('express').Router()
+const {
+  validationRules: projectCodeValidationRules,
+  validate: projectCodeValidate
+} = require('../validations/project-code-validator')
+const {
+  validationRules: updateValidationRules,
+  validate: updateValidate
+} = require('../validations/project-update-validator')
 const {
   getOne,
   updateOne,
@@ -9,8 +15,8 @@ const {
   getOutputs,
   getBatchOutputs,
   getResult,
-  getRunStats,
-} = require('../controllers/admin-project-controller');
+  getRunStats
+} = require('../controllers/admin-project-controller')
 
 /**
  * @swagger
@@ -39,10 +45,10 @@ const {
  *           application/json:
  *             schema:
  *               $ref: '#/components/models/serverError'
-*/
+ */
 router.get('/projects', async (req, res) => {
-  await getAll(req, res);
-});
+  await getAll(req, res)
+})
 
 /**
  * @swagger
@@ -85,9 +91,14 @@ router.get('/projects', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.put('/projects/:code', updateValidationRules(), updateValidate, async (req, res) => {
-  await updateOne(req, res);
-});
+router.put(
+  '/projects/:code',
+  updateValidationRules(),
+  updateValidate,
+  async (req, res) => {
+    await updateOne(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -124,9 +135,14 @@ router.put('/projects/:code', updateValidationRules(), updateValidate, async (re
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
-  await getOne(req, res);
-});
+router.get(
+  '/projects/:code',
+  projectCodeValidationRules(),
+  projectCodeValidate,
+  async (req, res) => {
+    await getOne(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -163,9 +179,14 @@ router.get('/projects/:code', projectCodeValidationRules(), projectCodeValidate,
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/conf', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
-  await getConf(req, res);
-});
+router.get(
+  '/projects/:code/conf',
+  projectCodeValidationRules(),
+  projectCodeValidate,
+  async (req, res) => {
+    await getConf(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -202,9 +223,14 @@ router.get('/projects/:code/conf', projectCodeValidationRules(), projectCodeVali
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/outputs', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
-  await getOutputs(req, res);
-});
+router.get(
+  '/projects/:code/outputs',
+  projectCodeValidationRules(),
+  projectCodeValidate,
+  async (req, res) => {
+    await getOutputs(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -241,9 +267,14 @@ router.get('/projects/:code/outputs', projectCodeValidationRules(), projectCodeV
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/batch/outputs', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
-  await getBatchOutputs(req, res);
-});
+router.get(
+  '/projects/:code/batch/outputs',
+  projectCodeValidationRules(),
+  projectCodeValidate,
+  async (req, res) => {
+    await getBatchOutputs(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -280,9 +311,14 @@ router.get('/projects/:code/batch/outputs', projectCodeValidationRules(), projec
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/result', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
-  await getResult(req, res);
-});
+router.get(
+  '/projects/:code/result',
+  projectCodeValidationRules(),
+  projectCodeValidate,
+  async (req, res) => {
+    await getResult(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -319,8 +355,13 @@ router.get('/projects/:code/result', projectCodeValidationRules(), projectCodeVa
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/runStats', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
-  await getRunStats(req, res);
-});
+router.get(
+  '/projects/:code/runStats',
+  projectCodeValidationRules(),
+  projectCodeValidate,
+  async (req, res) => {
+    await getRunStats(req, res)
+  }
+)
 
-module.exports = router;
+module.exports = router

@@ -1,7 +1,16 @@
-const router = require('express').Router();
-const { validationRules: bulkSubmissionCodeValidationRules, validate: bulkSubmissionCodeValidate } = require('../validations/bulkSubmission-code-validator');
-const { validationRules: addValidationRules, validate: addValidate } = require('../validations/bulkSubmission-validator');
-const { validationRules: updateValidationRules, validate: updateValidate } = require('../validations/bulkSubmission-update-validator');
+const router = require('express').Router()
+const {
+  validationRules: bulkSubmissionCodeValidationRules,
+  validate: bulkSubmissionCodeValidate
+} = require('../validations/bulkSubmission-code-validator')
+const {
+  validationRules: addValidationRules,
+  validate: addValidate
+} = require('../validations/bulkSubmission-validator')
+const {
+  validationRules: updateValidationRules,
+  validate: updateValidate
+} = require('../validations/bulkSubmission-update-validator')
 const {
   addOne,
   getOne,
@@ -15,8 +24,8 @@ const {
   getBatchOutputs,
   getResult,
   getRunStats,
-  getBulkSubmissionsByType,
-} = require('../controllers/auth-user-bulkSubmission-controller');
+  getBulkSubmissionsByType
+} = require('../controllers/auth-user-bulkSubmission-controller')
 
 /**
  * @swagger
@@ -47,8 +56,8 @@ const {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/bulkSubmissions', async (req, res) => {
-  await getOwn(req, res);
-});
+  await getOwn(req, res)
+})
 
 /**
  * @swagger
@@ -79,8 +88,8 @@ router.get('/bulkSubmissions', async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/bulkSubmissions/all', async (req, res) => {
-  await getAll(req, res);
-});
+  await getAll(req, res)
+})
 
 /**
  * @swagger
@@ -111,8 +120,8 @@ router.get('/bulkSubmissions/all', async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/bulkSubmissions/queue', async (req, res) => {
-  await getQueue(req, res);
-});
+  await getQueue(req, res)
+})
 
 /**
  * @swagger
@@ -149,8 +158,8 @@ router.get('/bulkSubmissions/queue', async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.post('/bulkSubmissions/files', async (req, res) => {
-  await getFiles(req, res);
-});
+  await getFiles(req, res)
+})
 
 /**
  * @swagger
@@ -186,9 +195,14 @@ router.post('/bulkSubmissions/files', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/bulkSubmissions', addValidationRules(), addValidate, async (req, res) => {
-  await addOne(req, res);
-});
+router.post(
+  '/bulkSubmissions',
+  addValidationRules(),
+  addValidate,
+  async (req, res) => {
+    await addOne(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -231,9 +245,14 @@ router.post('/bulkSubmissions', addValidationRules(), addValidate, async (req, r
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.put('/bulkSubmissions/:code', updateValidationRules(), updateValidate, async (req, res) => {
-  await updateOne(req, res);
-});
+router.put(
+  '/bulkSubmissions/:code',
+  updateValidationRules(),
+  updateValidate,
+  async (req, res) => {
+    await updateOne(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -270,9 +289,14 @@ router.put('/bulkSubmissions/:code', updateValidationRules(), updateValidate, as
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/bulkSubmissions/:code', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
-  await getOne(req, res);
-});
+router.get(
+  '/bulkSubmissions/:code',
+  bulkSubmissionCodeValidationRules(),
+  bulkSubmissionCodeValidate,
+  async (req, res) => {
+    await getOne(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -310,8 +334,8 @@ router.get('/bulkSubmissions/:code', bulkSubmissionCodeValidationRules(), bulkSu
  *               $ref: '#/components/models/serverError'
  */
 router.get('/bulkSubmissions/type/:type', async (req, res) => {
-  await getBulkSubmissionsByType(req, res);
-});
+  await getBulkSubmissionsByType(req, res)
+})
 
 /**
  * @swagger
@@ -348,9 +372,14 @@ router.get('/bulkSubmissions/type/:type', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/bulkSubmissions/:code/conf', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
-  await getConf(req, res);
-});
+router.get(
+  '/bulkSubmissions/:code/conf',
+  bulkSubmissionCodeValidationRules(),
+  bulkSubmissionCodeValidate,
+  async (req, res) => {
+    await getConf(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -387,9 +416,14 @@ router.get('/bulkSubmissions/:code/conf', bulkSubmissionCodeValidationRules(), b
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/bulkSubmissions/:code/outputs', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
-  await getOutputs(req, res);
-});
+router.get(
+  '/bulkSubmissions/:code/outputs',
+  bulkSubmissionCodeValidationRules(),
+  bulkSubmissionCodeValidate,
+  async (req, res) => {
+    await getOutputs(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -427,9 +461,14 @@ router.get('/bulkSubmissions/:code/outputs', bulkSubmissionCodeValidationRules()
  *               $ref: '#/components/models/serverError'
  */
 
-router.get('/bulkSubmissions/:code/batch/outputs', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
-  await getBatchOutputs(req, res);
-});
+router.get(
+  '/bulkSubmissions/:code/batch/outputs',
+  bulkSubmissionCodeValidationRules(),
+  bulkSubmissionCodeValidate,
+  async (req, res) => {
+    await getBatchOutputs(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -466,9 +505,14 @@ router.get('/bulkSubmissions/:code/batch/outputs', bulkSubmissionCodeValidationR
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/bulkSubmissions/:code/result', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
-  await getResult(req, res);
-});
+router.get(
+  '/bulkSubmissions/:code/result',
+  bulkSubmissionCodeValidationRules(),
+  bulkSubmissionCodeValidate,
+  async (req, res) => {
+    await getResult(req, res)
+  }
+)
 
 /**
  * @swagger
@@ -505,8 +549,13 @@ router.get('/bulkSubmissions/:code/result', bulkSubmissionCodeValidationRules(),
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/bulkSubmissions/:code/runStats', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
-  await getRunStats(req, res);
-});
+router.get(
+  '/bulkSubmissions/:code/runStats',
+  bulkSubmissionCodeValidationRules(),
+  bulkSubmissionCodeValidate,
+  async (req, res) => {
+    await getRunStats(req, res)
+  }
+)
 
-module.exports = router;
+module.exports = router
