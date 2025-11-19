@@ -31,6 +31,7 @@
     "mongoose": "^6.13.6",
     "mongoose-to-swagger": "^1.4.0",
     "node-cron": "^3.0.2",
+    "node-xlsx": "^0.24.0",
     "nodemailer": "^6.10.0",
     "nodemailer-mailgun-transport": "^2.1.5",
     "papaparse": "^5.5.1",

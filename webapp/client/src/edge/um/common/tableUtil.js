@@ -53,6 +53,28 @@ export const userTypeNames = {
   admin: 'Admin',
 }
 
+export const bulkSubmissionStatusColors = {
+  running: 'warning',
+  'in queue': 'secondary',
+  failed: 'danger',
+  complete: 'success',
+  rerun: 'info',
+  processing: 'info',
+  submitted: 'info',
+  delete: 'danger',
+}
+
+export const bulkSubmissionStatusNames = {
+  running: 'Running',
+  'in queue': 'In queue',
+  failed: 'Failed',
+  complete: 'Complete',
+  rerun: 'Re-run',
+  processing: 'Processing',
+  submitted: 'Submitted',
+  delete: 'Deleted',
+}
+
 const strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})')
 export const validatePassword = (value) => !value.length || strongPassword.test(value)
 export const validateRole = (value) => ['admin', 'user'].includes(value)

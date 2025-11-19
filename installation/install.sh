@@ -18,6 +18,7 @@ if [ ! -d  $io_home ]; then
     "sra"
     "db"
     "nextflow"
+    "bulksubmissions"
   )
 
   for dir in "${dirs[@]}"

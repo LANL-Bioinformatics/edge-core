@@ -22,9 +22,11 @@ export const apis = {
   userUploadFiles: '/api/auth-user/uploads/files',
   userPublicFiles: '/api/auth-user/data/public',
   userGlobusFiles: '/api/auth-user/data/globus',
+  userBulkSubmissions: '/api/auth-user/bulkSubmissions',
   adminProjects: '/api/admin/projects',
   adminUsers: '/api/admin/users',
   adminUploads: '/api/admin/uploads',
+  adminBulkSubmissions: '/api/admin/bulkSubmissions',
 }
 
 // match colors in scss/_custom.scss

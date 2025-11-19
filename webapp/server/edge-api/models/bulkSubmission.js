@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const { projectStatus } = require('../utils/conf');
+const { bulkSubmissionStatus } = require('../utils/conf');
 
 // Create Schema
-const projectSchema = new mongoose.Schema({
+const bulkSubmissionSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -14,10 +14,14 @@ const projectSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: projectStatus[0],
-    enum: projectStatus,
+    default: bulkSubmissionStatus[0],
+    enum: bulkSubmissionStatus,
   },
   type: {
+    type: String,
+    required: true,
+  },
+  filename: {
     type: String,
     required: true,
   },
@@ -27,10 +31,6 @@ const projectSchema = new mongoose.Schema({
     unique: true,
   },
   public: {
-    type: Boolean,
-    default: false,
-  },
-  notified: {
     type: Boolean,
     default: false,
   },
@@ -45,6 +45,9 @@ const projectSchema = new mongoose.Schema({
   sharedTo: [{
     type: String,
   }],
+  projects: [{
+    type: String
+  }],
 }, {
   timestamps: {
     createdAt: 'created', // Use `created` to store the created date
@@ -52,4 +55,4 @@ const projectSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Project', projectSchema);
+module.exports = mongoose.model('BulkSubmission', bulkSubmissionSchema);

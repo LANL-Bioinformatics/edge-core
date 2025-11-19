@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const { validationRules: projectCodeValidationRules, validate: projectCodeValidate } = require('../validations/project-code-validator');
-const { validationRules: addValidationRules, validate: addValidate } = require('../validations/project-validator');
-const { validationRules: updateValidationRules, validate: updateValidate } = require('../validations/project-update-validator');
+const { validationRules: bulkSubmissionCodeValidationRules, validate: bulkSubmissionCodeValidate } = require('../validations/bulkSubmission-code-validator');
+const { validationRules: addValidationRules, validate: addValidate } = require('../validations/bulkSubmission-validator');
+const { validationRules: updateValidationRules, validate: updateValidate } = require('../validations/bulkSubmission-update-validator');
 const {
   addOne,
   getOne,
@@ -15,14 +15,14 @@ const {
   getBatchOutputs,
   getResult,
   getRunStats,
-  getProjectsByType,
-} = require('../controllers/auth-user-project-controller');
+  getBulkSubmissionsByType,
+} = require('../controllers/auth-user-bulkSubmission-controller');
 
 /**
  * @swagger
- * /api/auth-user/projects:
+ * /api/auth-user/bulkSubmissions:
  *   get:
- *     summary: List projects owned by user
+ *     summary: List bulkSubmissions owned by user
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -46,15 +46,15 @@ const {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects', async (req, res) => {
+router.get('/bulkSubmissions', async (req, res) => {
   await getOwn(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/all:
+ * /api/auth-user/bulkSubmissions/all:
  *   get:
- *     summary: List projects that user can access to
+ *     summary: List bulkSubmissions that user can access to
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -78,15 +78,15 @@ router.get('/projects', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/all', async (req, res) => {
+router.get('/bulkSubmissions/all', async (req, res) => {
   await getAll(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/queue:
+ * /api/auth-user/bulkSubmissions/queue:
  *   get:
- *     summary: List projects that are still running or in queue
+ *     summary: List bulkSubmissions that are still running or in queue
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -110,15 +110,15 @@ router.get('/projects/all', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/queue', async (req, res) => {
+router.get('/bulkSubmissions/queue', async (req, res) => {
   await getQueue(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/files:
+ * /api/auth-user/bulkSubmissions/files:
  *   post:
- *     summary: Find all files matching fileTypes in project directories
+ *     summary: Find all files matching fileTypes in bulkSubmission directories
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -127,7 +127,7 @@ router.get('/projects/queue', async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/models/projectFiles'
+ *             $ref: '#/components/models/bulkSubmissionFiles'
  *     responses:
  *       200:
  *         description: Action successful.
@@ -148,15 +148,15 @@ router.get('/projects/queue', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/projects/files', async (req, res) => {
+router.post('/bulkSubmissions/files', async (req, res) => {
   await getFiles(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects:
+ * /api/auth-user/bulkSubmissions:
  *   post:
- *     summary: Create new project
+ *     summary: Create new bulkSubmission
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -165,7 +165,7 @@ router.post('/projects/files', async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/models/addProject'
+ *             $ref: '#/components/models/addBulkSubmission'
  *     responses:
  *       200:
  *         description: Action successful.
@@ -186,15 +186,15 @@ router.post('/projects/files', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/projects', addValidationRules(), addValidate, async (req, res) => {
+router.post('/bulkSubmissions', addValidationRules(), addValidate, async (req, res) => {
   await addOne(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/{code}:
+ * /api/auth-user/bulkSubmissions/{code}:
  *   put:
- *     summary: Update project
+ *     summary: Update bulkSubmission
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -204,13 +204,13 @@ router.post('/projects', addValidationRules(), addValidate, async (req, res) => 
  *        required: true
  *        type: string
  *        value: test
- *        description: The project unique code.
+ *        description: The bulkSubmission unique code.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/models/updateProject'
+ *             $ref: '#/components/models/updateBulkSubmission'
  *     responses:
  *       200:
  *         description: Action successful.
@@ -231,15 +231,15 @@ router.post('/projects', addValidationRules(), addValidate, async (req, res) => 
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.put('/projects/:code', updateValidationRules(), updateValidate, async (req, res) => {
+router.put('/bulkSubmissions/:code', updateValidationRules(), updateValidate, async (req, res) => {
   await updateOne(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/{code}:
+ * /api/auth-user/bulkSubmissions/{code}:
  *   get:
- *     summary: Get a project by code
+ *     summary: Get a bulkSubmission by code
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -249,14 +249,14 @@ router.put('/projects/:code', updateValidationRules(), updateValidate, async (re
  *        required: true
  *        type: string
  *        value: test
- *        description: The project unique code.
+ *        description: The bulkSubmission unique code.
  *     responses:
  *       200:
  *         description: Action successful.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/models/projectActionSuccessful'
+ *               $ref: '#/components/models/bulkSubmissionActionSuccessful'
  *       400:
  *         description: Invalid input
  *         content:
@@ -270,15 +270,15 @@ router.put('/projects/:code', updateValidationRules(), updateValidate, async (re
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
+router.get('/bulkSubmissions/:code', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
   await getOne(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/type/{type}:
+ * /api/auth-user/bulkSubmissions/type/{type}:
  *   get:
- *     summary: Get projects by type
+ *     summary: Get bulkSubmissions by type
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -288,14 +288,14 @@ router.get('/projects/:code', projectCodeValidationRules(), projectCodeValidate,
  *        required: true
  *        type: string
  *        value: test
- *        description: The project type.
+ *        description: The bulkSubmission type.
  *     responses:
  *       200:
  *         description: Action successful.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/models/projectActionSuccessful'
+ *               $ref: '#/components/models/bulkSubmissionActionSuccessful'
  *       400:
  *         description: Invalid input
  *         content:
@@ -309,15 +309,15 @@ router.get('/projects/:code', projectCodeValidationRules(), projectCodeValidate,
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/type/:type', async (req, res) => {
-  await getProjectsByType(req, res);
+router.get('/bulkSubmissions/type/:type', async (req, res) => {
+  await getBulkSubmissionsByType(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/{code}/conf:
+ * /api/auth-user/bulkSubmissions/{code}/conf:
  *   get:
- *     summary: Get a project configuration by code
+ *     summary: Get a bulkSubmission configuration by code
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -327,7 +327,7 @@ router.get('/projects/type/:type', async (req, res) => {
  *        required: true
  *        type: string
  *        value: test
- *        description: The project unique code.
+ *        description: The bulkSubmission unique code.
  *     responses:
  *       200:
  *         description: Action successful.
@@ -348,13 +348,13 @@ router.get('/projects/type/:type', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/conf', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
+router.get('/bulkSubmissions/:code/conf', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
   await getConf(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/{code}/outputs:
+ * /api/auth-user/bulkSubmissions/{code}/outputs:
  *   get:
  *     summary: Get output files by code
  *     tags: [AuthUser]
@@ -366,7 +366,7 @@ router.get('/projects/:code/conf', projectCodeValidationRules(), projectCodeVali
  *        required: true
  *        type: string
  *        value: test
- *        description: The project unique code.
+ *        description: The bulkSubmission unique code.
  *     responses:
  *       200:
  *         description: Action successful.
@@ -387,13 +387,13 @@ router.get('/projects/:code/conf', projectCodeValidationRules(), projectCodeVali
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/outputs', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
+router.get('/bulkSubmissions/:code/outputs', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
   await getOutputs(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/{code}/batch/outputs:
+ * /api/auth-user/bulkSubmissions/{code}/batch/outputs:
  *   get:
  *     summary: Get output files by code
  *     tags: [AuthUser]
@@ -405,7 +405,7 @@ router.get('/projects/:code/outputs', projectCodeValidationRules(), projectCodeV
  *        required: true
  *        type: string
  *        value: test
- *        description: The project unique code.
+ *        description: The bulkSubmission unique code.
  *     responses:
  *       200:
  *         description: Action successful.
@@ -427,15 +427,15 @@ router.get('/projects/:code/outputs', projectCodeValidationRules(), projectCodeV
  *               $ref: '#/components/models/serverError'
  */
 
-router.get('/projects/:code/batch/outputs', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
+router.get('/bulkSubmissions/:code/batch/outputs', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
   await getBatchOutputs(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/{code}/result:
+ * /api/auth-user/bulkSubmissions/{code}/result:
  *   get:
- *     summary: Get project result by code
+ *     summary: Get bulkSubmission result by code
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -445,7 +445,7 @@ router.get('/projects/:code/batch/outputs', projectCodeValidationRules(), projec
  *        required: true
  *        type: string
  *        value: test
- *        description: The project unique code.
+ *        description: The bulkSubmission unique code.
  *     responses:
  *       200:
  *         description: Action successful.
@@ -466,15 +466,15 @@ router.get('/projects/:code/batch/outputs', projectCodeValidationRules(), projec
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/result', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
+router.get('/bulkSubmissions/:code/result', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
   await getResult(req, res);
 });
 
 /**
  * @swagger
- * /api/auth-user/projects/{code}/runStats:
+ * /api/auth-user/bulkSubmissions/{code}/runStats:
  *   get:
- *     summary: Get project runStats by code
+ *     summary: Get bulkSubmission runStats by code
  *     tags: [AuthUser]
  *     security:
  *       - bearerAuth: []
@@ -484,7 +484,7 @@ router.get('/projects/:code/result', projectCodeValidationRules(), projectCodeVa
  *        required: true
  *        type: string
  *        value: test
- *        description: The project unique code.
+ *        description: The bulkSubmission unique code.
  *     responses:
  *       200:
  *         description: Action successful.
@@ -505,7 +505,7 @@ router.get('/projects/:code/result', projectCodeValidationRules(), projectCodeVa
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.get('/projects/:code/runStats', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
+router.get('/bulkSubmissions/:code/runStats', bulkSubmissionCodeValidationRules(), bulkSubmissionCodeValidate, async (req, res) => {
   await getRunStats(req, res);
 });
 

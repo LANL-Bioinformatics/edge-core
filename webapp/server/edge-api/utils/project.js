@@ -19,18 +19,9 @@ const getProject = async (code, type, user) => {
     }
     if (type === 'user' && (project.owner === user.email || project.sharedTo.includes(user.email) || project.public)) {
       return project;
-    } if (type === 'public' && project.public) {
+    }
+    if (type === 'public' && project.public) {
       return project;
-    } if (project.parent) {
-      let query = { status: { $ne: 'delete' }, code: project.parent, public: true };
-      if (type === 'user') {
-        query = { status: { $ne: 'delete' }, code: project.parent, $or: [{ owner: user.email }, { sharedTo: user.email }, { public: true }] };
-      }
-      const pp = await Project.findOne(query);
-      if (pp) {
-        return project;
-      }
-      return null;
     }
     return null;
   } catch (err) {
@@ -65,19 +56,6 @@ const updateProject = async (query, req) => {
 
     proj.updated = Date.now();
     const project = await proj.save();
-    // set children to 'delete'
-    if (project.type.match(/batch/) && project.status === 'delete') {
-      await Project.find({
-        status: { $ne: 'delete' }, code: { $in: project.children },
-      }).then((projects) => {
-        projects.forEach((subproject) => {
-          const subproj = subproject;
-          subproj.status = 'delete';
-          subproj.updated = Date.now();
-          subproj.save();
-        });
-      });
-    }
     return project;
   } catch (err) {
     return Promise.reject(err);
@@ -112,33 +90,6 @@ const getProjectOutputs = async (code, type, req) => {
     return Promise.reject(err);
   }
 };
-
-const getProjectBatchOutputs = (code, type, req) => new Promise((resolve, reject) => {
-  const projDir = config.IO.PROJECT_BASE_DIR;
-  getProject(code, type, req.user).then(project => {
-    if (!project.type.includes('batch')) {
-      reject(new Error('Not a batch project'));
-    }
-    Project.find({
-      'status': { $ne: 'delete' }, 'code': { $in: project.children }
-    }).then((projects) => {
-      const allfiles = [];
-      if (projects.length === 0) {
-        resolve(allfiles);
-      } else {
-        projects.forEach((proj, index) => {
-          const files = [];
-          if (proj && fs.existsSync(`${projDir}/${proj.code}/output`)) {
-            allfiles.push(...getAllFiles(`${projDir}/${proj.code}/output`, files, req.body.fileTypes, proj.name, `/projects/${proj.code}/output`, `${projDir}/${proj.code}/output`));
-          }
-          if (index === projects.length - 1) {
-            resolve(allfiles);
-          }
-        });
-      }
-    });
-  }).catch(err => { reject(err); });
-});
 
 const getProjectResult = async (code, type, req) => {
   try {
@@ -191,7 +142,6 @@ module.exports = {
   updateProject,
   getProjectConf,
   getProjectOutputs,
-  getProjectBatchOutputs,
   getProjectResult,
   getProjectRunStats,
 };

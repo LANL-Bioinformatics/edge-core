@@ -279,36 +279,6 @@ const getQueue = async (req, res) => {
   }
 };
 
-// Get subprojects
-const getChildren = async (req, res) => {
-  try {
-    logger.debug(`/api/auth-user/projects/${req.params.code}/children`);
-    const project = await getProject(req.params.code, 'user', req.user);
-
-    if (!project) {
-      logger.error(`project ${req.params.code} not found or access denied.`);
-      return res.status(400).json({
-        error: { children: `project ${req.params.code} not found or access denied` },
-        message: 'Action failed',
-        success: false,
-      });
-    }
-    const projects = await Project.find({ 'status': { $ne: 'delete' }, 'code': { $in: project.children } }).sort([['updated', -1]]);
-
-    return res.json({
-      children: projects,
-      message: 'Action successful',
-      success: true,
-    });
-  } catch (err) {
-    logger.error(`/api/auth-user/projects/${req.params.code}/children failed: ${err}`);
-    return res.status(500).json({
-      message: sysError,
-      success: false,
-    });
-  }
-};
-
 // Get files
 const getFiles = async (req, res) => {
   try {
@@ -437,7 +407,6 @@ module.exports = {
   getOwn,
   getAll,
   getQueue,
-  getChildren,
   getFiles,
   getOutputs,
   getBatchOutputs,

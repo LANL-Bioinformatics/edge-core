@@ -51,6 +51,7 @@ const appServerDir = process.env.APP_SERVER_DIR ? process.env.APP_SERVER_DIR : _
 const CLIENT_BASE_DIR = path.join(appServerDir, '../client');
 const NEXTFLOW_BASE_DIR = path.join(appServerDir, '../../workflows/Nextflow');
 const CROMWELL_BASE_DIR = path.join(appServerDir, '../../workflows/Cromwell');
+const WORKFLOW_DOCS_BASE_DIR = path.join(appServerDir, '../../workflows/docs');
 const IO_BASE_DIR = process.env.IO_BASE_DIR || path.join(appServerDir, '../../io');
 
 const config = {
@@ -195,6 +196,8 @@ const config = {
   IO: {
     // Directory to store workflow results.
     PROJECT_BASE_DIR: process.env.PROJECTS_BASE_DIR || path.join(IO_BASE_DIR, 'projects'),
+    // Directory to store bulk submission.
+    BULKSUBMISSION_BASE_DIR: process.env.BULKSUBMISSION_BASE_DIR || path.join(IO_BASE_DIR, 'bulkSubmissions'),
     // Directory to store sra workflow results.
     SRA_BASE_DIR: process.env.SRA_BASE_DIR || path.join(IO_BASE_DIR, 'sra'),
     // Directory to store public data.
@@ -205,6 +208,8 @@ const config = {
     UPLOADED_FILES_TEMP_DIR: process.env.UPLOADED_FILES_TEMP_DIR || path.join(IO_BASE_DIR, 'upload/tmp'),
     // Globus
     GLOBUG_DATA_HOME_DIR: process.env.GLOBUS_DATA_HOME_DIR,
+    // Directory to store workflow docs
+    WORKFLOW_DOCS_DIR: process.env.WORKFLOW_DOCS_DIR || WORKFLOW_DOCS_BASE_DIR,
   },
   // Parameters that influence the behavior of `Winston.js`, a logging library.
   // Reference: https://github.com/winstonjs/winston-daily-rotate-file#options

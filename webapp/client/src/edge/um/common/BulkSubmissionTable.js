@@ -1,10 +1,24 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import { Badge } from 'reactstrap'
+import { updateBulkSubmission } from 'src/redux/reducers/edge/userSlice'
+import { updateBulkSubmissionAdmin } from 'src/redux/reducers/edge/adminSlice'
+import { cleanError } from 'src/redux/reducers/messageSlice'
+import { ConfirmDialog } from '../../common/Dialogs'
+import { notify, getData, apis, isValidProjectName } from '../../common/util'
+import {
+  theme,
+  bulkSubmissionStatusColors,
+  bulkSubmissionStatusNames,
+  validateRequired,
+  validateBoolean,
+} from './tableUtil'
+import UserSelector from './UserSelector'
+import startCase from 'lodash.startcase'
+
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import startCase from 'lodash.startcase'
+
 import { MaterialReactTable } from 'material-react-table'
 import { ThemeProvider, Box, IconButton, Tooltip } from '@mui/material'
 import Fab from '@mui/material/Fab'
@@ -21,22 +35,6 @@ import {
 } from '@mui/icons-material'
 import moment from 'moment'
 
-import { updateProjectAdmin } from 'src/redux/reducers/edge/adminSlice'
-import { updateProject } from 'src/redux/reducers/edge/userSlice'
-import { setSubmittingForm } from 'src/redux/reducers/pageSlice'
-import { cleanError } from 'src/redux/reducers/messageSlice'
-import { ConfirmDialog } from '../../common/Dialogs'
-import { notify, getData, apis, isValidProjectName } from '../../common/util'
-import { workflowList } from 'src/workflows/common/util'
-import {
-  theme,
-  projectStatusColors,
-  projectStatusNames,
-  validateRequired,
-  validateBoolean,
-} from './tableUtil'
-import UserSelector from './UserSelector'
-
 const actionDialogs = {
   '': { message: 'This action is not undoable.' },
   update: { message: 'This action is not undoable.' },
@@ -46,10 +44,10 @@ const actionDialogs = {
   unshare: { message: "You can use 'share' to undo this action." },
   publish: { message: "You can use 'unpublish' to undo this action." },
   unpublish: { message: "You can use 'publish' to undo this action." },
-  export: { message: 'Export metadata of the selected projects to a csv file.' },
+  export: { message: 'Export metadata of the selected bulkSubmissions to a csv file.' },
 }
 
-const ProjectTable = (props) => {
+const BulkSubmissionTable = (props) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const user = useSelector((state) => state.user)
@@ -64,28 +62,28 @@ const ProjectTable = (props) => {
   const [action, setAction] = useState('')
   const [openUserSelector, setOpenUserSelector] = useState(false)
   const [userList, setUserlist] = useState([])
-  const [projectPageUrl, setProjectPageUrl] = useState('/user/project?code=')
-  const [projects, setProjects] = useState()
+  const [bulkSubmissions, setBulkSubmissions] = useState()
   const [validationErrors, setValidationErrors] = useState({})
+  const [bulkSubmissionPageUrl, setBulkSubmissionPageUrl] = useState('/user/bulksubmission?code=')
 
   useEffect(() => {
     if (props.tableType === 'admin' && user.profile.role !== 'admin') {
       navigate('/home')
     } else {
       if (props.tableType === 'admin') {
-        setProjectPageUrl('/admin/project?code=')
+        setBulkSubmissionPageUrl('/admin/bulksubmission?code=')
       }
-      getProjects()
+      getBulkSubmissions()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props, user])
 
   useEffect(() => {
-    if (projects && !page.submittingForm) {
+    if (bulkSubmissions && !page.submittingForm) {
       notifyUpdateResults()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projects, page])
+  }, [bulkSubmissions, page])
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
@@ -95,12 +93,12 @@ const ProjectTable = (props) => {
         setOpenDialog(false)
         dispatch(cleanError())
         dispatch(setSubmittingForm(true))
-        setProjects([])
+        setBulkSubmissions([])
         setAction('update')
-        const proj = updateProj(newData, oldData)
-        setProjects([proj])
-        resolve(proj)
-        //wait for project updating complete
+        const bulkSubmission = updateBulkSubmission(newData, oldData)
+        setBulkSubmissions([bulkSubmission])
+        resolve(bulkSubmission)
+        //wait for bulkSubmission updating complete
         setTimeout(() => {
           dispatch(setSubmittingForm(false))
         }, 200)
@@ -161,7 +159,7 @@ const ProjectTable = (props) => {
   const columns = useMemo(
     () => [
       {
-        header: 'Project',
+        header: 'Name',
         accessorKey: 'name',
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
@@ -180,11 +178,16 @@ const ProjectTable = (props) => {
         enableEditing: false,
       },
       {
+        header: 'File',
+        accessorKey: 'filename',
+        enableEditing: false,
+      },
+      {
         header: 'Status',
         accessorKey: 'status',
         Cell: ({ cell }) => (
-          <Badge color={projectStatusColors[cell.getValue()]}>
-            {projectStatusNames[cell.getValue()]}
+          <Badge color={bulkSubmissionStatusColors[cell.getValue()]}>
+            {bulkSubmissionStatusNames[cell.getValue()]}
           </Badge>
         ),
         enableEditing: false,
@@ -230,20 +233,20 @@ const ProjectTable = (props) => {
     [getCommonEditTextFieldProps],
   )
 
-  const reloadProjects = () => {
+  const reloadBulkSubmissions = () => {
     setSelectedData([])
-    getProjects()
+    getBulkSubmissions()
   }
 
-  const getProjects = () => {
-    let url = apis.userProjects
+  const getBulkSubmissions = () => {
+    let url = apis.userBulkSubmissions
     if (props.tableType === 'admin') {
-      url = apis.adminProjects
+      url = apis.adminBulkSubmissions
     }
     setLoading(true)
     getData(url)
       .then((data) => {
-        let projects = data.projects.map((obj) => {
+        let bulks = data.bulkSubmissions.map((obj) => {
           let rObj = { ...obj }
 
           if (obj.sharedTo && obj.sharedTo.length > 0) {
@@ -255,7 +258,7 @@ const ProjectTable = (props) => {
           return rObj
         })
         setLoading(false)
-        setTableData(projects)
+        setTableData(bulks)
       })
       .catch((err) => {
         setLoading(false)
@@ -263,29 +266,29 @@ const ProjectTable = (props) => {
       })
   }
 
-  const updateProj = (proj, oldProj) => {
+  const updateBulk = (bulk, oldBulk) => {
     // only update status to 'rerun' if it is 'failed'
     const stats = ['failed', 'processing']
-    if (action === 'rerun' && !stats.includes(oldProj.status)) {
-      return oldProj
+    if (action === 'rerun' && !stats.includes(oldBulk.status)) {
+      return oldBulk
     }
     if (props.tableType === 'admin') {
-      dispatch(updateProjectAdmin(proj))
+      dispatch(updateBulkSubmissionAdmin(bulk))
     } else {
-      dispatch(updateProject(proj))
+      dispatch(updateBulkSubmission(bulk))
     }
-    return oldProj
+    return oldBulk
   }
 
   const notifyUpdateResults = () => {
     let resetTable = false
-    projects.forEach((proj) => {
-      const actionTitle = startCase(action) + " project '" + proj.name + "'"
-      if (errors[proj.code]) {
-        notify('error', actionTitle + ' failed! ' + errors[proj.code])
+    bulkSubmissions.forEach((bulk) => {
+      const actionTitle = startCase(action) + " bulk submission '" + bulk.name + "'"
+      if (errors[bulk.code]) {
+        notify('error', actionTitle + ' failed! ' + errors[bulk.code])
       } else {
         notify('success', actionTitle + ' successfully!')
-        reloadProjects()
+        reloadBulkSubmissions()
         resetTable = true
       }
     })
@@ -296,7 +299,7 @@ const ProjectTable = (props) => {
 
   const handleAction = (action, rows) => {
     if (action === 'refresh') {
-      getProjects()
+      getBulkSubmissions()
       return
     }
     if (rows.length === 0) {
@@ -318,7 +321,7 @@ const ProjectTable = (props) => {
     setOpenDialog(false)
     dispatch(cleanError())
     dispatch(setSubmittingForm(true))
-    setProjects([])
+    setBulkSubmissions([])
 
     //get user selector options
     if (action === 'share' || action === 'unshare') {
@@ -326,32 +329,32 @@ const ProjectTable = (props) => {
     } else if (action === 'export') {
       //do exporting
     } else {
-      const promises = selectedData.map(async (proj) => {
-        return proccessProject(proj)
+      const promises = selectedData.map(async (bulk) => {
+        return proccessBulkSubmission(bulk)
       })
       Promise.all(promises).then((results) => {
-        setProjects(results)
+        setBulkSubmissions(results)
       })
-      //wait for project updating complete
+      //wait for bulk submission updating complete
       setTimeout(() => {
         dispatch(setSubmittingForm(false))
       }, 500)
     }
   }
 
-  const proccessProject = (proj) => {
-    const oldProj = { ...proj }
+  const proccessBulkSubmission = (bulk) => {
+    const oldBulk = { ...bulk }
     if (action === 'delete') {
-      proj.status = 'delete'
+      bulk.status = 'delete'
     } else if (action === 'rerun') {
-      proj.status = 'rerun'
+      bulk.status = 'rerun'
     } else if (action === 'publish') {
-      proj.public = true
+      bulk.public = true
     } else if (action === 'unpublish') {
-      proj.public = false
+      bulk.public = false
     }
 
-    return updateProj(proj, oldProj)
+    return updateBulk(bulk, oldBulk)
   }
 
   const handleUserSelectorChange = (selectedUsers) => {
@@ -367,45 +370,45 @@ const ProjectTable = (props) => {
     setOpenDialog(false)
     dispatch(cleanError())
     dispatch(setSubmittingForm(true))
-    setProjects([])
+    setBulkSubmissions([])
 
-    const promises = selectedData.map((proj) => {
-      return processShareUnshareProject(proj)
+    const promises = selectedData.map((bulk) => {
+      return processShareUnshareBulkSubmission(bulk)
     })
     Promise.all(promises).then((results) => {
-      setProjects(results)
+      setBulkSubmissions(results)
     })
-    //wait for project updating complete
+    //wait for bulkSubmission updating complete
     setTimeout(() => {
       dispatch(setSubmittingForm(false))
     }, 500)
   }
 
-  const processShareUnshareProject = (proj) => {
-    const oldProj = { ...proj }
+  const processShareUnshareBulkSubmission = (bulk) => {
+    const oldBulk = { ...bulk }
     if (action === 'share') {
-      let sharedTo = proj.sharedTo
+      let sharedTo = bulk.sharedTo
       userList.map((user) => {
-        if (proj.owner === user) {
+        if (bulk.owner === user) {
         } else if (!sharedTo.includes(user)) {
           sharedTo.push(user)
         }
         return 1
       })
 
-      proj.sharedTo = sharedTo
+      bulk.sharedTo = sharedTo
     } else if (action === 'unshare') {
-      let sharedTo = proj.sharedTo
+      let sharedTo = bulk.sharedTo
       userList.map((user) => {
         var index = sharedTo.indexOf(user)
         sharedTo.splice(index, 1)
         return 1
       })
 
-      proj.sharedTo = sharedTo
+      bulk.sharedTo = sharedTo
     }
 
-    return updateProj(proj, oldProj)
+    return updateBulk(bulk, oldBulk)
   }
 
   const handleUserSelectorClose = () => {
@@ -418,7 +421,7 @@ const ProjectTable = (props) => {
       <ConfirmDialog
         isOpen={openDialog}
         action={action}
-        header={'Are you sure to ' + action + ' the selected projects?'}
+        header={'Are you sure to ' + action + ' the selected bulk submissions?'}
         message={actionDialogs[action].message}
         handleClickYes={handleConfirmYes}
         handleClickClose={handleConfirmClose}
@@ -451,11 +454,11 @@ const ProjectTable = (props) => {
           }}
           muiTablePaginationProps={{
             rowsPerPageOptions: [10, 20, 50, 100],
-            labelRowsPerPage: 'projects per page',
+            labelRowsPerPage: 'bulk submissions per page',
           }}
           renderEmptyRowsFallback={() => (
             <center>
-              <br></br>No projects to display
+              <br></br>No bulk submissions to display
             </center>
           )}
           renderDetailPanel={({ row }) => (
@@ -473,8 +476,10 @@ const ProjectTable = (props) => {
           onEditingRowCancel={handleCancelRowEdits}
           renderRowActions={({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
-              <Tooltip arrow placement="bottom" title="Go to project result page">
-                <IconButton onClick={() => navigate(`${projectPageUrl}${row.original.code}`)}>
+              <Tooltip arrow placement="bottom" title="Go to bulk submission result page">
+                <IconButton
+                  onClick={() => navigate(`${bulkSubmissionPageUrl}${row.original.code}`)}
+                >
                   <Explore />
                 </IconButton>
               </Tooltip>
@@ -507,7 +512,7 @@ const ProjectTable = (props) => {
                       />
                     </Fab>
                   </Tooltip>
-                  <Tooltip title="Delete selected projects" aria-label="delete">
+                  <Tooltip title="Delete selected bulkSubmissions" aria-label="delete">
                     <Fab
                       color="primary"
                       size="small"
@@ -524,7 +529,7 @@ const ProjectTable = (props) => {
                     </Fab>
                   </Tooltip>
                   {props.tableType === 'admin' && (
-                    <Tooltip title="Rerun selected 'Failed' projects" aria-label="rerun">
+                    <Tooltip title="Rerun selected 'Failed' bulkSubmissions" aria-label="rerun">
                       <Fab
                         color="primary"
                         size="small"
@@ -541,7 +546,7 @@ const ProjectTable = (props) => {
                       </Fab>
                     </Tooltip>
                   )}
-                  <Tooltip title="Share selected projects" aria-label="share">
+                  <Tooltip title="Share selected bulkSubmissions" aria-label="share">
                     <Fab
                       color="primary"
                       size="small"
@@ -557,7 +562,7 @@ const ProjectTable = (props) => {
                       />
                     </Fab>
                   </Tooltip>
-                  <Tooltip title="Unshare selected projects" aria-label="unshare">
+                  <Tooltip title="Unshare selected bulkSubmissions" aria-label="unshare">
                     <Fab
                       color="primary"
                       size="small"
@@ -573,7 +578,7 @@ const ProjectTable = (props) => {
                       />
                     </Fab>
                   </Tooltip>
-                  <Tooltip title="Publish selected projects" aria-label="publish">
+                  <Tooltip title="Publish selected bulkSubmissions" aria-label="publish">
                     <Fab
                       color="primary"
                       size="small"
@@ -589,7 +594,7 @@ const ProjectTable = (props) => {
                       />
                     </Fab>
                   </Tooltip>
-                  <Tooltip title="Unpublish selected projects" aria-label="unpublish">
+                  <Tooltip title="Unpublish selected bulkSubmissions" aria-label="unpublish">
                     <Fab
                       color="primary"
                       size="small"
@@ -615,4 +620,4 @@ const ProjectTable = (props) => {
   )
 }
 
-export default ProjectTable
+export default BulkSubmissionTable

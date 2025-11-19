@@ -6,7 +6,6 @@ const {
   updateOne,
   getConf,
   getAll,
-  getChildren,
   getOutputs,
   getBatchOutputs,
   getResult,
@@ -166,45 +165,6 @@ router.get('/projects/:code', projectCodeValidationRules(), projectCodeValidate,
  */
 router.get('/projects/:code/conf', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
   await getConf(req, res);
-});
-
-/**
- * @swagger
- * /api/admin/projects/{code}/children:
- *   get:
- *     summary: Get subprojects by code
- *     tags: [Admin]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *      - in: path
- *        name: code
- *        required: true
- *        type: string
- *        value: test
- *        description: The project unique code.
- *     responses:
- *       200:
- *         description: Action successful.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/models/actionSuccessful'
- *       400:
- *         description: Invalid input
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/models/actionFailed'
- *       500:
- *         description: API server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/models/serverError'
- */
-router.get('/projects/:code/children', projectCodeValidationRules(), projectCodeValidate, async (req, res) => {
-  await getChildren(req, res);
 });
 
 /**
