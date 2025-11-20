@@ -27,7 +27,7 @@ import { setSubmittingForm } from 'src/redux/reducers/pageSlice'
 import { cleanError } from 'src/redux/reducers/messageSlice'
 import { ConfirmDialog } from '../../common/Dialogs'
 import { notify, getData, apis, isValidProjectName } from '../../common/util'
-import { workflowList } from 'src/workflows/common/util'
+import { workflowList } from 'src/util'
 import {
   theme,
   projectStatusColors,

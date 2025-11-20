@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { colors } from 'src/util'
 
 export const apis = {
   publicProjects: '/api/public/projects',
@@ -28,20 +29,6 @@ export const apis = {
   adminUploads: '/api/admin/uploads',
   adminBulkSubmissions: '/api/admin/bulkSubmissions',
   workflowDocs: '/workflow-docs',
-}
-
-// match colors in scss/_custom.scss
-export const colors = {
-  primary: '#5856d6',
-  secondary: '#6b7785',
-  success: '#1b9e3e',
-  danger: '#e55353',
-  warning: '#f9b115',
-  info: '#39f',
-  light: '#ebedef',
-  gray: '#ced2d8',
-  dark: '#212631',
-  app: '#6a9e5d',
 }
 
 export const defaults = {

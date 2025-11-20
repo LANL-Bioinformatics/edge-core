@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Button, Form, Row, Col } from 'reactstrap'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { workflowList } from 'src/workflows/common/util'
+import { workflowList } from 'src/util'
 import config from 'src/config'
 
 import { getData, postData, notify, apis } from '../../../common/util'

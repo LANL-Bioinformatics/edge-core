@@ -1,10 +1,5 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
 import {
-  CAvatar,
-  CBadge,
   CDropdown,
-  CDropdownDivider,
   CDropdownHeader,
   CDropdownItem,
   CDropdownMenu,
@@ -22,7 +17,7 @@ import {
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { FaUserCircle } from 'react-icons/fa'
-import { colors } from 'src/edge/common/util'
+import { colors } from 'src/util'
 import config from 'src/config'
 
 const AppHeaderDropdown = (props) => {

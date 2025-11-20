@@ -1,9 +1,8 @@
-import React from 'react'
 import { Badge } from 'reactstrap'
 import Moment from 'react-moment'
 
 import { projectStatusColors, projectStatusNames } from '../../um/common/tableUtil'
-import { workflowList } from 'src/workflows/common/util'
+import { workflowList } from 'src/util'
 
 const ProjectSummary = (props) => {
   return (
