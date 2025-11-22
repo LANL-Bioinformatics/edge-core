@@ -6,9 +6,11 @@ const authUserRoutes = require('./auth-user')
 const authUserProjectRoutes = require('./auth-user-project')
 const authUserUploadRoutes = require('./auth-user-upload')
 const authUserDataRoutes = require('./auth-user-data')
+const authUserBulkSubmissionRoutes = require('./auth-user-bulkSubmission')
 const adminUserRoutes = require('./admin-user')
 const adminProjectRoutes = require('./admin-project')
 const adminUploadRoutes = require('./admin-upload')
+const adminBulkSubmissionRoutes = require('./admin-bulkSubmission')
 
 /* GET home page. */
 router.get('/', (req, res) => {
@@ -30,6 +32,11 @@ router.use(
 router.use(
   '/auth-user',
   passport.authenticate('user', { session: false }),
+  authUserBulkSubmissionRoutes,
+)
+router.use(
+  '/auth-user',
+  passport.authenticate('user', { session: false }),
   authUserUploadRoutes,
 )
 router.use(
@@ -46,6 +53,11 @@ router.use(
   '/admin',
   passport.authenticate('admin', { session: false }),
   adminProjectRoutes,
+)
+router.use(
+  '/admin',
+  passport.authenticate('admin', { session: false }),
+  adminBulkSubmissionRoutes,
 )
 router.use(
   '/admin',

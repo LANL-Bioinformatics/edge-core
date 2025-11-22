@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Button, Form, Row, Col } from 'reactstrap'
+import { NavLink } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { workflowList } from 'src/util'
-import config from 'src/config'
 
-import { getData, postData, notify, apis } from '../../../common/util'
-import { LoaderDialog, MessageDialog } from '../../../common/Dialogs'
-import MySelect from '../../../common/MySelect'
+import { getData, postData, notify, apis } from '../../common/util'
+import { LoaderDialog, MessageDialog } from '../../common/Dialogs'
+import MySelect from '../../common/MySelect'
 import { Project } from '../../project/forms/Project'
 import { FileUpload } from '../../project/forms/FileUpload'
 
@@ -28,7 +28,7 @@ function BulkSubmission(props) {
 
   //callback function for child component
   const setProject = (params) => {
-    //console.log("main project:", params)
+    //console.log('main project:', params)
     setProjectParams(params)
     setDoValidation(doValidation + 1)
   }
@@ -44,16 +44,20 @@ function BulkSubmission(props) {
   }
   //submit button clicked
   const onSubmit = () => {
-    let formData = new FormData()
+    setSubmitting(true)
 
-    formData.append('pipeline', workflowList[workflow].title)
+    let formData = new FormData()
     formData.append(
-      'project',
-      JSON.stringify({ name: projectParams.proj_name, desc: projectParams.proj_desc }),
+      'bulkSubmission',
+      JSON.stringify({
+        name: projectParams.projectName,
+        desc: projectParams.projectDesc,
+        type: workflow,
+      }),
     )
 
     let inputDisplay = {}
-    inputDisplay.type = workflowList[workflow].title
+    inputDisplay.type = workflowList[workflow].label
     inputDisplay.input = {}
     formData.append('file', uploadParams.file)
     formData.append('bulkfile', JSON.stringify({ name: uploadParams.file.name }))
@@ -64,6 +68,7 @@ function BulkSubmission(props) {
     //console.log("formdata", JSON.stringify(workflowParams))
     postData(apis.userBulkSubmissions, formData)
       .then((data) => {
+        setSubmitting(false)
         notify('success', 'Your bulk submission request was submitted successfully!', 2000)
         setTimeout(() => props.history.push('/user/bulkSubmission/list'), 2000)
       })
@@ -110,11 +115,9 @@ function BulkSubmission(props) {
       className="animated fadeIn"
       style={disabled ? { pointerEvents: 'none', opacity: '0.4' } : {}}
     >
-      <span className="edge-workflow-tag pt-3 text-muted edge-text-size-small">
-        {props.category} | Bulk Submission
-      </span>
+      <span className="edge-workflow-tag pt-3 text-muted edge-text-size-small">{props.tag}</span>
       <Row className="justify-content-center">
-        <Col xs="12" md="10">
+        <Col xs="12" md="12">
           <ToastContainer />
           <LoaderDialog loading={submitting === true} text="Submitting..." />
           <MessageDialog
@@ -187,12 +190,16 @@ function BulkSubmission(props) {
                   ) : (
                     <></>
                   )}
+                  <span className="pt-3 text-muted edge-text-size-small">
+                    NOTE: All fastq files in the Bulk Excel File must be uploaded to the{' '}
+                    <NavLink to="/user/uploads">My Uploads</NavLink> before submission.
+                  </span>
+                  <br></br>
                   Download Excel{' '}
                   <a
                     style={{ color: 'blue', textDecoration: 'underline' }}
                     rel="noreferrer"
-                    href={config.API.BASE_URI + workflowList[workflow].bulk_submission_template}
-                    target="_blank"
+                    href={`${apis.workflowDocs}/bulkSubmission/${workflowList[workflow].bulk_submission_template}`}
                   >
                     Template
                   </a>
@@ -201,7 +208,7 @@ function BulkSubmission(props) {
                   <FileUpload
                     setParams={setFileUpload}
                     text="Bulk Excel File"
-                    upload_tip={
+                    tooltip={
                       workflowList[workflow]['bulk_file_tip']
                         ? workflowList[workflow]['bulk_file_tip']
                         : 'Required'
@@ -212,7 +219,6 @@ function BulkSubmission(props) {
                 </>
               )}
             </div>
-
             <div className="edge-center">
               <Button
                 color="primary"

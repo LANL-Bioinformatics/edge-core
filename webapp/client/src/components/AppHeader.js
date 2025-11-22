@@ -72,6 +72,13 @@ const AppHeader = () => {
                   My Projects
                 </CNavLink>
               </CNavItem>
+              {config.APP.BULK_SUBMISSIONS_IS_ENABLED && (
+                <CNavItem>
+                  <CNavLink to="/user/bulkSubmissions" as={NavLink}>
+                    My Bulk Submissions
+                  </CNavLink>
+                </CNavItem>
+              )}
               {config.APP.UPLOAD_IS_ENABLED && (
                 <CNavItem>
                   <CNavLink to="/user/uploads" as={NavLink}>

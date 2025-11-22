@@ -1,15 +1,6 @@
-const { body, validationResult } = require('express-validator')
+const { validationResult } = require('express-validator')
 
-const validationRules = () => [
-  body('bulkSubmission.name')
-    .trim()
-    .isLength({ min: 3, max: 30 })
-    .escape()
-    .withMessage(
-      'Invalid bulkSubmission name, at least 3 but less than 30 characters.',
-    ),
-  body('bulkSubmission.desc').optional(),
-]
+const validationRules = () => []
 
 const validate = (req, res, next) => {
   const errors = validationResult(req)

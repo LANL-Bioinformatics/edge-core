@@ -235,32 +235,39 @@ const ProjectTable = (props) => {
     getProjects()
   }
 
-  const getProjects = () => {
-    let url = apis.userProjects
-    if (props.tableType === 'admin') {
-      url = apis.adminProjects
-    }
+  const getProjects = async () => {
     setLoading(true)
-    getData(url)
-      .then((data) => {
-        let projects = data.projects.map((obj) => {
-          let rObj = { ...obj }
+    try {
+      let url = ''
+      if (props.bulkSubmissionCode) {
+        url = `${apis.userBulkSubmissions}/${props.bulkSubmissionCode}/projects`
+        if (props.tableType === 'admin') {
+          url = `${apis.adminBulkSubmissions}/${props.bulkSubmissionCode}/projects`
+        }
+      } else {
+        url = apis.userProjects
+        if (props.tableType === 'admin') {
+          url = apis.adminProjects
+        }
+      }
+      const data = await getData(url)
+      let projects = data.projects.map((obj) => {
+        let rObj = { ...obj }
 
-          if (obj.sharedTo && obj.sharedTo.length > 0) {
-            rObj['shared'] = true
-          } else {
-            rObj['shared'] = false
-          }
+        if (obj.sharedTo && obj.sharedTo.length > 0) {
+          rObj['shared'] = true
+        } else {
+          rObj['shared'] = false
+        }
 
-          return rObj
-        })
-        setLoading(false)
-        setTableData(projects)
+        return rObj
       })
-      .catch((err) => {
-        setLoading(false)
-        alert(err)
-      })
+      setLoading(false)
+      setTableData(projects)
+    } catch (err) {
+      setLoading(false)
+      alert(err)
+    }
   }
 
   const updateProj = (proj, oldProj) => {

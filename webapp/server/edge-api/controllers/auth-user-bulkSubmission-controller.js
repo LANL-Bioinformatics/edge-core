@@ -42,9 +42,6 @@ const addOne = async (req, res) => {
     const fileName = data.bulkfile.name
 
     fs.mkdirSync(bulkHome)
-    // don't save bulkSubmission name/desc to conf file
-    delete data.bulkSubmission
-
     fs.writeFileSync(`${bulkHome}/conf.json`, JSON.stringify(data))
 
     // save uploaded excel file to bulkSubmission home

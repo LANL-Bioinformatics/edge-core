@@ -4,10 +4,12 @@ const userRoutes = require('./edge-api/routes/user')
 const projectRoutes = require('./edge-api/routes/project')
 const authUserRoutes = require('./edge-api/routes/auth-user')
 const authUserProjectRoutes = require('./edge-api/routes/auth-user-project')
+const authUserBulkSubmissionRoutes = require('./edge-api/routes/auth-user-bulkSubmission')
 const authUserUploadRoutes = require('./edge-api/routes/auth-user-upload')
 const authUserDataRoutes = require('./edge-api/routes/auth-user-data')
 const adminUserRoutes = require('./edge-api/routes/admin-user')
 const adminProjectRoutes = require('./edge-api/routes/admin-project')
+const adminBulkSubmissionRoutes = require('./edge-api/routes/admin-bulkSubmission')
 const adminUploadRoutes = require('./edge-api/routes/admin-upload')
 
 /* GET home page. */
@@ -30,6 +32,11 @@ router.use(
 router.use(
   '/auth-user',
   passport.authenticate('user', { session: false }),
+  authUserBulkSubmissionRoutes,
+)
+router.use(
+  '/auth-user',
+  passport.authenticate('user', { session: false }),
   authUserUploadRoutes,
 )
 router.use(
@@ -46,6 +53,11 @@ router.use(
   '/admin',
   passport.authenticate('admin', { session: false }),
   adminProjectRoutes,
+)
+router.use(
+  '/admin',
+  passport.authenticate('admin', { session: false }),
+  adminBulkSubmissionRoutes,
 )
 router.use(
   '/admin',

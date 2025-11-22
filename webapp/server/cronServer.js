@@ -22,6 +22,10 @@ const {
   projectStatusMonitor,
   projectRerunMonitor,
 } = require('./crons/projectMonitors')
+const {
+  bulkSubmissionMonitor,
+  bulkSubmissionRerunMonitor,
+} = require('./crons/bulkSubmissionMonitor')
 const { dbBackup, dbBackupClean } = require('./crons/dbMonitors')
 const config = require('./config')
 
@@ -72,6 +76,14 @@ cron.schedule(config.CRON.SCHEDULES.PROJECT_RERUN_MONITOR, async () => {
 // monitor project deletion every day at 10pm
 cron.schedule(config.CRON.SCHEDULES.PROJECT_DELETION_MONITOR, async () => {
   await projectDeletionMonitor()
+})
+// monitor bulk submission requests on every 3 minutes
+cron.schedule(config.CRON.SCHEDULES.BULKSUBMISSION_MONITOR, async () => {
+  await bulkSubmissionMonitor()
+})
+// monitor bulk submission rerun on every 1 minute
+cron.schedule(config.CRON.SCHEDULES.BULKSUBMISSION_RERUN_MONITOR, async () => {
+  await bulkSubmissionRerunMonitor()
 })
 // backup nmdcedge DB every day at 10pm
 cron.schedule(config.CRON.SCHEDULES.DATABASE_BACKUP_CREATOR, () => {

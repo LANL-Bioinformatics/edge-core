@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Badge } from 'reactstrap'
+import { useNavigate } from 'react-router-dom'
 import { updateBulkSubmission } from 'src/redux/reducers/edge/userSlice'
 import { updateBulkSubmissionAdmin } from 'src/redux/reducers/edge/adminSlice'
+import { setSubmittingForm } from 'src/redux/reducers/pageSlice'
 import { cleanError } from 'src/redux/reducers/messageSlice'
+import { workflowList } from 'src/util'
 import { ConfirmDialog } from '../../common/Dialogs'
 import { notify, getData, apis, isValidProjectName } from '../../common/util'
 import {
@@ -88,14 +91,14 @@ const BulkSubmissionTable = (props) => {
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       const oldData = row.original
-      let newData = { ...oldData, name: values.name, desc: values.desc, public: values.public }
+      let newData = { ...oldData, name: values.name, desc: values.desc }
       let update = new Promise((resolve, reject) => {
         setOpenDialog(false)
         dispatch(cleanError())
         dispatch(setSubmittingForm(true))
         setBulkSubmissions([])
         setAction('update')
-        const bulkSubmission = updateBulkSubmission(newData, oldData)
+        const bulkSubmission = updateBulk(newData, oldData)
         setBulkSubmissions([bulkSubmission])
         resolve(bulkSubmission)
         //wait for bulkSubmission updating complete
@@ -194,27 +197,6 @@ const BulkSubmissionTable = (props) => {
         size: 100, //decrease the width of this column
       },
       {
-        header: 'Shared',
-        accessorKey: 'shared',
-        Cell: ({ cell }) => <> {cell.getValue() ? 'true' : 'false'}</>,
-        enableColumnActions: false,
-        enableEditing: false,
-        enableGlobalFilter: false,
-        size: 100, //decrease the width of this column
-      },
-      {
-        header: 'Public',
-        accessorKey: 'public',
-        Cell: ({ cell }) => <> {cell.getValue() ? 'true' : 'false'}</>,
-        editSelectOptions: ['true', 'false'],
-        muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.state,
-          helperText: validationErrors?.state,
-        },
-        size: 100, //decrease the width of this column
-      },
-      {
         header: 'Created',
         accessorKey: 'created',
         Cell: ({ cell }) => <>{moment(cell.getValue()).format('MM/DD/YYYY, h:mm:ss A')}</>,
@@ -229,7 +211,7 @@ const BulkSubmissionTable = (props) => {
         enableColumnFilter: false,
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [getCommonEditTextFieldProps],
   )
 
@@ -464,12 +446,6 @@ const BulkSubmissionTable = (props) => {
           renderDetailPanel={({ row }) => (
             <div style={{ margin: '15px', textAlign: 'left' }}>
               <b>Description:</b> {row.original.desc}
-              {(props.tableType === 'admin' || row.original.owner === user.profile.email) && (
-                <>
-                  <br></br>
-                  <b>Shared To:</b> {row.original.sharedTo.join(', ')}
-                </>
-              )}
             </div>
           )}
           onEditingRowSave={handleSaveRowEdits}
@@ -546,70 +522,6 @@ const BulkSubmissionTable = (props) => {
                       </Fab>
                     </Tooltip>
                   )}
-                  <Tooltip title="Share selected bulkSubmissions" aria-label="share">
-                    <Fab
-                      color="primary"
-                      size="small"
-                      style={{ marginRight: 10 }}
-                      aria-label="share"
-                    >
-                      <PersonAdd
-                        className="edge-table-icon"
-                        onClick={() => {
-                          setTable(table)
-                          handleAction('share', table.getSelectedRowModel().flatRows)
-                        }}
-                      />
-                    </Fab>
-                  </Tooltip>
-                  <Tooltip title="Unshare selected bulkSubmissions" aria-label="unshare">
-                    <Fab
-                      color="primary"
-                      size="small"
-                      style={{ marginRight: 10 }}
-                      aria-label="unshare"
-                    >
-                      <PersonAddDisabled
-                        className="edge-table-icon"
-                        onClick={() => {
-                          setTable(table)
-                          handleAction('unshare', table.getSelectedRowModel().flatRows)
-                        }}
-                      />
-                    </Fab>
-                  </Tooltip>
-                  <Tooltip title="Publish selected bulkSubmissions" aria-label="publish">
-                    <Fab
-                      color="primary"
-                      size="small"
-                      style={{ marginRight: 10 }}
-                      aria-label="publish"
-                    >
-                      <LockOpen
-                        className="edge-table-icon"
-                        onClick={() => {
-                          setTable(table)
-                          handleAction('publish', table.getSelectedRowModel().flatRows)
-                        }}
-                      />
-                    </Fab>
-                  </Tooltip>
-                  <Tooltip title="Unpublish selected bulkSubmissions" aria-label="unpublish">
-                    <Fab
-                      color="primary"
-                      size="small"
-                      style={{ marginRight: 10 }}
-                      aria-label="unpublish"
-                    >
-                      <Lock
-                        className="edge-table-icon"
-                        onClick={() => {
-                          setTable(table)
-                          handleAction('unpublish', table.getSelectedRowModel().flatRows)
-                        }}
-                      />
-                    </Fab>
-                  </Tooltip>
                 </div>
               </div>
             )

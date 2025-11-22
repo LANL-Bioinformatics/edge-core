@@ -168,6 +168,13 @@ const config = {
       // monitor project deletion every day at 10pm
       PROJECT_DELETION_MONITOR:
         process.env.CRON_PROJECT_DELETION_MONITOR_SCHEDULE || '0 22 * * *',
+      // monitor bulk submission requests on every 3 minutes
+      BULKSUBMISSION_MONITOR:
+        process.env.CRON_BULKSUBMISSION_MONITOR_SCHEDULE || '0-59/3 * * * *',
+      // monitor bulk submission requests on every 3 minutes
+      BULKSUBMISSION_RERUN_MONITOR:
+        process.env.CRON_BULKSUBMISSION_RERUN_MONITOR_SCHEDULE ||
+        '0-59/1 * * * *',
       // backup nmdcedge database every day at 1 am
       DATABASE_BACKUP_CREATOR:
         process.env.CRON_DATABASE_BACKUP_CREATOR_SCHEDULE || '0 1 * * *',
@@ -265,6 +272,10 @@ const config = {
     GLOBUG_DATA_HOME_DIR: process.env.GLOBUS_DATA_HOME_DIR,
     // Directory to store workflow docs
     WORKFLOW_DOCS_DIR: process.env.WORKFLOW_DOCS_DIR || WORKFLOW_DOCS_BASE_DIR,
+    // Directory to store project config templates
+    PROJECT_CONF_TEMPLATE_DIR:
+      process.env.PROJECT_CONF_TEMPLATE_DIR ||
+      path.join(WORKFLOW_DOCS_BASE_DIR, 'project'),
   },
   // Parameters that influence the behavior of `Winston.js`, a logging library.
   // Reference: https://github.com/winstonjs/winston-daily-rotate-file#options
