@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button, Form, Row, Col } from 'reactstrap'
-import { NavLink } from 'react-router-dom'
+import { useNavigate, NavLink } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { workflowList } from 'src/util'
@@ -14,7 +14,8 @@ import { FileUpload } from '../../project/forms/FileUpload'
 const HtmlToReactParser = require('html-to-react').Parser
 let htmlToReactParser = new HtmlToReactParser()
 
-function BulkSubmission(props) {
+const BulkSubmission = (props) => {
+  const navigate = useNavigate()
   const [openDialog, setOpenDialog] = useState(false)
   const [disabled, setDisabled] = useState(false)
   const [sysMsg, setSysMsg] = useState()
@@ -70,7 +71,7 @@ function BulkSubmission(props) {
       .then((data) => {
         setSubmitting(false)
         notify('success', 'Your bulk submission request was submitted successfully!', 2000)
-        setTimeout(() => props.history.push('/user/bulkSubmission/list'), 2000)
+        setTimeout(() => navigate('/user/bulkSubmissions'), 2000)
       })
       .catch((error) => {
         setSubmitting(false)
@@ -177,12 +178,10 @@ function BulkSubmission(props) {
                             Learn more
                           </a>
                           <br></br>
-                          <br></br>
                         </>
                       ) : (
                         <>
                           {htmlToReactParser.parse(workflowList[workflow].info)} &nbsp;
-                          <br></br>
                           <br></br>
                         </>
                       )}
