@@ -81,6 +81,31 @@ const getWorkflowCommand = proj => {
   return command
 }
 
+const validateBulkSubmissionInput = async (bulkExcel, type) => {
+  // Parse a file
+  const workSheetsFromFile = xlsx.parse(bulkExcel)
+  const rows = workSheetsFromFile[0].data.filter(row =>
+    // Check if all cells in the row are empty (null, undefined, or empty string after trim)
+    row.some(
+      cell => cell !== null && cell !== undefined && String(cell).trim() !== '',
+    ),
+  )
+  // Remove header
+  rows.shift()
+  // validate inputs
+  let validInput = true
+  let errMsg = ''
+  let currRow = 1
+  const submissions = []
+  if (rows.length === 0) {
+    validInput = false
+    errMsg += 'ERROR: No submission found in the bulk excel file.\n'
+  }
+
+  // eslint-disable-next-line consistent-return
+  return { validInput, errMsg, submissions }
+}
+
 module.exports = {
   cromwellWorkflows,
   nextflowWorkflows,
@@ -90,4 +115,5 @@ module.exports = {
   generateWorkflowResult,
   checkFlagFile,
   getWorkflowCommand,
+  validateBulkSubmissionInput,
 }

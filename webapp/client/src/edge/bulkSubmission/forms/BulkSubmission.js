@@ -190,7 +190,7 @@ const BulkSubmission = (props) => {
                     <></>
                   )}
                   <span className="pt-3 text-muted edge-text-size-small">
-                    NOTE: All fastq files in the Bulk Excel File must be uploaded to the{' '}
+                    NOTE: All input files in the Bulk Excel File must be uploaded to the{' '}
                     <NavLink to="/user/uploads">My Uploads</NavLink> before submission.
                   </span>
                   <br></br>
