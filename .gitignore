@@ -19,4 +19,4 @@ webapp/client/src/workflows/common/routes.js
 webapp/client/src/workflows/common/ProjectResult.js
 webapp/server/workflow/config.js
 webapp/server/workflow/indexRouter.js
-#webapp/server/workflow/util.js
+webapp/server/workflow/util.js
