@@ -22,4 +22,3 @@ webapp/server/package.json
 webapp/server/workflow/config.js
 webapp/server/workflow/indexRouter.js
 webapp/server/workflow/util.js
-.gitignore
