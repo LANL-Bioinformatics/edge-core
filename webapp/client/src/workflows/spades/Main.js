@@ -9,8 +9,8 @@ import { postData, getData, notify, apis, isValidFileInput } from 'src/edge/comm
 import { LoaderDialog, MessageDialog } from 'src/edge/common/Dialogs'
 import MySelect from 'src/edge/common/MySelect'
 import { Project } from 'src/edge/project/forms/Project'
-import { InputRawReads } from 'src/edge/project/forms/InputRawReads'
 import { HtmlText } from 'src/edge/common/HtmlText'
+import { Taxonomy } from './forms/Taxonomy'
 import { workflowOptions, workflows } from './defaults'
 
 const Main = (props) => {
@@ -59,62 +59,30 @@ const Main = (props) => {
       desc: projectParams.projectDesc,
       type: workflow,
     }
-    if (rawDataParams.inputs.source.value === 'sra') {
-      formData.rawReads = {
-        source: rawDataParams.inputs.source.value,
-        accessions: rawDataParams.inputs.inputFiles.value,
-      }
-      rawDataParams.files = []
-    } else if (rawDataParams.inputs.source.value === 'fasta') {
-      formData.rawReads = {
-        source: rawDataParams.inputs.source.value,
-        inputFasta: rawDataParams.inputs.inputFiles.value[0],
-      }
-    } else {
-      formData.rawReads = {
-        source: rawDataParams.inputs.source.value,
-        seqPlatform: rawDataParams.inputs.seqPlatform.value,
-        paired: rawDataParams.inputs.paired.value,
-        inputFiles: rawDataParams.inputs.inputFiles.value,
-      }
-    }
 
     // set workflow inputs
-    let myWorkflow = {
-      name: workflow,
-      input: {
-        read_type: rawDataParams.inputs.seqPlatform.value === 'Illumina' ? 'short' : 'long',
-      },
-    }
+    let myWorkflow = { name: workflow, input: {} }
     // set workflow input display
-    let inputDisplay = { 'Raw Reads': {} }
-    //inputDisplay[workflowList[workflow].label] = {}
-    if (rawDataParams.inputs.source.value === 'sra') {
-      inputDisplay['Raw Reads'][rawDataParams.inputs['source'].text] =
-        rawDataParams.inputs['source'].display
-      inputDisplay['Raw Reads']['SRA Accession(s)'] = rawDataParams.inputs['inputFiles'].display
-    } else if (rawDataParams.inputs.source.value === 'fasta') {
-      inputDisplay['Raw Reads'][rawDataParams.inputs['source'].text] =
-        rawDataParams.inputs['source'].display
-      inputDisplay['Raw Reads']['Contig/Fasta File'] = rawDataParams.inputs['inputFiles'].display[0]
-    } else {
-      Object.keys(rawDataParams.inputs).forEach((key) => {
-        if (rawDataParams.inputs[key].display) {
-          inputDisplay['Raw Reads'][rawDataParams.inputs[key].text] =
-            rawDataParams.inputs[key].display
-        } else {
-          inputDisplay['Raw Reads'][rawDataParams.inputs[key].text] =
-            rawDataParams.inputs[key].value
-        }
-      })
-    }
+    let inputDisplay = {}
+    inputDisplay[workflowList[workflow].label] = {}
+
+    Object.keys(selectedWorkflows[workflow].inputs).forEach((key) => {
+      myWorkflow.input[key] = selectedWorkflows[workflow].inputs[key].value
+      if (selectedWorkflows[workflow].inputs[key].display) {
+        inputDisplay[[workflowList[workflow].label]][selectedWorkflows[workflow].inputs[key].text] =
+          selectedWorkflows[workflow].inputs[key].display
+      } else {
+        inputDisplay[[workflowList[workflow].label]][selectedWorkflows[workflow].inputs[key].text] =
+          selectedWorkflows[workflow].inputs[key].value
+      }
+    })
 
     // set form data
     formData.workflow = myWorkflow
     formData.inputDisplay = inputDisplay
 
     // files used for caculating total input size on server side
-    formData.files = [...rawDataParams.files]
+    formData.files = [...selectedWorkflows[workflow].files]
 
     // submit to server via api
     postData(apis.userProjects, formData)
@@ -240,33 +208,13 @@ const Main = (props) => {
               <br></br>
             </>
           )}
-          <InputRawReads
-            note={workflows[workflow]['rawReadsInput'].note}
-            setParams={setRawData}
-            isValidFileInput={isValidFileInput}
-            source={workflows[workflow]['rawReadsInput'].source}
-            sourceDisplay={workflows[workflow]['rawReadsInput'].text}
-            sourceOptionsOn={false}
-            sourceOptions={workflows[workflow]['rawReadsInput'].sourceOptions}
-            seqPlatformOptions={workflows[workflow]['rawReadsInput'].seqPlatformOptions}
-            seqPlatformText={workflows[workflow]['rawReadsInput'].seqPlatformText}
-            seqPlatformTooltip={workflows[workflow]['rawReadsInput'].seqPlatformTooltip}
-            seqPlatformDefaultValue={
-              workflows[workflow]['rawReadsInput'].seqPlatformDefaultValue
-                ? workflows[workflow]['rawReadsInput'].seqPlatformDefaultValue
-                : null
-            }
-            disableSwitcher={false}
-            text={workflows[workflow]['rawReadsInput'].text}
-            tooltip={workflows[workflow]['rawReadsInput'].tooltip}
-            title={'Input Raw Reads'}
-            fastqSettings={
-              workflows[workflow]['rawReadsInput'].fastq
-                ? workflows[workflow]['rawReadsInput'].fastq
-                : {}
-            }
-            isValid={rawDataParams ? rawDataParams.validForm : false}
-            errMessage={rawDataParams ? rawDataParams.errMessage : null}
+          <Taxonomy
+            name={workflow}
+            full_name={workflow}
+            title={'Input Raw Read'}
+            setParams={setWorkflowParams}
+            isValid={selectedWorkflows[workflow] ? selectedWorkflows[workflow].validForm : false}
+            errMessage={selectedWorkflows[workflow] ? selectedWorkflows[workflow].errMessage : null}
             allExpand={allExpand}
             allClosed={allClosed}
           />

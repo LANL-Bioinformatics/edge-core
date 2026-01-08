@@ -5,7 +5,7 @@ export const workflowList = {
     info: 'This tool retrieves sequence project in FASTQ files from NCBI- SRA / EBI - ENA / DDBJ database. Input accession number supports studies(SRP*/ ERP * /DRP*), experiments (SRX*/ERX * /DRX*), samples(SRS * /ERS*/DRS *), runs(SRR * /ERR*/DRR *), or submissions (SRA * /ERA*/DRA *).',
   },
   // Add more workflows here
-  spades: {
+  taxonomy: {
     label: 'Read-based Taxonomy Classification',
     category: 'spades',
     info: 'Only GOTTCHA2 is integrated in this SPADES EDGE version for read-based taxonomy classification.',
