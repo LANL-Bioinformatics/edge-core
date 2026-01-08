@@ -1,7 +1,10 @@
 const fs = require('fs')
+const ejs = require('ejs')
+const path = require('path')
 const config = require('../config')
 const workflowConfig = require('./config')
 
+const localWorkflows = ['taxonomy']
 const cromwellWorkflows = []
 const nextflowWorkflows = ['sra2fastq']
 const nextflowConfigs = {
@@ -14,6 +17,21 @@ const workflowList = {
     outdir: 'output/sra2fastq',
     nextflow_main: 'sra2fastq/nextflow/main.nf -profile local',
     config_tmpl: 'sra2fastq/workflow_config.tmpl',
+  },
+  taxonomy: {
+    outdir: 'output/taxonomy',
+    cmd_template:
+      '<%= exec %> --input <%= input %> --outdir <%= outdir %> --prefix <%= prefix %> --db-path <%= dbPath %> --cpu <%= cpu %>  --spades-data <%= spadesData %>',
+    cmd_values: {
+      exec: process.env.TAXONOMY_EXEC || '/opt/taxonomy/taxonomy_classify',
+      cpu: process.env.TAXONOMY_CPU || '1',
+      spadesData:
+        process.env.TAXONOMY_SPADES_DATA ||
+        path.join(workflowConfig.DATA_DIR, 'spades_data'),
+      dbPath:
+        process.env.TAXONOMY_DB_PATH ||
+        path.join(workflowConfig.DATA_DIR, 'taxonomy_db'),
+    },
   },
 }
 
@@ -48,13 +66,24 @@ const generateWorkflowResult = proj => {
   }
 }
 
-const checkFlagFile = proj => {
+const checkFlagFile = (proj, jobQueue) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`
-  // create output directory
   const outDir = `${projHome}/${workflowList[proj.type].outdir}`
+  if (jobQueue === 'local') {
+    const flagFile = `${projHome}/.done`
+    if (!fs.existsSync(flagFile)) {
+      return false
+    }
+  }
+  // check expected output files
   if (proj.type === 'assayDesign') {
     const outJson = `${outDir}/jbrowse/jbrowse_url.json`
     if (!fs.existsSync(outJson)) {
+      return false
+    }
+  } else if (proj.type === 'taxonomy') {
+    const outTsv = `${outDir}/${proj.name}.pathogen.tsv`
+    if (!fs.existsSync(outTsv)) {
       return false
     }
   }
@@ -65,48 +94,33 @@ const getWorkflowCommand = proj => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`
   const projectConf = JSON.parse(fs.readFileSync(`${projHome}/conf.json`))
   const outDir = `${projHome}/${workflowList[projectConf.workflow.name].outdir}`
+  const template = workflowList[projectConf.workflow.name].cmd_template
+
   let command = ''
-  if (proj.type === 'assayDesign') {
-    // create bioaiConf.json
-    const conf = `${projHome}/bioaiConf.json`
-    fs.writeFileSync(
-      conf,
-      JSON.stringify({
-        pipeline: 'bioai',
-        params: { ...projectConf.workflow.input, ...projectConf.genomes },
-      }),
-    )
-    command += ` && ${workflowConfig.WORKFLOW.BIOAI_EXEC} -i ${conf} -o ${outDir}`
+  if (projectConf.workflow.name === 'taxonomy') {
+    const values = {
+      input: projectConf.workflow.input.fastqFile,
+      outdir: outDir,
+      prefix: proj.name,
+      exec: process.env.TAXONOMY_EXEC || '/opt/taxonomy/taxonomy_classify',
+      cpu: process.env.TAXONOMY_CPU || '1',
+      spadesData:
+        process.env.TAXONOMY_SPADES_DATA ||
+        path.join(workflowConfig.DATA_DIR, 'spades_data'),
+      dbPath:
+        process.env.TAXONOMY_DB_PATH ||
+        path.join(workflowConfig.DATA_DIR, 'taxonomy_db'),
+    }
+    command = ejs.render(template, values)
+    if (projectConf.workflow.input.readType === 'nanopore') {
+      command += ' --ont'
+    }
   }
   return command
 }
 
-const validateBulkSubmissionInput = async (bulkExcel, type) => {
-  // Parse a file
-  const workSheetsFromFile = xlsx.parse(bulkExcel)
-  const rows = workSheetsFromFile[0].data.filter(row =>
-    // Check if all cells in the row are empty (null, undefined, or empty string after trim)
-    row.some(
-      cell => cell !== null && cell !== undefined && String(cell).trim() !== '',
-    ),
-  )
-  // Remove header
-  rows.shift()
-  // validate inputs
-  let validInput = true
-  let errMsg = ''
-  let currRow = 1
-  const submissions = []
-  if (rows.length === 0) {
-    validInput = false
-    errMsg += 'ERROR: No submission found in the bulk excel file.\n'
-  }
-
-  // eslint-disable-next-line consistent-return
-  return { validInput, errMsg, submissions }
-}
-
 module.exports = {
+  localWorkflows,
   cromwellWorkflows,
   nextflowWorkflows,
   nextflowConfigs,
@@ -115,5 +129,4 @@ module.exports = {
   generateWorkflowResult,
   checkFlagFile,
   getWorkflowCommand,
-  validateBulkSubmissionInput,
 }
