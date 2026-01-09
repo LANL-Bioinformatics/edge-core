@@ -72,10 +72,16 @@ const generateWorkflowResult = proj => {
         fs.readFileSync(`${outdir}/${proj.name}.pathogen.tsv`).toString(),
         { delimiter: '\t', header: true, skipEmptyLines: true },
       ).data
-      result['Krona plot'] =
-        `${workflowList[projectConf.workflow.name].outdir}/${proj.name}.krona.html`
+      if (fs.existsSync(`${outdir}/${proj.name}.krona.html`)) {
+        result['Krona plot'] =
+          `${workflowList[projectConf.workflow.name].outdir}/${proj.name}.krona.html`
+      }
       result['Coverage browser'] =
         `${workflowList[projectConf.workflow.name].outdir}/${proj.name}.coverage.html`
+      if (fs.existsSync(`${outdir}/${proj.name}.pathogen.full.html`)) {
+        result['Pathogen full'] =
+          `${workflowList[projectConf.workflow.name].outdir}/${proj.name}.pathogen.full.html`
+      }
     }
     fs.writeFileSync(resultJson, JSON.stringify(result))
   }
