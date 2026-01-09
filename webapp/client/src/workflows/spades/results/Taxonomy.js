@@ -15,7 +15,8 @@ const NoMaxWidthTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))({
   [`& .${tooltipClasses.tooltip}`]: {
-    maxWidth: 'none',
+    //maxWidth: 'none',
+    maxWidth: '800px',
   },
 })
 
@@ -167,6 +168,23 @@ export const Taxonomy = (props) => {
                         muiTablePaginationProps={{
                           rowsPerPageOptions: [10, 20, 50, 100],
                           labelRowsPerPage: 'rows per page',
+                        }}
+                        initialState={{
+                          columnVisibility: {
+                            TAXID: false,
+                            TOTAL_BP_MAPPED: false,
+                            SNI_SCORE: false,
+                            COVERED_SIG_LEN: false,
+                            BEST_SIG_COV: false,
+                            DEPTH: false,
+                          },
+                          columnFilters: [
+                            {
+                              id: 'LEVEL', // Must match the accessorKey
+                              value: 'species', // The default filter value
+                            },
+                          ],
+                          showColumnFilters: true,
                         }}
                         renderEmptyRowsFallback={() => (
                           <center>
