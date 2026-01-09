@@ -24,14 +24,12 @@ export const Taxonomy = (props) => {
   const [pathogen_info, setPathogen_info] = useState('')
   const [collapseCard, setCollapseCard] = useState(true)
   const tabs = {
-    'GOTTCHA2 profiling result': 'profiling_result',
-    'Pathogen-annotated hits': 'pathogen_annotated_hits',
-    'Krona plot': 'krona_plot',
-    'Coverage browser': 'coverage_browser',
-    'Pathogen full': 'pathogen_full',
+    'Taxonomy/Pathogen': 'pathogen krona',
+    Details: 'pathogen_full',
+    Coverage: 'coverage_browser',
   }
   const [activeTab, setActiveTab] = useState(0)
-  const tableData = props.result['GOTTCHA2 profiling result']
+  /* const tableData = props.result['GOTTCHA2 profiling result']
   //create columns from data
   const columns = useMemo(
     () =>
@@ -43,7 +41,7 @@ export const Taxonomy = (props) => {
           }))
         : [],
     [tableData],
-  )
+  ) */
   const tableData2 = props.result['Pathogen-annotated hits']
   //create columns from data
   const columns2 = useMemo(
@@ -166,26 +164,7 @@ export const Taxonomy = (props) => {
             {Object.keys(tabs).map((item, index) => (
               <TabPane key={index} tabId={index}>
                 <br></br>
-                {item === 'GOTTCHA2 profiling result' && tableData ? (
-                  <>
-                    <ThemeProvider theme={theme}>
-                      <MaterialReactTable
-                        columns={columns}
-                        data={tableData}
-                        enableFullScreenToggle={false}
-                        muiTablePaginationProps={{
-                          rowsPerPageOptions: [10, 20, 50, 100],
-                          labelRowsPerPage: 'rows per page',
-                        }}
-                        renderEmptyRowsFallback={() => (
-                          <center>
-                            <br></br>No result to display
-                          </center>
-                        )}
-                      />
-                    </ThemeProvider>
-                  </>
-                ) : item === 'Pathogen-annotated hits' && tableData2 ? (
+                {item === 'Taxonomy/Pathogen' && tableData2 ? (
                   <>
                     <ThemeProvider theme={theme}>
                       <MaterialReactTable
@@ -203,37 +182,9 @@ export const Taxonomy = (props) => {
                         )}
                       />
                     </ThemeProvider>
-                  </>
-                ) : item === 'Krona plot' ? (
-                  props.result['Krona plot'] ? (
-                    <>
-                      <a
-                        href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Krona plot']}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        [full window view]
-                      </a>
-                      <br></br>
-                      <br></br>
-                      <iframe
-                        id={'krona_iframe'}
-                        key={'krona_iframe'}
-                        src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Krona plot']}`}
-                        className="edge-iframe"
-                      />
-                    </>
-                  ) : (
-                    <span>
-                      No available
-                      <br></br>
-                      <br></br>
-                    </span>
-                  )
-                ) : item === 'Coverage browser' && props.result['Coverage browser'] ? (
-                  <>
+                    <br></br>
                     <a
-                      href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Coverage browser']}`}
+                      href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Krona plot']}`}
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -242,13 +193,13 @@ export const Taxonomy = (props) => {
                     <br></br>
                     <br></br>
                     <iframe
-                      id="coverage_iframe"
-                      key={'coverage_iframe'}
-                      src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Coverage browser']}`}
+                      id={'krona_iframe'}
+                      key={'krona_iframe'}
+                      src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Krona plot']}`}
                       className="edge-iframe"
                     />
                   </>
-                ) : item === 'Pathogen full' && props.result['Pathogen full'] ? (
+                ) : item === 'Details' && props.result['Pathogen full'] ? (
                   <>
                     <a
                       href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Pathogen full']}`}
@@ -263,6 +214,24 @@ export const Taxonomy = (props) => {
                       id="pathogen_full_iframe"
                       key={'pathogen_full_iframe'}
                       src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Pathogen full']}`}
+                      className="edge-iframe"
+                    />
+                  </>
+                ) : item === 'Coverage' && props.result['Coverage browser'] ? (
+                  <>
+                    <a
+                      href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Coverage browser']}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      [full window view]
+                    </a>
+                    <br></br>
+                    <br></br>
+                    <iframe
+                      id="coverage_iframe"
+                      key={'coverage_iframe'}
+                      src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Coverage browser']}`}
                       className="edge-iframe"
                     />
                   </>
