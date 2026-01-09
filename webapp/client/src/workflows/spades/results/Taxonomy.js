@@ -20,8 +20,6 @@ const NoMaxWidthTooltip = styled(({ className, ...props }) => (
 })
 
 export const Taxonomy = (props) => {
-  const [view_info, setView_info] = useState(false)
-  const [pathogen_info, setPathogen_info] = useState('')
   const [collapseCard, setCollapseCard] = useState(true)
   const tabs = {
     'Taxonomy/Pathogen': 'pathogen krona',
@@ -114,11 +112,6 @@ export const Taxonomy = (props) => {
   )
   const toggleTab = (tab) => {
     setActiveTab(tab)
-  }
-
-  const viewInfo = (info) => () => {
-    setPathogen_info(info)
-    setView_info(true)
   }
 
   useEffect(() => {
