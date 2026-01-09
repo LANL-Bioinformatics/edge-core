@@ -11,9 +11,9 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
 ## INSTALL webapp
 
-1. Create a local copy of the bioai-edge web app in your installation directory
+1. Create a local copy of the spades-edge web app in your installation directory
    
-   `git clone https://bio-gitea.lanl.gov/yxu/bioai-edge.git`
+   `git clone https://github.com/yxu-lanl/spades-edge.git`
 
 2. Inside edge-core/installation folder, run the installation script 
 
