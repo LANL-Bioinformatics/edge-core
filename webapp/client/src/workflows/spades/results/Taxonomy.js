@@ -260,9 +260,9 @@ export const Taxonomy = (props) => {
                     <br></br>
                     <br></br>
                     <iframe
-                      id="coverage_iframe"
-                      key={'coverage_iframe'}
-                      src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Coverage browser']}`}
+                      id="pathogen_full_iframe"
+                      key={'pathogen_full_iframe'}
+                      src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Pathogen full']}`}
                       className="edge-iframe"
                     />
                   </>
