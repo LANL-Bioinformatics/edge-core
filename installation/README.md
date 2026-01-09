@@ -1,7 +1,7 @@
 ## INSTALLATION PREREQUISITES
 
-### Install Node20.19+
-https://nodejs.org/en/download
+### Install node
+https://nodejs.org
 
 ### Install pm2
 `npm install pm2@latest -g`
@@ -11,7 +11,9 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
 ## INSTALL webapp
 
-1. Move/copy edge-core folder to the installation directory
+1. Create a local copy of the bioai-edge web app in your installation directory
+   
+   `git clone https://bio-gitea.lanl.gov/yxu/bioai-edge.git`
 
 2. Inside edge-core/installation folder, run the installation script 
 
