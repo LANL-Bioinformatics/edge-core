@@ -28,6 +28,7 @@ export const Taxonomy = (props) => {
     'Pathogen-annotated hits': 'pathogen_annotated_hits',
     'Krona plot': 'krona_plot',
     'Coverage browser': 'coverage_browser',
+    'Pathogen full': 'pathogen_full',
   }
   const [activeTab, setActiveTab] = useState(0)
   const tableData = props.result['GOTTCHA2 profiling result']
@@ -204,24 +205,32 @@ export const Taxonomy = (props) => {
                     </ThemeProvider>
                   </>
                 ) : item === 'Krona plot' ? (
-                  <>
-                    <a
-                      href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Krona plot']}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      [full window view]
-                    </a>
-                    <br></br>
-                    <br></br>
-                    <iframe
-                      id={'krona_iframe'}
-                      key={'krona_iframe'}
-                      src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Krona plot']}`}
-                      className="edge-iframe"
-                    />
-                  </>
-                ) : item === 'Coverage browser' ? (
+                  props.result['Krona plot'] ? (
+                    <>
+                      <a
+                        href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Krona plot']}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        [full window view]
+                      </a>
+                      <br></br>
+                      <br></br>
+                      <iframe
+                        id={'krona_iframe'}
+                        key={'krona_iframe'}
+                        src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Krona plot']}`}
+                        className="edge-iframe"
+                      />
+                    </>
+                  ) : (
+                    <span>
+                      No available
+                      <br></br>
+                      <br></br>
+                    </span>
+                  )
+                ) : item === 'Coverage browser' && props.result['Coverage browser'] ? (
                   <>
                     <a
                       href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Coverage browser']}`}
@@ -239,9 +248,27 @@ export const Taxonomy = (props) => {
                       className="edge-iframe"
                     />
                   </>
+                ) : item === 'Pathogen full' && props.result['Pathogen full'] ? (
+                  <>
+                    <a
+                      href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Pathogen full']}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      [full window view]
+                    </a>
+                    <br></br>
+                    <br></br>
+                    <iframe
+                      id="coverage_iframe"
+                      key={'coverage_iframe'}
+                      src={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Coverage browser']}`}
+                      className="edge-iframe"
+                    />
+                  </>
                 ) : (
                   <span>
-                    No plots available
+                    No available
                     <br></br>
                     <br></br>
                   </span>
