@@ -1,6 +1,7 @@
 const fs = require('fs')
 const ejs = require('ejs')
 const path = require('path')
+const Papa = require('papaparse')
 const config = require('../config')
 const workflowConfig = require('./config')
 
@@ -19,7 +20,7 @@ const workflowList = {
     config_tmpl: 'sra2fastq/workflow_config.tmpl',
   },
   taxonomy: {
-    outdir: 'output/taxonomy',
+    outdir: 'output/Taxonomy',
     cmd_template:
       '<%= exec %> --input <%= input %> --outdir <%= outdir %> --prefix <%= prefix %> --db-path <%= dbPath %> --cpu <%= cpu %>  --spades-data <%= spadesData %>',
     cmd_values: {
@@ -61,6 +62,20 @@ const generateWorkflowResult = proj => {
         // link sra downloads to project output
         fs.symlinkSync(`../../../../sra/${accession}`, `${outdir}/${accession}`)
       })
+    }
+    if (projectConf.workflow.name === 'taxonomy') {
+      result['GOTTCHA2 profiling result'] = Papa.parse(
+        fs.readFileSync(`${outdir}/${proj.name}.tsv`).toString(),
+        { delimiter: '\t', header: true, skipEmptyLines: true },
+      ).data
+      result['Pathogen-annotated hits'] = Papa.parse(
+        fs.readFileSync(`${outdir}/${proj.name}.pathogen.tsv`).toString(),
+        { delimiter: '\t', header: true, skipEmptyLines: true },
+      ).data
+      result['Krona plot'] =
+        `${workflowList[projectConf.workflow.name].outdir}/${proj.name}.krona.html`
+      result['Coverage browser'] =
+        `${workflowList[projectConf.workflow.name].outdir}/${proj.name}.coverage.html`
     }
     fs.writeFileSync(resultJson, JSON.stringify(result))
   }

@@ -4,6 +4,7 @@ import { LoaderDialog, FileViewerDialog } from '/src/edge/common/Dialogs'
 import { getData, fetchFile, apis } from '/src/edge/common/util'
 import ProjectGeneral from '/src/edge/project/results/ProjectGeneral'
 import ProjectOutputs from '/src/edge/project/results/ProjectOutputs'
+import { Taxonomy } from '/src/workflows/spades/results/Taxonomy'
 
 const ProjectResult = (props) => {
   const [project, setProject] = useState()
@@ -209,7 +210,19 @@ const ProjectResult = (props) => {
             allExpand={allExpand}
             allClosed={allClosed}
           />
-          {result && <></>}
+          {result && (
+            <>
+              {project.type === 'taxonomy' && (
+                <Taxonomy
+                  result={result}
+                  project={project}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+            </>
+          )}
           {outputs?.length > 0 && (
             <ProjectOutputs
               outputs={outputs}
