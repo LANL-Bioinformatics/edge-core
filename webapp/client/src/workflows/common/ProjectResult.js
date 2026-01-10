@@ -142,7 +142,7 @@ const ProjectResult = (props) => {
   }
 
   return (
-    <div className="animated fadeIn">
+    <span className="animated fadeIn">
       <LoaderDialog
         loading={confLoading || runStatsLoading || resultLoading || outputLoading}
         text="Loading..."
@@ -166,6 +166,7 @@ const ProjectResult = (props) => {
         <>
           {project && project.status === 'failed' && props.type !== 'public' && (
             <>
+              <br></br>
               <Button type="button" size="sm" color="primary" onClick={viewLogFile}>
                 View Log
               </Button>
@@ -173,6 +174,13 @@ const ProjectResult = (props) => {
               <br></br>
             </>
           )}
+          {result && result['Result Summary'] && (
+            <>
+              <b>Pathogen Summary:</b> {result['Result Summary']}
+            </>
+          )}
+          <br></br>
+
           {(outputs?.length > 0 || result) && !disableExpandClose && (
             <>
               <div className="float-end edge-text-size-small">
@@ -235,7 +243,7 @@ const ProjectResult = (props) => {
           <br></br>
         </>
       )}
-    </div>
+    </span>
   )
 }
 

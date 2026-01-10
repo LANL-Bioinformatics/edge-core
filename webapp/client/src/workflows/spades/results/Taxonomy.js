@@ -34,16 +34,16 @@ const NoMaxWidthTooltip = styled(({ className, ...props }) => (
 export const Taxonomy = (props) => {
   const [collapseCard, setCollapseCard] = useState(true)
   const tabs = {
-    'Taxonomy/Pathogen Summary': 'pathogen krona',
-    'Profiling Details': 'pathogen_full',
-    'Signature Coverage': 'coverage_browser',
+    'Taxonomy/Pathogen Summary': 'table and krona',
+    'Profiling Details': 'pathogen_full html',
+    'Signature Coverage': 'coverage_browser html',
   }
   const [taxLevel, setTaxLevel] = useState('species')
   const [activeTab, setActiveTab] = useState(0)
 
-  const tableData2 = props.result['Pathogen-annotated hits']
+  const tableData = props.result['Pathogen-annotated hits']
   //create columns from data
-  const columns2 = useMemo(
+  const columns = useMemo(
     () => [
       {
         header: 'LEVEL',
@@ -187,17 +187,11 @@ export const Taxonomy = (props) => {
                     <br></br>
                     <ThemeProvider theme={theme}>
                       <MaterialReactTable
-                        columns={columns2}
-                        data={props.result['Pathogen-annotated hits'].filter(
-                          (row) => row.LEVEL.toLowerCase() === taxLevel,
-                        )}
-                        enableColumnResizing
-                        enableTopToolbar
-                        enableBottomToolbar={false}
-                        muiTableBodyRowProps={{ hover: false }}
+                        columns={columns}
+                        data={tableData.filter((row) => row.LEVEL === taxLevel)}
                         enableFullScreenToggle={false}
                         muiTablePaginationProps={{
-                          rowsPerPageOptions: [10, 20, 50, 100],
+                          rowsPerPageOptions: [5, 10, 20, 50, 100],
                           labelRowsPerPage: 'rows per page',
                         }}
                         initialState={{
@@ -209,6 +203,7 @@ export const Taxonomy = (props) => {
                             BEST_SIG_COV: false,
                             DEPTH: false,
                           },
+                          pagination: { pageSize: 5, pageIndex: 0 },
                         }}
                         renderEmptyRowsFallback={() => (
                           <center>
