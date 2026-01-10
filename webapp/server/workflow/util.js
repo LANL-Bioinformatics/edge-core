@@ -64,10 +64,9 @@ const generateWorkflowResult = proj => {
       })
     }
     if (projectConf.workflow.name === 'taxonomy') {
-      result['GOTTCHA2 profiling result'] = Papa.parse(
-        fs.readFileSync(`${outdir}/${proj.name}.tsv`).toString(),
-        { delimiter: '\t', header: true, skipEmptyLines: true },
-      ).data
+      result['Result Summary'] = fs
+        .readFileSync(`${outdir}/${proj.name}.pathogen.summary.txt`)
+        .toString()
       result['Pathogen-annotated hits'] = Papa.parse(
         fs.readFileSync(`${outdir}/${proj.name}.pathogen.tsv`).toString(),
         { delimiter: '\t', header: true, skipEmptyLines: true },

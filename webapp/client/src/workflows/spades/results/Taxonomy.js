@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useMemo, Fragment } from 'react'
-import { Card, CardBody, Collapse, TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap'
+import {
+  Card,
+  CardBody,
+  Collapse,
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Button,
+  ButtonGroup,
+} from 'reactstrap'
 import { MaterialReactTable } from 'material-react-table'
 import { ThemeProvider } from '@mui/material'
 import { styled } from '@mui/material/styles'
@@ -23,24 +34,13 @@ const NoMaxWidthTooltip = styled(({ className, ...props }) => (
 export const Taxonomy = (props) => {
   const [collapseCard, setCollapseCard] = useState(true)
   const tabs = {
-    'Taxonomy/Pathogen': 'pathogen krona',
-    Details: 'pathogen_full',
-    Coverage: 'coverage_browser',
+    'Taxonomy/Pathogen Summary': 'pathogen krona',
+    'Profiling Details': 'pathogen_full',
+    'Signature Coverage': 'coverage_browser',
   }
+  const [taxLevel, setTaxLevel] = useState('species')
   const [activeTab, setActiveTab] = useState(0)
-  /* const tableData = props.result['GOTTCHA2 profiling result']
-  //create columns from data
-  const columns = useMemo(
-    () =>
-      tableData.length
-        ? Object.keys(tableData[0]).map((columnId) => ({
-            header: columnId,
-            accessorKey: columnId,
-            id: columnId,
-          }))
-        : [],
-    [tableData],
-  ) */
+
   const tableData2 = props.result['Pathogen-annotated hits']
   //create columns from data
   const columns2 = useMemo(
@@ -158,12 +158,43 @@ export const Taxonomy = (props) => {
             {Object.keys(tabs).map((item, index) => (
               <TabPane key={index} tabId={index}>
                 <br></br>
-                {item === 'Taxonomy/Pathogen' && tableData2 ? (
+                {item === 'Taxonomy/Pathogen Summary' && props.result['Pathogen-annotated hits'] ? (
                   <>
+                    <ButtonGroup className="mr-3" aria-label="First group" size="sm">
+                      <Button
+                        color="outline-primary"
+                        onClick={() => setTaxLevel('species')}
+                        active={taxLevel === 'species'}
+                      >
+                        Species
+                      </Button>
+                      <Button
+                        color="outline-primary"
+                        onClick={() => setTaxLevel('genus')}
+                        active={taxLevel === 'genus'}
+                      >
+                        Genus
+                      </Button>
+                      <Button
+                        color="outline-primary"
+                        onClick={() => setTaxLevel('family')}
+                        active={taxLevel === 'family'}
+                      >
+                        Family
+                      </Button>
+                    </ButtonGroup>
+                    <br></br>
+                    <br></br>
                     <ThemeProvider theme={theme}>
                       <MaterialReactTable
                         columns={columns2}
-                        data={tableData2}
+                        data={props.result['Pathogen-annotated hits'].filter(
+                          (row) => row.LEVEL.toLowerCase() === taxLevel,
+                        )}
+                        enableColumnResizing
+                        enableTopToolbar
+                        enableBottomToolbar={false}
+                        muiTableBodyRowProps={{ hover: false }}
                         enableFullScreenToggle={false}
                         muiTablePaginationProps={{
                           rowsPerPageOptions: [10, 20, 50, 100],
@@ -178,13 +209,6 @@ export const Taxonomy = (props) => {
                             BEST_SIG_COV: false,
                             DEPTH: false,
                           },
-                          columnFilters: [
-                            {
-                              id: 'LEVEL', // Must match the accessorKey
-                              value: 'species', // The default filter value
-                            },
-                          ],
-                          showColumnFilters: true,
                         }}
                         renderEmptyRowsFallback={() => (
                           <center>
@@ -210,7 +234,7 @@ export const Taxonomy = (props) => {
                       className="edge-iframe"
                     />
                   </>
-                ) : item === 'Details' && props.result['Pathogen full'] ? (
+                ) : item === 'Profiling Details' && props.result['Pathogen full'] ? (
                   <>
                     <a
                       href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Pathogen full']}`}
@@ -228,7 +252,7 @@ export const Taxonomy = (props) => {
                       className="edge-iframe"
                     />
                   </>
-                ) : item === 'Coverage' && props.result['Coverage browser'] ? (
+                ) : item === 'Signature Coverage' && props.result['Coverage browser'] ? (
                   <>
                     <a
                       href={`${config.APP.API_URI}/projects/${props.project.code}/${props.result['Coverage browser']}`}
