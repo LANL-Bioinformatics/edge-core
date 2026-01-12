@@ -49,7 +49,11 @@ export const Taxonomy = (props) => {
         header: 'LEVEL',
         accessorKey: 'LEVEL',
       },
-      { header: 'NAME', accessorKey: 'NAME' },
+      {
+        header: 'NAME',
+        accessorKey: 'NAME',
+        filterFn: 'includesString', // use built-in filter function
+      },
       {
         header: 'TAXID',
         accessorKey: 'TAXID',
@@ -85,6 +89,8 @@ export const Taxonomy = (props) => {
       {
         header: 'PATHOGENIC_INFO',
         accessorKey: 'PATHOGENIC_INFO',
+        enableGlobalFilter: false, // do not scan this column during global filtering
+        enableColumnFilter: false, // disable column filtering for this column
         Cell: ({ cell }) =>
           cell.getValue() == '' ? (
             ''
@@ -189,6 +195,7 @@ export const Taxonomy = (props) => {
                       <MaterialReactTable
                         columns={columns}
                         data={tableData.filter((row) => row.LEVEL === taxLevel)}
+                        globalFilterFn="includesString" //turn off fuzzy matching and use simple includesString filter function
                         enableFullScreenToggle={false}
                         muiTablePaginationProps={{
                           rowsPerPageOptions: [5, 10, 20, 50, 100],
