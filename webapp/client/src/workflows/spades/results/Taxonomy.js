@@ -202,6 +202,7 @@ export const Taxonomy = (props) => {
                           labelRowsPerPage: 'rows per page',
                         }}
                         initialState={{
+                          density: 'compact',
                           columnVisibility: {
                             TAXID: false,
                             TOTAL_BP_MAPPED: false,
@@ -210,7 +211,7 @@ export const Taxonomy = (props) => {
                             BEST_SIG_COV: false,
                             DEPTH: false,
                           },
-                          pagination: { pageSize: 5, pageIndex: 0 },
+                          pagination: { pageSize: 10, pageIndex: 0 },
                         }}
                         renderEmptyRowsFallback={() => (
                           <center>
