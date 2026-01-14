@@ -11,7 +11,9 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
 ## INSTALL webapp
 
-1. Use 'git clone' to create a local copy of the EDGE repo in your installation directory
+1. Create a local copy of the microbiome-edge web app in your installation directory
+
+   `git clone https://github.com/LANL-Bioinformatics/edge-core.git`
    
 2. Create environment variables
 
@@ -38,7 +40,7 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
         ```
         > Those environment variables are used within `webapp/server/config.js`.
 
-3. Inside EDGE installation folder, run the installation script 
+3. Inside edge-core/installation folder, run the installation script 
 
     `./install.sh`
     
@@ -47,7 +49,7 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
 1. Start MongoDB if it's not started yet
 
-2. Inside EDGE folder, run the pm2 start command 
+2. Inside edge-core folder, run the pm2 start command 
 
     `pm2 start pm2.config.js`
     
