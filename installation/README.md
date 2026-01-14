@@ -31,12 +31,6 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
         ```
         > Those environment variables are used within `webapp/client/src/config.js`.
 
-    -  Create a build directory with a production build of the client:
-        ```shell
-        cd webapp/client
-        npm run build
-        ```
-
     - Populate the server environment configuration file (i.e. `webapp/server/.env`). 
     
         You can initialize it based upon the corresponding example file:
