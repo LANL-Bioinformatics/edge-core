@@ -1,7 +1,7 @@
 ## INSTALLATION PREREQUISITES
 
-### Install Node20.19+
-https://nodejs.org/en/download
+### Install Node
+https://nodejs.org
 
 ### Install pm2
 `npm install pm2@latest -g`
@@ -11,13 +11,11 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
 ## INSTALL webapp
 
-1. Move/copy edge-core folder to the installation directory
+1. Create a local copy of the microbiome-edge web app in your installation directory
 
-2. Inside edge-core/installation folder, run the installation script 
-
-    `./install.sh`
-    
-3. Create environment variables
+   `git clone https://github.com/LANL-Bioinformatics/edge-core.git`
+   
+2. Create environment variables
 
     The web client and web server each rely on environment variables for their configuration.
     You can define those environment variables in `.env` files.
@@ -47,6 +45,11 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
         webapp/server/.env
         ```
         > Those environment variables are used within `webapp/server/config.js`.
+
+3. Inside edge-core/installation folder, run the installation script 
+
+    `./install.sh`
+    
 
 ## START webapp
 
