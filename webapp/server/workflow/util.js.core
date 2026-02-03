@@ -1,4 +1,5 @@
 const fs = require('fs')
+const xlsx = require('node-xlsx').default
 const config = require('../config')
 const workflowConfig = require('./config')
 
@@ -101,15 +102,18 @@ const validateBulkSubmissionInput = async (bulkExcel, type) => {
   // Remove header
   rows.shift()
   // validate inputs
+  // validate inputs
   let validInput = true
   let errMsg = ''
-  let currRow = 1
   const submissions = []
   if (rows.length === 0) {
     validInput = false
     errMsg += 'ERROR: No submission found in the bulk excel file.\n'
   }
 
+  if (type === 'wastewater') {
+    // do some validation for wastewater submission\
+  }
   // eslint-disable-next-line consistent-return
   return { validInput, errMsg, submissions }
 }
