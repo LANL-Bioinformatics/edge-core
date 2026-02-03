@@ -99,8 +99,6 @@ const config = {
       161061273600,
     // Directory of the workflow files.
     WORKFLOW_DIR: process.env.NEXTFLOW_WORKFLOW_DIR || NEXTFLOW_BASE_DIR,
-    WORK_DIR:
-      process.env.NEXTFLOW_WORK_DIR || path.join(IO_BASE_DIR, 'nextflow'),
   },
   CROMWELL: {
     // Base URL at which HTTP clients can access the Cromwell API.
