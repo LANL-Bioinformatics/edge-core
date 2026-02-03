@@ -102,7 +102,6 @@ const validateBulkSubmissionInput = async (bulkExcel, type) => {
   // Remove header
   rows.shift()
   // validate inputs
-  // validate inputs
   let validInput = true
   let errMsg = ''
   const submissions = []
