@@ -7,7 +7,7 @@ const sysError = config.APP.API_ERROR
 // Get reference list
 const getReflist = async (req, res) => {
   try {
-    logger.debug('/api/workflow/data/reflist')
+    logger.debug('/api-workflow/data/reflist')
     const rawdata = fs.readFileSync(workflowConfig.data.REF_LIST)
     const reflist = Object.keys(JSON.parse(rawdata)).sort()
 
@@ -17,7 +17,7 @@ const getReflist = async (req, res) => {
       success: true,
     })
   } catch (err) {
-    logger.error(`/api/workflow/data/reflist failed: ${err}`)
+    logger.error(`/api-workflow/data/reflist failed: ${err}`)
     return res.status(500).json({
       message: sysError,
       success: false,
