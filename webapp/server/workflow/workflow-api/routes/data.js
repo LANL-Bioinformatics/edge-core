@@ -3,7 +3,7 @@ const { getReflist } = require('../controllers/data-controller')
 
 /**
  * @swagger
- * /api/workflow/data/reflist:
+ * /api-workflow/data/reflist:
  *   get:
  *     summary: Ref list
  *     tags: [Metag]
