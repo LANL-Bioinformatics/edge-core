@@ -86,7 +86,6 @@ const workflowList = {
 // eslint-disable-next-line no-unused-vars
 const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
   const params = {}
-  const errMsg = ''
   if (projectConf.workflow.name === 'sra2fastq') {
     // download sra data to shared directory
     params.sraOutdir = config.IO.SRA_BASE_DIR
@@ -115,7 +114,7 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
     }
   }
 
-  return { workflowParams: errMsg ? null : params, errMsg }
+  return params
 }
 
 const generateWorkflowResult = proj => {
