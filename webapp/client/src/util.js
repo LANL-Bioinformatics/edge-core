@@ -50,6 +50,12 @@ export const workflowList = {
     category: 'metagenomics',
     info: 'Gene Family Analysis workflow ',
   },
+  //pipeline
+  metagenomics: {
+    label: 'Metagenomics Pipeline',
+    category: 'metagenomics',
+    info: 'EDGE provides many modules to do various analyses. You can choose to run or skip a specific process. Parameters/options are provided for most of the analyses.',
+  },
 }
 
 // match colors in scss/edgescss

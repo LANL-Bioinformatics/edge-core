@@ -4,6 +4,7 @@ const UserProjectPage = React.lazy(() => import('src/workflows/common/projectPag
 const AdminProjectPage = React.lazy(() => import('src/workflows/common/projectPage/Admin'))
 const SRAWorkflow = React.lazy(() => import('src/workflows/sra/Main'))
 const MetaGWorkflow = React.lazy(() => import('src/workflows/metagenomics/Main'))
+const MetaGPipeline = React.lazy(() => import('src/workflows/metagenomics/pipeline/Main'))
 
 const workflowPrivateRoutes = [
   { path: '/user/project', name: 'ProjectPage', element: UserProjectPage },
@@ -11,6 +12,7 @@ const workflowPrivateRoutes = [
   config.APP.SRADATA_IS_ENABLED && { path: '/user/sradata', name: 'Data', element: SRAWorkflow },
   // Add more workflow private routes here
   { path: '/workflow/metagenomics', name: 'MetaG', element: MetaGWorkflow },
+  { path: '/workflow/metagenomics/pipeline', name: 'MetaGPipeline', element: MetaGPipeline },
 ]
 
 export default workflowPrivateRoutes

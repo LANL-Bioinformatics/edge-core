@@ -127,7 +127,7 @@ export const inputRawReads = {
 
 export const workflows = {
   runFaQCs: {
-    validForm: false,
+    validForm: true,
     errMessage: 'input error',
     paramsOn: true,
     files: [],
@@ -298,7 +298,7 @@ export const workflows = {
     },
   },
   assembly: {
-    validForm: false,
+    validForm: true,
     errMessage: 'input error',
     paramsOn: true,
     files: [],
@@ -638,7 +638,7 @@ export const workflows = {
     },
   },
   annotation: {
-    validForm: false,
+    validForm: true,
     errMessage: 'input error',
     paramsOn: true,
     files: [],

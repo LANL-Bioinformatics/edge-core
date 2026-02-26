@@ -14,7 +14,7 @@ import { workflows } from '../defaults'
 
 export const Phylogeny = (props) => {
   const workflowName = 'phylogeny'
-  const [collapseParms, setCollapseParms] = useState(false)
+  const [collapseParms, setCollapseParms] = useState(props.collapseParms !== undefined ? props.collapseParms : false)
   const [form] = useState({ ...workflows[workflowName] })
   const [validInputs] = useState({ ...workflows[workflowName].validInputs })
   const [resetGenomeSelect, setResetGenomeSelect] = useState(0)
@@ -24,15 +24,12 @@ export const Phylogeny = (props) => {
   const [doValidation, setDoValidation] = useState(0)
 
   const toggleParms = () => {
-    setCollapseParms(!collapseParms)
+    if (form.paramsOn) {
+      setCollapseParms(!collapseParms)
+    }
   }
 
   const setOnoff = (onoff) => {
-    if (onoff) {
-      setCollapseParms(false)
-    } else {
-      setCollapseParms(true)
-    }
     form.paramsOn = onoff
     setDoValidation(doValidation + 1)
   }
@@ -141,7 +138,8 @@ export const Phylogeny = (props) => {
   }
 
   useEffect(() => {
-    form.paramsOn = props.paramsOn ? props.paramsOn : true
+    form.paramsOn = props.paramsOn !== undefined ? props.paramsOn : true
+    setDoValidation(doValidation + 1)
   }, [props.paramsOn]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -187,11 +185,12 @@ export const Phylogeny = (props) => {
         title={props.title}
         collapseParms={collapseParms}
         id={workflowName + 'input'}
-        isValid={props.isValid}
+        isValid={form.paramsOn === true ? props.isValid : true}
         errMessage={props.errMessage}
         onoff={props.onoff}
         paramsOn={form.paramsOn}
         setOnoff={setOnoff}
+        disabled={props.disabled !== undefined ? props.disabled : false}
       />
       <Collapse isOpen={!collapseParms && form.paramsOn} id={'collapseParameters-' + props.name}>
         <CardBody style={props.disabled ? { pointerEvents: 'none', opacity: '0.4' } : {}}>
