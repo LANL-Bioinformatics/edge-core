@@ -4,6 +4,10 @@ import { LoaderDialog, FileViewerDialog } from '/src/edge/common/Dialogs'
 import { getData, fetchFile, apis } from '/src/edge/common/util'
 import ProjectGeneral from '/src/edge/project/results/ProjectGeneral'
 import ProjectOutputs from '/src/edge/project/results/ProjectOutputs'
+import { RunFaQCs } from '../metagenomics/results/RunFaQCs'
+import { Assembly } from '../metagenomics/results/Assembly'
+import { Phylogeny } from '../metagenomics/results/Phylogeny'
+import { AntiSmash } from '../metagenomics/results/AntiSmash'
 
 const ProjectResult = (props) => {
   const [project, setProject] = useState()
@@ -98,6 +102,7 @@ const ProjectResult = (props) => {
       //project files
       getData(url)
         .then((data) => {
+          //console.log(data.fileData)
           setOutputLoading(false)
           setOutputs(data.fileData)
         })
@@ -113,13 +118,11 @@ const ProjectResult = (props) => {
       getProjectConf()
       setRunStatsLoading(true)
       getProjectRunStats()
-      if (['complete', 'running', 'failed'].includes(project.status)) {
-        setOutputLoading(true)
-        getProjectOutputs()
-      }
       if (project.status === 'complete') {
         setResultLoading(true)
         getProjectResult()
+        setOutputLoading(true)
+        getProjectOutputs()
       }
     }
   }, [project, type])
@@ -172,7 +175,7 @@ const ProjectResult = (props) => {
               <br></br>
             </>
           )}
-          {(outputs?.length > 0 || result) && !disableExpandClose && (
+          {(outputs || result) && !disableExpandClose && (
             <>
               <div className="float-end edge-text-size-small">
                 <Button
@@ -209,8 +212,47 @@ const ProjectResult = (props) => {
             allExpand={allExpand}
             allClosed={allClosed}
           />
-          {result && <></>}
-          {outputs?.length > 0 && (
+          {result && (
+            <>
+              {project.type === 'runFaQCs' && (
+                <RunFaQCs
+                  result={result}
+                  project={project}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+              {project.type === 'assembly' && (
+                <Assembly
+                  result={result}
+                  project={project}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+              {project.type === 'phylogeny' && (
+                <Phylogeny
+                  result={result}
+                  project={project}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+              {project.type === 'antiSmash' && (
+                <AntiSmash
+                  result={result}
+                  project={project}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+            </>
+          )}
+          {outputs && (
             <ProjectOutputs
               outputs={outputs}
               filePath={'/projects/' + project.code + '/output'}
