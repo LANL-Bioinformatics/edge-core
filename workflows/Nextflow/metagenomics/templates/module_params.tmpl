@@ -75,7 +75,7 @@
     }
     
     annotation {
-        contigSizeForAnnotation = <% if(typeof minContigSize !== 'undefined') { %><%= minContigSize %><% } else { %>700<%} %>
+        contigSizeForAnnotation = <% if(typeof annotationMinContigSize !== 'undefined') { %><%= annotationMinContigSize %><% } else { %>700<%} %>
         taxKingdom = <% if(typeof taxKingdom !== 'undefined') { %>"<%= taxKingdom %>"<% } else { %>"bacteria"<%} %>
         //annotaters: prokka, ratt
         annotateProgram = <% if(typeof annotateProgram !== 'undefined') { %>"<%= annotateProgram %>"<% } else { %>"prokka"<%} %> //default
