@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM continuumio/miniconda3:v25.11.1 AS build
-ENV version=1.7.1
+FROM continuumio/miniconda3:main AS build
+ENV version=1.7.0
 
 ENV container=docker
 
@@ -13,8 +13,14 @@ RUN conda init bash \
     && conda create --name readsToContig \
     && conda activate readsToContig 
 
-RUN conda install -n readsToContig -c conda-forge r-base=4.4.0 python=3.11
-RUN conda install -n readsToContig -c bioconda minimap2=2.24 perl-json=4.10 samclip=0.4.0 bwa=0.7.18 bowtie2=2.5.4 samtools=1.6
+RUN conda install -n readsToContig -c conda-forge r-base
+RUN conda install -n readsToContig -c conda-forge python=3.11
+RUN conda install -n readsToContig -c bioconda minimap2=2.24
+RUN conda install -n readsToContig -c bioconda perl-json
+RUN conda install -n readsToContig -c bioconda samclip=0.4.0
+RUN conda install -n readsToContig -c bioconda bwa
+RUN conda install -n readsToContig -c bioconda bowtie2
+RUN conda install -n readsToContig -c bioconda samtools=1.6
 RUN conda install -c conda-forge conda-pack
 
 
@@ -24,11 +30,11 @@ RUN conda-pack -n readsToContig -o /tmp/env.tar && \
 
 RUN /venv/bin/conda-unpack
 
-FROM debian:trixie AS runtime
+FROM debian:buster AS runtime
 #RUN apk add --no-cache bash
 
 COPY --from=build /venv /venv
-RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
 ENV PERL5LIB=/venv/lib/perl5/core_perl
 ENV PATH=/venv/bin:$PATH
     

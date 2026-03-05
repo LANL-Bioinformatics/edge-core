@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM continuumio/miniconda3:v25.11.1 AS build
-ENV version=1.0.1
+FROM continuumio/miniconda3:main AS build
+ENV version=1.0.0
 
 ENV container=docker
 
@@ -15,8 +15,9 @@ RUN conda init bash \
 
 # install dependencies
 RUN conda install -n binning -c conda-forge python=3.11
-RUN conda install -n binning -c bioconda maxbin2=2.2.7 checkm-genome=1.2.3
-RUN conda install -c conda-forge conda-pack=0.8.1
+RUN conda install -n binning -c bioconda maxbin2=2.2.7
+RUN conda install -n binning -c bioconda checkm-genome=1.2.3
+RUN conda install -c conda-forge conda-pack
 
 RUN conda-pack -n binning -o /tmp/env.tar && \
     mkdir /venv && cd /venv && tar xf /tmp/env.tar && \
@@ -24,11 +25,11 @@ RUN conda-pack -n binning -o /tmp/env.tar && \
 
 RUN /venv/bin/conda-unpack
 
-FROM debian:trixie AS runtime
+FROM debian:latest AS runtime
 
 COPY --from=build /venv /venv
 ENV PATH=/venv/bin:$PATH
-RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
     
 SHELL ["/bin/bash", "-c"]
 CMD /bin/bash
