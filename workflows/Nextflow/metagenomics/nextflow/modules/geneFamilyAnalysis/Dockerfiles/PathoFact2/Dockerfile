@@ -51,7 +51,7 @@ RUN mkdir -p /abs/path/to/PathoFact2/DATABASES/HMM \
 # deeparg download_data -o "<path_to_database_dir>/deeparg_db" #TODO: download DBs for DeepARG
 
 
-RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
 ENV PATH=/PathoFact2:$PATH
 
     

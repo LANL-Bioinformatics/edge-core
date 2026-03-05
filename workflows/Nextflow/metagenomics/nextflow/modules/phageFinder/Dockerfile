@@ -37,7 +37,7 @@ FROM debian:trixie AS runtime
 COPY --from=build /venv /venv
 COPY --from=build /phage_finder_v2.1 /venv/opt/phage_finder_v2.1
 ENV PATH=/venv/opt/phage_finder_v2.1/bin:/venv/bin:$PATH
-RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
     
 SHELL ["/bin/bash", "-c"]
 CMD /bin/bash

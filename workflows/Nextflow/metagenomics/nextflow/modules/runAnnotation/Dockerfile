@@ -36,7 +36,7 @@ FROM debian:latest AS runtime
 COPY --from=build /venv /venv
 
 ENV PATH=/venv/bin:/venv/opt/RATT:$PATH
-RUN apt-get update && apt-get install  procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install  procps -y && apt-get clean
 
 SHELL ["/bin/bash", "-c"]
 CMD /bin/bash

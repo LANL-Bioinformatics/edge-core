@@ -19,7 +19,7 @@ RUN conda init bash \
 RUN gunzip /MetaVF_toolkit/databases/*.gz && chmod 755 /MetaVF_toolkit/metaVF.py
 
 ENV PATH=/venv/bin:/MetaVF_toolkit:$PATH
-RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
     
 SHELL ["/bin/bash", "-c"]
 CMD /bin/bash

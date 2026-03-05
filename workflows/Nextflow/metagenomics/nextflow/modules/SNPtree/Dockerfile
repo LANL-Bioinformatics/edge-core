@@ -32,7 +32,7 @@ FROM debian:latest AS runtime
 
 COPY --from=build /venv /venv
 
-RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
 ENV PERL5LIB=/venv/lib/perl5/core_perl:/venv/lib/perl5/site_perl
 ENV PATH=/venv/bin:$PATH
 
