@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const xlsx = require('node-xlsx').default
 const Papa = require('papaparse')
 const config = require('../config')
@@ -16,6 +17,7 @@ const nextflowWorkflows = [
   'phylogeny',
   'refBased',
   'geneFamily',
+  'metagenomics',
 ]
 const nextflowConfigs = {
   executor_config: {
@@ -81,11 +83,16 @@ const workflowList = {
     nextflow_main: `${config.NEXTFLOW.WORKFLOW_DIR}/metagenomics/nextflow/main.nf`,
     config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/metagenomics/templates/workflow_config.tmpl`,
   },
+  metagenomics: {
+    outdir: 'output/Metagenomics',
+    nextflow_main: `${config.NEXTFLOW.WORKFLOW_DIR}/metagenomics/nextflow/main.nf`,
+    config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/metagenomics/templates/pipeline_config.tmpl`,
+  },
 }
 
 // eslint-disable-next-line no-unused-vars
 const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
-  const params = {}
+  let params = {}
   if (projectConf.workflow.name === 'sra2fastq') {
     // download sra data to shared directory
     params.sraOutdir = config.IO.SRA_BASE_DIR
@@ -111,6 +118,36 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
       } else {
         params.inputFastq = projectConf.rawReads.inputFiles
       }
+    }
+
+    if (projectConf.pipeline) {
+      let worflowParams = {
+        runFaQCs: false,
+        assembly: false,
+        annotation: false,
+        binning: false,
+        antiSmash: false,
+        taxonomy: false,
+        phylogeny: false,
+        refBased: false,
+        geneFamily: false,
+        contigsOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}`,
+        qcOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.runFaQCs.outdir)}`,
+        assemblyOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.assembly.outdir)}`,
+        annotationOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.annotation.outdir)}`,
+        binningOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.binning.outdir)}`,
+        antiSmashOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.antiSmash.outdir)}`,
+        taxonomyOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.taxonomy.outdir)}`,
+        phylogenyOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.phylogeny.outdir)}`,
+        refBasedOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.refBased.outdir)}`,
+        geneFamilyOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}/${path.basename(workflowList.geneFamily.outdir)}`,
+        reportOutdir: `${projHome}/${workflowList[projectConf.workflow.name].outdir}`,
+      }
+      projectConf.pipeline.forEach(workflow => {
+        worflowParams[workflow.name] = true
+        worflowParams = { ...worflowParams, ...workflow.input }
+      })
+      params = { ...params, ...worflowParams }
     }
   }
 

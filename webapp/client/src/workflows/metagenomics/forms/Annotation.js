@@ -53,7 +53,7 @@ export const Annotation = (props) => {
     if (validInputs[form.inputs['annotateProgram'].value][name]) {
       validInputs[form.inputs['annotateProgram'].value][name].isValid = inForm.validForm
     }
-    if (name === 'minContigSize') {
+    if (name === 'annotationMinContigSize') {
       //set all annotatePrograms
       Object.keys(validInputs).forEach((key) => {
         validInputs[key][name].isValid = inForm.validForm
@@ -176,15 +176,15 @@ export const Annotation = (props) => {
       <Collapse isOpen={!collapseParms && form.paramsOn} id={'collapseParameters-' + props.name}>
         <CardBody style={props.disabled ? { pointerEvents: 'none', opacity: '0.4' } : {}}>
           <IntegerInput
-            name={'minContigSize'}
+            name={'annotationMinContigSize'}
             setParams={setMainIntegerInput}
-            text={workflows[workflowName].inputs['minContigSize'].text}
-            tooltip={workflows[workflowName].inputs['minContigSize'].tooltip}
+            text={workflows[workflowName].inputs['annotationMinContigSize'].text}
+            tooltip={workflows[workflowName].inputs['annotationMinContigSize'].tooltip}
             defaultValue={
-              workflows[workflowName].inputs['minContigSize']['integerInput'].defaultValue
+              workflows[workflowName].inputs['annotationMinContigSize']['integerInput'].defaultValue
             }
-            min={workflows[workflowName].inputs['minContigSize']['integerInput'].min}
-            max={workflows[workflowName].inputs['minContigSize']['integerInput'].max}
+            min={workflows[workflowName].inputs['annotationMinContigSize']['integerInput'].min}
+            max={workflows[workflowName].inputs['annotationMinContigSize']['integerInput'].max}
           />
           <br></br>
           <OptionSelector

@@ -78,6 +78,7 @@ const Main = (props) => {
     setSubmitting(true)
     let formData = {}
     formData.category = workflowList[pipeline].category
+    formData.workflow = { name: pipeline }
     // set project info
     formData.project = {
       name: projectParams.projectName,

@@ -3,38 +3,38 @@ params {
     //which modules are run
     modules {
         sra2fastq = <% if(typeof source !== 'undefined' && source === 'sra') { %>true<% } else { %>false<%} %>
-        faqcs = <%= runFaQCs %>
+        faqcs = <% if(typeof runFaQCs !== 'undefined') { %><%= runFaQCs %><% } else { %>false<%} %>
         hostRemoval = false
-        runAssembly = <%= assembly %>
-        annotation = <%= annotation %>
-        readsBinning = <%= binning %>
+        runAssembly = <% if(typeof assembly !== 'undefined') { %><%= assembly %><% } else { %>false<%} %>
+        annotation = <% if(typeof annotation !== 'undefined') { %><%= annotation %><% } else { %>false<%} %>
+        readsBinning = <% if(typeof binning !== 'undefined') { %><%= binning %><% } else { %>false<%} %>
         phageFinder = true //true by default -- will run if non-viral reads are annotated
         readsTaxonomyAssignment = <% if(typeof readTax !== 'undefined') { %><%= readTax %><% } else { %>false<%} %>
         contigsTaxonomyAssignment = <% if(typeof contigTax !== 'undefined') { %><%= contigTax %><% } else { %>false<%} %>
-        secondaryMetaboliteAnalysis =  <%= antiSmash %>
-        refBasedAnalysis = <%= refBasedAnalysis %>
-        snpTree = <%= phylogeny %>
-        readsGeneFamilyAnalysis = <% if(typeof readGeneFamily !== 'undefined') { %><%= readGeneFamily %><% } else { %>false<%} %>
-        contigsGeneFamilyAnalysis =  <% if(typeof contigGeneFamily !== 'undefined') { %><%= contigGeneFamily %><% } else { %>false<%} %> //contig-based requires annotation output as well (GFF,FAA).
-        geneFamilyAnalysis = 
+        secondaryMetaboliteAnalysis = <% if(typeof antiSmash !== 'undefined') { %><%= antiSmash %><% } else { %>false<%} %>
+        refBasedAnalysis = <% if(typeof refBased !== 'undefined') { %><%= refBased %><% } else { %>false<%} %>
+        snpTree = <% if(typeof phylogeny !== 'undefined') { %><%= phylogeny %><% } else { %>false<%} %>
+        readsGeneFamilyAnalysis = <% if(typeof readsGeneFamily !== 'undefined') { %><%= readsGeneFamily %><% } else { %>false<%} %>
+        contigsGeneFamilyAnalysis = <% if(typeof contigsGeneFamily !== 'undefined') { %><%= contigsGeneFamily %><% } else { %>false<%} %> //contig-based requires annotation output as well (GFF,FAA).
     }
 
     outputLocations {
         //everything in its separate output for the moment
         sra2fastqOutDir =  "<%= sraOutdir %>"
-        processProvidedContigsOutDir = "<%= projOutdir %>"
-        qcOutDir = "<%= projOutdir %>/ReadsQC"
+        processProvidedContigsOutDir = "<%= contigsOutdir %>"
+        qcOutDir = "<%= qcOutdir %>"
         hostRemovalOutDir = ""
-        assemblyOutDir = "<%= projOutdir %>/Assembly"
-        contigsTaxonomyOutDir = "<%= projOutdir %>/Taxonomy"
-        phageFinderOutDir = ""
-        readBinningOutDir = "<%= projOutdir %>/Binning"
-        readsTaxonomyOutDir = "<%= projOutdir %>/Taxonomy"
-        annotationOutDir = "<%= projOutdir %>/annotation"
-        smaOutDir = "<%= projOutdir %>/AntiSmash"
-        phylogenyOutDir = "<%= projOutdir %>/Phylogeny"
-        geneFamilyOutDir = "<%= projOutdir %>/SpecialtyGenes"
-        reportOutDir = "<%= projOutdir %>"
+        assemblyOutDir ="<%= assemblyOutdir %>"
+        contigsTaxonomyOutDir ="<%= taxonomyOutdir %>"
+        phageFinderOutDir = "<%= annotationOutdir %>"
+        readBinningOutDir = "<%= binningOutdir %>"
+        readsTaxonomyOutDir = "<%= taxonomyOutdir %>"
+        annotationOutDir = "<%= annotationOutdir %>"
+        smaOutDir = "<%= antiSmashOutdir %>"
+        refBasedOutDir = "<%= refBasedOutdir %>"
+        phylogenyOutDir = "<%= phylogenyOutdir %>"
+        geneFamilyOutDir = "<%= geneFamilyOutdir %>"
+        reportOutDir = "<%= reportOutdir %>"
     }
 
 <%- include (moduleParams) %>

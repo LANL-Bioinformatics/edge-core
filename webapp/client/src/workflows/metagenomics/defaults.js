@@ -659,7 +659,7 @@ export const workflows = {
       },
     },
     inputs: {
-      minContigSize: {
+      annotationMinContigSize: {
         text: 'Minimum Contig Length',
         tooltip: 'Default:700, range: 1 - 10000',
         value: 700,
@@ -792,7 +792,7 @@ export const workflows = {
     // only for input with validation method
     validInputs: {
       prokka: {
-        minContigSize: {
+        annotationMinContigSize: {
           isValid: true,
           error: 'Minimum Contig Length error. Default: 700, range: 1 - 10000',
         },
@@ -807,7 +807,10 @@ export const workflows = {
         },
       },
       ratt: {
-        minContigSize: { isValid: true, error: 'Minimum Contig Length error. Range: 1 - 10000' },
+        annotationMinContigSize: {
+          isValid: true,
+          error: 'Minimum Contig Length error. Range: 1 - 10000',
+        },
         sourceGBK: {
           isValid: false,
           error: 'Annotation Source Genbank error. Invalid file input',
