@@ -7,7 +7,7 @@ on:
         branches:
             - main
         paths:
-            - 'workflows/Nextflow/modules/phageFinder/Dockerfile'
+            - 'workflows/Nextflow/metagenomics/nextflow/modules/phageFinder/Dockerfile'
 
 jobs:
     build-and-push-image:
@@ -18,7 +18,7 @@ jobs:
             - name: Get Version
               id: get_version
               run: |
-                  VERSION=$(grep -oP 'version=\K.*' workflows/Nextflow/modules/phageFinder/Dockerfile)
+                  VERSION=$(grep -oP 'version=\K.*' workflows/Nextflow/metagenomics/nextflow/modules/phageFinder/Dockerfile)
                   VERSION=${VERSION:-1.0.0}
                   echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
             - name: Authenticate with container registry
@@ -36,18 +36,18 @@ jobs:
               id: push
               uses: docker/build-push-action@v5
               with:
-                  context: workflows/Nextflow/modules/phageFinder
-                  file: workflows/Nextflow/modules/phageFinder/Dockerfile
+                  context: workflows/Nextflow/metagenomics/nextflow/modules/phageFinder
+                  file: workflows/Nextflow/metagenomics/nextflow/modules/phageFinder/Dockerfile
                   push: true
                   tags: ghcr.io/lanl-bioinformatics/edge_phage_finder:${{ steps.get_version.outputs.version }}
             - name: update image tag ID and version in the config
               run: |
                  imageName="ghcr.io/lanl-bioinformatics/edge_phage_finder:${{ steps.get_version.outputs.version }}"
                  version="${{ steps.get_version.outputs.version }}"
-                 sed -i -E "s#apwat/phage_finder:[0-9a-zA-Z._-]+#${imageName}#" workflows/Nextflow/configs/container.config
-                 sed -i -E "s#edge_phage_finder:[0-9a-zA-Z._-]+#edge_phage_finder:${version}#" workflows/Nextflow/configs/container.config
-                 sed -i -E "s#apwat/phage_finder:[0-9a-zA-Z._-]+#${imageName}#" workflows/Nextflow/nextflow.config
-                 sed -i -E "s#edge_phage_finder:[0-9a-zA-Z._-]+#edge_phage_finder:${version}#" workflows/Nextflow/nextflow.config
+                 sed -i -E "s#apwat/phage_finder:[0-9a-zA-Z._-]+#${imageName}#" workflows/Nextflow/metagenomics/configs/container.config
+                 sed -i -E "s#edge_phage_finder:[0-9a-zA-Z._-]+#edge_phage_finder:${version}#" workflows/Nextflow/metagenomics/configs/container.config
+                 sed -i -E "s#apwat/phage_finder:[0-9a-zA-Z._-]+#${imageName}#" workflows/Nextflow/metagenomics/nextflow/nextflow.config
+                 sed -i -E "s#edge_phage_finder:[0-9a-zA-Z._-]+#edge_phage_finder:${version}#" workflows/Nextflow/metagenomics/nextflow/nextflow.config
             #A GitHub Action to detect changed files during a Workflow run and to commit and push them back to the GitHub repository. 
             #By default, the commit is made in the name of "GitHub Actions" and co-authored by the user that made the last commit.
             - name: auto-commit image version update
