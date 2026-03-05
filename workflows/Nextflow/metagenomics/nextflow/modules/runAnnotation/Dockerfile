@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM continuumio/miniconda3:v25.11.1 AS build
-ENV version=0.6.1
+FROM continuumio/miniconda3:24.5.0-0 AS build
+ENV version=0.6.0
 
 ENV container=docker
 
@@ -13,9 +13,14 @@ RUN conda init bash \
     && conda create --name annotation \
     && conda activate annotation 
 
-RUN conda install -n annotation -c bioconda perl-lwp-protocol-https=6.15 prokka=1.15.6 mummer=3.23 blast=2.16 perl-yaml=1.30
-RUN conda install -n annotation -c conda-forge r-base=4.3.0
-RUN conda install -c conda-forge conda-pack=0.8.1
+RUN conda install -n annotation -c bioconda perl-lwp-protocol-https
+RUN conda install -n annotation -c conda-forge r-base
+RUN conda install -y -n annotation -c bioconda prokka
+RUN conda install -n annotation -c bioconda mummer
+RUN conda install -n annotation -c bioconda blast=2.16
+RUN conda install -n annotation -c bioconda perl-yaml
+
+RUN conda install -c conda-forge conda-pack
 
 #Custom implementation of RATT from EDGE
 RUN wget https://ref-db.edgebioinformatics.org/EDGE/dev/edge_dev_thirdParty_softwares.tgz \
@@ -36,7 +41,7 @@ FROM debian:latest AS runtime
 COPY --from=build /venv /venv
 
 ENV PATH=/venv/bin:/venv/opt/RATT:$PATH
-RUN apt-get update && apt-get install  procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
 
 SHELL ["/bin/bash", "-c"]
 CMD /bin/bash
