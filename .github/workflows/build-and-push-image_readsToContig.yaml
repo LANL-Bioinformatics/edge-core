@@ -45,7 +45,7 @@ jobs:
                  imageName="ghcr.io/lanl-bioinformatics/edge_run_r2c:${{ steps.get_version.outputs.version }}"
                  version="${{ steps.get_version.outputs.version }}"
                  sed -i -E "s#apwat/run_r2c:[0-9a-zA-Z._-]+#${imageName}#" workflows/Nextflow/metagenomics/configs/container.config
-                 sed -i -E "s#edge_run_r2c:[0-9a-zA-Z._-]+#edge_run_r2c:${version}#" workflows/metagenomics/Nextflow/configs/container.config
+                 sed -i -E "s#edge_run_r2c:[0-9a-zA-Z._-]+#edge_run_r2c:${version}#" workflows/Nextflow/metagenomics/configs/container.config
                  sed -i -E "s#apwat/run_r2c:[0-9a-zA-Z._-]+#${imageName}#" workflows/Nextflow/metagenomics/nextflow/nextflow.config
                  sed -i -E "s#edge_run_r2c:[0-9a-zA-Z._-]+#edge_run_r2c:${version}#" workflows/Nextflow/metagenomics/nextflow/nextflow.config
             #A GitHub Action to detect changed files during a Workflow run and to commit and push them back to the GitHub repository. 
