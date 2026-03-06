@@ -18,7 +18,7 @@ jobs:
             - name: Get Version
               id: get_version
               run: |
-                  VERSION=$(grep -oP 'version=\K.*'workflows/Nextflow/metagenomics/nextflow/modules/contigBinning/Dockerfile)
+                  VERSION=$(grep -oP 'version=\K.*' workflows/Nextflow/metagenomics/nextflow/modules/contigBinning/Dockerfile)
                   VERSION=${VERSION:-1.0.0}
                   echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
             - name: Authenticate with container registry

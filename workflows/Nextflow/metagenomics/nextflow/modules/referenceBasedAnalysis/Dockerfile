@@ -35,7 +35,7 @@ FROM debian:trixie AS runtime
 
 COPY --from=build /venv /venv
 COPY --from=build /reference-based_assembly/consensus_fasta.py /venv/bin/
-RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
 RUN chmod 755 /venv/bin/consensus_fasta.py
 ENV PERL5LIB=/venv/lib/perl5/core_perl
 ENV PATH=/venv/bin

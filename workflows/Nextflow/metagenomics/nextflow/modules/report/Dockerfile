@@ -28,7 +28,7 @@ FROM debian:trixie AS runtime
 #RUN apk add --no-cache bash
 
 COPY --from=build /venv /venv
-RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
+RUN apt-get update && apt-get install procps -y && apt-get clean
 ENV PATH=/venv/bin:$PATH
 ENV PERL5LIB=/venv/lib/perl5/core_perl
     
