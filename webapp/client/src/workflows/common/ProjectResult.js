@@ -8,6 +8,7 @@ import { RunFaQCs } from '../metagenomics/results/RunFaQCs'
 import { Assembly } from '../metagenomics/results/Assembly'
 import { Phylogeny } from '../metagenomics/results/Phylogeny'
 import { AntiSmash } from '../metagenomics/results/AntiSmash'
+import { MetaG } from '../metagenomics/pipeline/results/MetaG'
 
 const ProjectResult = (props) => {
   const [project, setProject] = useState()
@@ -118,11 +119,13 @@ const ProjectResult = (props) => {
       getProjectConf()
       setRunStatsLoading(true)
       getProjectRunStats()
+      if (['complete', 'running', 'failed'].includes(project.status)) {
+        setOutputLoading(true)
+        getProjectOutputs()
+      }
       if (project.status === 'complete') {
         setResultLoading(true)
         getProjectResult()
-        setOutputLoading(true)
-        getProjectOutputs()
       }
     }
   }, [project, type])
@@ -243,6 +246,15 @@ const ProjectResult = (props) => {
               )}
               {project.type === 'antiSmash' && (
                 <AntiSmash
+                  result={result}
+                  project={project}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+              {project.type === 'metagenomics' && (
+                <MetaG
                   result={result}
                   project={project}
                   userType={type}

@@ -154,12 +154,77 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
   return params
 }
 
+const metaGWorkflowResult = (outdir, workflow, projCode) => {
+  const pattern = new RegExp(`^.+${projCode}/`)
+  const result = {}
+  result[workflow] = {}
+
+  if (workflow === 'runFaQCs') {
+    const statsJsonFile = `${outdir}/QC.stats.json`
+    if (fs.existsSync(statsJsonFile)) {
+      result[workflow].stats = JSON.parse(fs.readFileSync(statsJsonFile))
+    }
+    const summaryPlotsFile = `${outdir}/QC_summary_plots.html`
+    if (fs.existsSync(summaryPlotsFile)) {
+      result[workflow].summaryPlots =
+        `${outdir.replace(pattern, '')}/QC_summary_plots.html`
+    }
+    const reportFile = `${outdir}/QC_final_report.html`
+    if (fs.existsSync(reportFile)) {
+      result[workflow].report =
+        `${outdir.replace(pattern, '')}/QC_final_report.html`
+    }
+    const reportLongReadsFile = `${outdir}/NanoPlot-report.html`
+    if (fs.existsSync(reportLongReadsFile)) {
+      result[workflow].report =
+        `${outdir.replace(pattern, '')}/NanoPlot-report.html`
+    }
+  } else if (workflow === 'assembly') {
+    const statsFile = `${outdir}/contigs_stats.txt`
+    if (fs.existsSync(statsFile)) {
+      result[workflow].stats = Papa.parse(
+        fs.readFileSync(statsFile).toString(),
+        {
+          delimiter: '\t',
+          header: true,
+          skipEmptyLines: true,
+        },
+      ).data
+    }
+    const reportFile = `${outdir}/final_report.pdf`
+    if (fs.existsSync(reportFile)) {
+      result[workflow].report =
+        `${outdir.replace(pattern, '')}/final_report.pdf`
+    }
+  } else if (workflow === 'antiSmash') {
+    // antiSMASH HTML output
+    const antiSmashHtml = `${outdir}/output/index.html`
+    if (fs.existsSync(antiSmashHtml)) {
+      result[workflow].antiSmashHtml =
+        `${outdir.replace(pattern, '')}/output/index.html`
+    }
+  } else if (workflow === 'phylogeny') {
+    const treeAllHtml = `${outdir}/SNPphyloTree.all.html`
+    if (fs.existsSync(treeAllHtml)) {
+      result[workflow].treeAllHtml =
+        `${outdir.replace(pattern, '')}/SNPphyloTree.all.html`
+    }
+    const treeCdsHtml = `${outdir}/SNPphyloTree.cds.html`
+    if (fs.existsSync(treeCdsHtml)) {
+      result[workflow].treeCdsHtml =
+        `${outdir.replace(pattern, '')}/SNPphyloTree.cds.html`
+    }
+  }
+
+  return result
+}
+
 const generateWorkflowResult = proj => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`
   const resultJson = `${projHome}/result.json`
 
   if (!fs.existsSync(resultJson)) {
-    const result = {}
+    let result = {}
     const projectConf = JSON.parse(fs.readFileSync(`${projHome}/conf.json`))
     const outdir = `${projHome}/${workflowList[projectConf.workflow.name].outdir}`
 
@@ -171,50 +236,39 @@ const generateWorkflowResult = proj => {
         fs.symlinkSync(`../../../../sra/${accession}`, `${outdir}/${accession}`)
       })
     } else if (projectConf.workflow.name === 'runFaQCs') {
-      const statsJsonFile = `${outdir}/QC.stats.json`
-      if (fs.existsSync(statsJsonFile)) {
-        result.stats = JSON.parse(fs.readFileSync(statsJsonFile))
-      }
-      const summaryPlotsFile = `${outdir}/QC_summary_plots.html`
-      if (fs.existsSync(summaryPlotsFile)) {
-        result.summaryPlots = `${workflowList[projectConf.workflow.name].outdir}/QC_summary_plots.html`
-      }
-      const reportFile = `${outdir}/QC_final_report.html`
-      if (fs.existsSync(reportFile)) {
-        result.report = `${workflowList[projectConf.workflow.name].outdir}/QC_final_report.html`
-      }
-      const reportLongReadsFile = `${outdir}/NanoPlot-report.html`
-      if (fs.existsSync(reportLongReadsFile)) {
-        result.report = `${workflowList[projectConf.workflow.name].outdir}/NanoPlot-report.html`
+      result = {
+        ...result,
+        ...metaGWorkflowResult(outdir, 'runFaQCs', proj.code).runFaQCs,
       }
     } else if (projectConf.workflow.name === 'assembly') {
-      const statsFile = `${outdir}/contigs_stats.txt`
-      if (fs.existsSync(statsFile)) {
-        result.stats = Papa.parse(fs.readFileSync(statsFile).toString(), {
-          delimiter: '\t',
-          header: true,
-          skipEmptyLines: true,
-        }).data
-      }
-      const reportFile = `${outdir}/final_report.pdf`
-      if (fs.existsSync(reportFile)) {
-        result.report = `${workflowList[projectConf.workflow.name].outdir}/final_report.pdf`
-      }
-    } else if (projectConf.workflow.name === 'phylogeny') {
-      const treeAllHtml = `${outdir}/SNPphyloTree.all.html`
-      if (fs.existsSync(treeAllHtml)) {
-        result.treeAllHtml = `${workflowList[projectConf.workflow.name].outdir}/SNPphyloTree.all.html`
-      }
-      const treeCdsHtml = `${outdir}/SNPphyloTree.cds.html`
-      if (fs.existsSync(treeCdsHtml)) {
-        result.treeCdsHtml = `${workflowList[projectConf.workflow.name].outdir}/SNPphyloTree.cds.html`
+      result = {
+        ...result,
+        ...metaGWorkflowResult(outdir, 'assembly', proj.code).assembly,
       }
     } else if (projectConf.workflow.name === 'antiSmash') {
-      // antiSMASH HTML output
-      const antiSmashHtml = `${outdir}/output/index.html`
-      if (fs.existsSync(antiSmashHtml)) {
-        result.antiSmashHtml = `${workflowList[projectConf.workflow.name].outdir}/output/index.html`
+      result = {
+        ...result,
+        ...metaGWorkflowResult(outdir, 'antiSmash', proj.code).antiSmash,
       }
+    } else if (projectConf.workflow.name === 'phylogeny') {
+      result = {
+        ...result,
+        ...metaGWorkflowResult(outdir, 'phylogeny', proj.code).phylogeny,
+      }
+    } else if (projectConf.workflow.name === 'metagenomics') {
+      projectConf.pipeline.forEach(workflow => {
+        const workflowResult = metaGWorkflowResult(
+          `${outdir}/${path.basename(workflowList[workflow.name].outdir)}`,
+          workflow.name,
+          proj.code,
+        )
+        if (Object.keys(workflowResult[workflow.name]).length > 0) {
+          result = {
+            ...result,
+            ...workflowResult,
+          }
+        }
+      })
     }
 
     fs.writeFileSync(resultJson, JSON.stringify(result))
