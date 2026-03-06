@@ -185,6 +185,12 @@ export const Binning = (props) => {
               workflows[workflowName].inputs['binningAbundFile']['fileInput'].dataSources
             }
             fileTypes={workflows[workflowName].inputs['binningAbundFile']['fileInput'].fileTypes}
+            projectTypes={
+              workflows[workflowName].inputs['binningAbundFile']['fileInput'].projectTypes
+            }
+            projectScope={
+              workflows[workflowName].inputs['binningAbundFile']['fileInput'].projectScope
+            }
             viewFile={workflows[workflowName].inputs['binningAbundFile']['fileInput'].viewFile}
             isOptional={workflows[workflowName].inputs['binningAbundFile']['fileInput'].isOptional}
             cleanupInput={
