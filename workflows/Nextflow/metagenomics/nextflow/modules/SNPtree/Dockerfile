@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM continuumio/miniconda3:main AS build
-ENV version=0.6.0
+FROM continuumio/miniconda3:v25.11.1 AS build
+ENV version=0.6.1
 
 ENV container=docker
 
@@ -15,17 +15,11 @@ RUN conda init bash \
 
 # install dependencies for snpTree
 
-RUN conda install -n snpTree -c bioconda bcftools=1.9
-RUN conda install -n snpTree -c bioconda samtools=1.9
-RUN conda install -n snpTree -c bioconda phame
-RUN conda install -n snpTree -c bioconda perl-bioperl
-RUN conda install -n snpTree -c bioconda perl-xml-simple
-RUN conda install -n snpTree -c bioconda perl-xml-libxml
-RUN conda install -n snpTree -c bioconda perl-bio-phylo
-RUN conda install -n snpTree -c bioconda perl-json
-RUN conda install -n snpTree -c bioconda perl-yaml
+RUN conda install -n snpTree -c bioconda bcftools=1.9 samtools=1.9 phame=1.0.3 \
+    perl-bioperl=1.7.8 perl-xml-simple=2.25 perl-xml-libxml=2.0207 perl-bio-phylo=2.0.2 \
+    perl-json=4.10 perl-yaml=1.30
 RUN conda install -n snpTree -c conda-forge python=3.7
-RUN conda install -c conda-forge conda-pack
+RUN conda install -c conda-forge conda-pack=0.8.1
 
 RUN conda-pack -n snpTree -o /tmp/env.tar && \
     mkdir /venv && cd /venv && tar xf /tmp/env.tar && \
@@ -38,7 +32,7 @@ FROM debian:latest AS runtime
 
 COPY --from=build /venv /venv
 
-RUN apt-get update && apt-get install procps -y && apt-get clean
+RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
 ENV PERL5LIB=/venv/lib/perl5/core_perl:/venv/lib/perl5/site_perl
 ENV PATH=/venv/bin:$PATH
 
