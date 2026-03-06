@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM continuumio/miniconda3:main AS build
-ENV version=1.6.1
+FROM continuumio/miniconda3:v25.11.1 AS build
+ENV version=1.6.2
 
 ENV container=docker
 
@@ -14,19 +14,13 @@ RUN conda init bash \
   && conda activate runFaQCs 
 
 
-# plotting and trimming software for long reads
-RUN conda install -n runFaQCs -c bioconda nanoplot=1.43.0
-RUN conda install -n runFaQCs -c bioconda porechop
-
-#faqcs
-RUN conda install -n runFaQCs -c bioconda faqcs=2.12
 
 #dependencies for illumina_fastq_QC.pl
-RUN conda install -n runFaQCs -c bioconda perl-parallel-forkmanager
-RUN conda install -n runFaQCs -c bioconda perl-string-approx
-RUN conda install -n runFaQCs -c conda-forge r-base
+RUN conda install -n runFaQCs -c bioconda perl-parallel-forkmanager=2.04 perl-string-approx=3.27 faqcs=2.12 porechop=0.2.4 nanoplot=1.43.0
+RUN conda install -n runFaQCs -c conda-forge r-base=4.4.3
 
-RUN conda install -c conda-forge conda-pack
+RUN conda install -c conda-forge conda-pack=0.8.1
+
 
 RUN conda-pack -n runFaQCs -o /tmp/env.tar && \
     mkdir /venv && cd /venv && tar xf /tmp/env.tar && \
@@ -35,10 +29,10 @@ RUN conda-pack -n runFaQCs -o /tmp/env.tar && \
 
 RUN /venv/bin/conda-unpack
 
-FROM debian:latest AS runtime
+FROM debian:trixie AS runtime
 
 COPY --from=build /venv /venv
-RUN apt-get update && apt-get install procps -y && apt-get clean
+RUN apt-get update && apt-get install procps=2:4.0.4-9 -y && apt-get clean
 ENV PATH=/venv/bin:$PATH
     
 SHELL ["/bin/bash", "-c"]
