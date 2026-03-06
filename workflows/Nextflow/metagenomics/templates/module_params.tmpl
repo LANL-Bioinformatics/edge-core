@@ -103,7 +103,7 @@
         splitTrimMinQ =  <% if(typeof splitTrimMinQ !== 'undefined') { %><%= splitTrimMinQ %><% } else { %>20<%} %>
         //RTA tools: gottcha-genDB-b,gottcha-speDB-b,gottcha-strDB-b,gottcha-genDB-v,gottcha-speDB-v,gottcha-strDB-v,gottcha2-speDB-b,pangia,bwa,metaphlan4,kraken2,centrifuge,diamond
         enabledTools = <% if(typeof enabledTools !== 'undefined') { %>"<%= enabledTools %>"<% } else { %>"gottcha-genDB-b,gottcha-speDB-b,gottcha-strDB-b,gottcha-genDB-v,gottcha-speDB-v,gottcha-strDB-v,gottcha2-speDB-b,pangia,bwa,metaphlan4,kraken2,centrifuge,diamond"<%} %>
-        baseDB = "/project/refdata/nextflow/database"
+        baseDB = "/project/refdata"
         custom_gottcha_genDB_b =  <% if(typeof custom_gottcha_genDB_b !== 'undefined' && custom_gottcha_genDB_b) { %>"<%= custom_gottcha_genDB_b %>"<% } else { %>null<%} %>
         custom_gottcha_speDB_b =  <% if(typeof custom_gottcha_speDB_b !== 'undefined' && custom_gottcha_speDB_b) { %>"<%= custom_gottcha_speDB_b %>"<% } else { %>null<%} %>
         custom_gottcha_strDB_b =  <% if(typeof custom_gottcha_strDB_b !== 'undefined' && custom_gottcha_strDB_b) { %>"<%= custom_gottcha_strDB_b %>"<% } else { %>null<%} %>
@@ -121,12 +121,12 @@
     }
 
     contigsTaxonomy {
-        miccrDB = "/project/refdata/nextflow/database/miccrDB"
+        miccrDB = "/project/refdata/miccrDB"
         rowLimit = 3000
     }
 
     SMA {
-        database = "/project/refdata/nextflow/database/antismash" //path to downloaded database location (download-antismash-databases --database-dir <DBPATH>)
+        database = "/project/refdata/antismash" //path to downloaded database location (download-antismash-databases --database-dir <DBPATH>)
         smaTaxon = <% if(typeof smaTaxon !== 'undefined') { %>"<%= smaTaxon %>"<% } else { %>"bacteria"<%} %>
         clusterblast = <% if(typeof clusterblast !== 'undefined') { %><%= clusterblast %><% } else { %>false<%} %>
         subclusterblast = <% if(typeof subclusterblast !== 'undefined') { %><%= subclusterblast %><% } else { %>true<%} %>
@@ -145,8 +145,8 @@
         selectGenomes = <% if(typeof selectGenomes !== 'undefined') { %><%- JSON.stringify(selectGenomes) %><% } else { %>[]<%} %>
         referenceGenomes = <% if(typeof referenceGenomes !== 'undefined') { %><%- JSON.stringify(referenceGenomes) %><% } else { %>[]<%} %>
         //expects id_mapping.txt in the same directory as refDB
-        refDB = "/project/refdata/nextflow/database/bwa_index/NCBI-Bacteria-Virus.fna"
-        genomeLocation = "/project/refdata/nextflow/database/NCBI_genomes"
+        refDB = "/project/refdata/bwa_index/NCBI-Bacteria-Virus.fna"
+        genomeLocation = "/project/refdata/NCBI_genomes"
         r2gAligner = <% if(typeof r2gAligner !== 'undefined') { %>"<%= r2gAligner %>"<% } else { %>"bwa"<%} %> //bowtie2, bwa, minimap2
         r2gAlignerOptions = <% if(typeof r2gAlignerOptions !== 'undefined') { %>"<%= r2gAlignerOptions %>"<% } else { %>""<%} %>
         r2gMinMapQual = <% if(typeof r2gMinMapQual !== 'undefined') { %><%= r2gMinMapQual %><% } else { %>60<%} %>
@@ -178,14 +178,14 @@
 
     contigsToRef {
         identity = 85
-        contigRefDB = "/project/refdata/nextflow/database/miccrDB"
+        contigRefDB = "/project/refdata/miccrDB"
         mapUnmappedContigs =  <% if(typeof mapUnmappedContigs !== 'undefined') { %><%= mapUnmappedContigs %><% } else { %>false<%} %>
     }
 
 
     snpTree {
         //SNP DB path. Should contain SNPdb, bwa_index, NCBI genomes
-        snpDBbase = "/project/refdata/nextflow/database"
+        snpDBbase = "/project/refdata"
         //SNP databases: Ecoli, Yersinia, Francisella, Brucella, Bacillus
         snpDBname = <% if(typeof snpDBname !== 'undefined' && snpDBname) { %>"<%= snpDBname %>"<% } else { %>null<%} %>
         //List of genome name from NCBI genomes see $EDGE/edge_ui/data/Ref_list.json
@@ -206,8 +206,8 @@
         inputFAA = <% if(typeof inputFAA !== 'undefined' && inputFAA) { %>"<%= inputFAA %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %> //input for contig-based single-workflow version--needs annotation output
         inputGFF = <% if(typeof inputGFF !== 'undefined' && inputGFF) { %>"<%= inputGFF %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE4"<%} %> //input for contig-based single-workflow version--needs annotation output
         virulenceFactorTool = <% if(typeof virulenceFactorTool !== 'undefined') { %>"<%= virulenceFactorTool %>"<% } else { %>"MetaVF Toolkit"<%} %> //"MetaVF Toolkit" or "PathoFact2" 
-        rgiDB = "/project/refdata/nextflow/database/RGI"
-        pf2DB = "/project/refdata/nextflow/database/PathoFact2"
-        genomadDB = "/project/refdata/nextflow/database/genomad"
+        rgiDB = "/project/refdata/RGI"
+        pf2DB = "/project/refdata/PathoFact2"
+        genomadDB = "/project/refdata/genomad"
         pf2Config = "${projectDir}/modules/geneFamilyAnalysis/resources/usr/bin/EDGE_PF2_Config.yaml"
     }
