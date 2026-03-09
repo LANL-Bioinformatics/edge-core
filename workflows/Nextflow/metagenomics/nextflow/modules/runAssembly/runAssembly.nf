@@ -408,18 +408,24 @@ process lrasm {
 
     script:
     def consensus = settings["lrasm"]["numConsensus"] != null ? "-n ${settings["lrasm"]["numConsensus"]} ": ""
-    preset = settings["lrasm"]["preset"] != null ? "-x ${settings["lrasm"]["preset"]} " : ""
-    if(preset.equalsIgnoreCase("pacbio")) {
-        preset = "pb"
+    preset = ""
+    if(settings["lrasm"]["preset"] != null) {
+        preset = settings["lrasm"]["preset"]
+        if(preset.equalsIgnoreCase("pacbio")) {
+            preset = "pb"
+        }
+        else if(preset.equalsIgnoreCase("pacbio hifi")) {
+            preset = "pb-hifi"
+        }
+        else if(preset.equalsIgnoreCase("nanopore")) {
+            preset = "ont"
+        }
+        else if(preset.equalsIgnoreCase("nanopore hq")) {
+            preset = "ont-hq"
+        }
     }
-    else if(preset.equalsIgnoreCase("pacbio hifi")) {
-        preset = "pb-hifi"
-    }
-    else if(preset.equalsIgnoreCase("nanopore")) {
-        preset = "ont"
-    }
-    else if(preset.equalsIgnoreCase("nanopore hq")) {
-        preset = "ont-hq"
+    if(preset != "") {
+        preset = "-x $preset"
     }
     
     def errorCorrection = (settings["lrasm"]["ec"] != null && settings["lrasm"]["ec"]) ? "-e " : ""
