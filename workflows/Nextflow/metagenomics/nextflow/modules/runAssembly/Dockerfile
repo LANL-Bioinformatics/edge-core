@@ -1,5 +1,5 @@
 FROM continuumio/miniconda3:v25.11.1 AS build
-ENV version=1.7.1
+ENV version=1.7.2
 
 ENV container=docker
 
@@ -37,6 +37,7 @@ RUN /venv/bin/conda-unpack
 FROM debian:trixie AS runtime
 
 COPY --from=build /venv /venv
+COPY --from=build /long_read_assembly /long_read_assembly
 
 
 RUN apt-get update && apt-get install  procps -y && apt-get clean
