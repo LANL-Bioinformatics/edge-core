@@ -6,6 +6,7 @@ import ProjectGeneral from '/src/edge/project/results/ProjectGeneral'
 import ProjectOutputs from '/src/edge/project/results/ProjectOutputs'
 import { RunFaQCs } from '../metagenomics/results/RunFaQCs'
 import { Assembly } from '../metagenomics/results/Assembly'
+import { Binning } from '../metagenomics/results/Binning'
 import { Phylogeny } from '../metagenomics/results/Phylogeny'
 import { AntiSmash } from '../metagenomics/results/AntiSmash'
 import { MetaG } from '../metagenomics/pipeline/results/MetaG'
@@ -228,6 +229,15 @@ const ProjectResult = (props) => {
               )}
               {project.type === 'assembly' && (
                 <Assembly
+                  result={result}
+                  project={project}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+              {project.type === 'binning' && (
+                <Binning
                   result={result}
                   project={project}
                   userType={type}

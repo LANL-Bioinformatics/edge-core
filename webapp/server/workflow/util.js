@@ -196,6 +196,18 @@ const metaGWorkflowResult = (outdir, workflow, projCode) => {
       result[workflow].report =
         `${outdir.replace(pattern, '')}/final_report.pdf`
     }
+  } else if (workflow === 'binning') {
+    const statsFile = `${outdir}/contigs_stats.txt`
+    if (fs.existsSync(statsFile)) {
+      result[workflow].stats = Papa.parse(
+        fs.readFileSync(statsFile).toString(),
+        {
+          delimiter: '\t',
+          header: true,
+          skipEmptyLines: true,
+        },
+      ).data
+    }
   } else if (workflow === 'antiSmash') {
     // antiSMASH HTML output
     const antiSmashHtml = `${outdir}/output/index.html`
@@ -244,6 +256,11 @@ const generateWorkflowResult = proj => {
       result = {
         ...result,
         ...metaGWorkflowResult(outdir, 'assembly', proj.code).assembly,
+      }
+    } else if (projectConf.workflow.name === 'binning') {
+      result = {
+        ...result,
+        ...metaGWorkflowResult(outdir, 'binning', proj.code).binning,
       }
     } else if (projectConf.workflow.name === 'antiSmash') {
       result = {
