@@ -408,7 +408,26 @@ process lrasm {
 
     script:
     def consensus = settings["lrasm"]["numConsensus"] != null ? "-n ${settings["lrasm"]["numConsensus"]} ": ""
-    def preset = settings["lrasm"]["preset"] != null ? "-x ${settings["lrasm"]["preset"]} " : ""
+    preset = ""
+    if(settings["lrasm"]["preset"] != null) {
+        preset = settings["lrasm"]["preset"]
+        if(preset.equalsIgnoreCase("pacbio")) {
+            preset = "pb"
+        }
+        else if(preset.equalsIgnoreCase("pacbio hifi")) {
+            preset = "pb-hifi"
+        }
+        else if(preset.equalsIgnoreCase("nanopore")) {
+            preset = "ont"
+        }
+        else if(preset.equalsIgnoreCase("nanopore hq")) {
+            preset = "ont-hq"
+        }
+    }
+    if(preset != "") {
+        preset = "-x $preset"
+    }
+    
     def errorCorrection = (settings["lrasm"]["ec"] != null && settings["lrasm"]["ec"]) ? "-e " : ""
     def algorithm = settings["lrasm"]["algorithm"] != null ? "-a ${settings["lrasm"]["algorithm"]} " : ""
     def minLenOpt = ""
@@ -421,7 +440,7 @@ process lrasm {
     def flyeOpt = settings["lrasm"]["algorithm"] == "metaflye" ? "--fo '--meta' ": ""
 
     """
-    lrasm -o . -t ${task.cpus} \
+    lrasm -o \$PWD -t ${task.cpus} \
     $preset\
     $consensus\
     $errorCorrection\
