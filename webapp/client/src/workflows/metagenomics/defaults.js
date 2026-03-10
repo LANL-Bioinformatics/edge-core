@@ -895,8 +895,10 @@ export const workflows = {
         fileInput: {
           enableInput: true,
           placeholder: '(Required) Select a file or enter a file http(s) url',
-          dataSources: ['upload', 'public'],
+          dataSources: ['upload', 'public', 'project'],
           fileTypes: ['txt', 'tsv'],
+          projectTypes: ['assembly'],
+          projectScope: ['self+shared'],
           viewFile: false,
           isOptional: false,
           cleanupInput: true,
