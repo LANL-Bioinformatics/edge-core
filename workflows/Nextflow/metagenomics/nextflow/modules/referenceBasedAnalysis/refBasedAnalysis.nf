@@ -6,7 +6,7 @@
 //checks reference genome format, aligns input to reference, and generates consensus sequence if desired
 process referenceBasedPipeline {
     label "r2g"
-    label "medium"
+    label "xlarge"
     publishDir(
         path: "${settings["refBasedOutDir"]}",
         mode: 'copy'
