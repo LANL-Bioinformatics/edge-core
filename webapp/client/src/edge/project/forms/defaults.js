@@ -135,7 +135,7 @@ export const components = {
         isOptional: false,
         showErrorTooltip: true,
         errMessage:
-          'Required, at 3 but less than 30 characters. <br/>Only alphabets, numbers, dashs, dots and underscore are allowed in the name.',
+          'Required, at 3 but less than 30 characters. <br/>Only alphabets, numbers, dashs, dot and underscore are allowed in the name.',
       },
       projectDesc: {
         text: 'Description',
