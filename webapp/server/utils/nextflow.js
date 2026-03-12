@@ -6,6 +6,7 @@ const {
   nextflowConfigs,
   workflowList,
   generateNextflowWorkflowParams,
+  zipWorkflowOutput,
   generateWorkflowResult,
 } = require('../workflow/util')
 const { write2log, execCmd, sleep, pidIsRunning } = require('./common')
@@ -197,6 +198,8 @@ const updateJobStatus = async (job, proj) => {
     if (newStatus === 'Aborted') {
       status = 'failed'
     } else if (newStatus === 'Succeeded') {
+      // zip output if needed
+      await zipWorkflowOutput(proj)
       // generate result.json
       logger.info('generate workflow result.json')
       try {
