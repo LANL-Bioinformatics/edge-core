@@ -1,6 +1,5 @@
 const fs = require('fs')
 const xlsx = require('node-xlsx').default
-const { execCmd } = require('../utils/common')
 const config = require('../config')
 const workflowConfig = require('./config')
 
@@ -30,15 +29,6 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
   }
 
   return params
-}
-
-const zipWorkflowOutput = async proj => {
-  const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`
-  const projectConf = JSON.parse(fs.readFileSync(`${projHome}/conf.json`))
-  if (workflowList[projectConf.workflow.name].zip_output) {
-    const cmd = `cd ${projHome}/${workflowList[projectConf.workflow.name].outdir} && ${workflowList[projectConf.workflow.name].zip_output}`
-    await execCmd(cmd.replaceAll('<PROJECT>', proj.name.replace(/\s+/g, '_')))
-  }
 }
 
 const generateWorkflowResult = proj => {
@@ -134,7 +124,6 @@ module.exports = {
   nextflowConfigs,
   workflowList,
   generateNextflowWorkflowParams,
-  zipWorkflowOutput,
   generateWorkflowResult,
   checkFlagFile,
   getWorkflowCommand,
