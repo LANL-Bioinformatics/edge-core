@@ -18,9 +18,7 @@ const generateRunStats = async project => {
     Workflow: job.type,
     Status: job.status,
     'Running Time': timeStats.includes(project.status) ? timeFormat(d) : '',
-    Start: timeStats.includes(project.status)
-      ? moment(job.created).format('YYYY-MM-DD HH:mm:ss')
-      : '',
+    Start: moment(job.created).format('YYYY-MM-DD HH:mm:ss'),
     End: timeStats.includes(project.status)
       ? moment(job.updated).format('YYYY-MM-DD HH:mm:ss')
       : '',
