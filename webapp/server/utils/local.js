@@ -13,12 +13,17 @@ const generateRunStats = async project => {
   )
   const d = moment.duration(ms)
   const stats = []
+  const timeStats = ['complete', 'failed', 'aborted']
   stats.push({
     Workflow: job.type,
     Status: job.status,
-    'Running Time': timeFormat(d),
-    Start: moment(job.created).format('YYYY-MM-DD HH:mm:ss'),
-    End: moment(job.updated).format('YYYY-MM-DD HH:mm:ss'),
+    'Running Time': timeStats.includes(project.status) ? timeFormat(d) : '',
+    Start: timeStats.includes(project.status)
+      ? moment(job.created).format('YYYY-MM-DD HH:mm:ss')
+      : '',
+    End: timeStats.includes(project.status)
+      ? moment(job.updated).format('YYYY-MM-DD HH:mm:ss')
+      : '',
   })
   fs.writeFileSync(
     `${config.IO.PROJECT_BASE_DIR}/${project.code}/run_stats.json`,
