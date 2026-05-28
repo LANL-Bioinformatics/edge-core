@@ -12,7 +12,7 @@ const generateRunStats = async project => {
   let startTime = moment(job.created, 'YYYY-MM-DD HH:mm:ss')
   let endTime = timeStats.includes(project.status)
     ? moment(job.updated, 'YYYY-MM-DD HH:mm:ss')
-    : Date.now()
+    : moment(Date.now())
   // get time from run_time.txt if exists, which is more accurate for local workflow
   // Thu May 28 09:07:15 AM MDT 2026
   // Thu May 28 09:08:09 AM MDT 2026
