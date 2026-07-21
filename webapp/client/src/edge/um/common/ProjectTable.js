@@ -19,7 +19,7 @@ import {
   LockOpen,
   Explore,
 } from '@mui/icons-material'
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 
 import { updateProjectAdmin } from 'src/redux/reducers/edge/adminSlice'
 import { updateProject } from 'src/redux/reducers/edge/userSlice'
