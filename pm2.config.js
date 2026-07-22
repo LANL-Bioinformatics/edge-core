@@ -6,6 +6,10 @@
  * - https://pm2.keymetrics.io/docs/usage/environment/
  */
 
+const path = require("path")
+
+const serverCwd = path.join(__dirname, "webapp", "server")
+
 module.exports = {
   apps: [
     {
@@ -13,14 +17,14 @@ module.exports = {
       script: "server.js",
       instances: 4,
       exec_mode: "cluster",
-      cwd: "./webapp/server",
+      cwd: serverCwd,
       node_args: "--max_old_space_size=1024",
       max_memory_restart: "1200M"
     },
     {
       name: "cronserver",
       script: "cronServer.js",
-      cwd: "./webapp/server",
+      cwd: serverCwd,
       node_args: "--max_old_space_size=1024",
       max_memory_restart: "1200M"
     }
