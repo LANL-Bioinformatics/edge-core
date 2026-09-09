@@ -151,6 +151,9 @@ class JobExecutor:
         for job_id in job_ids:
             self.cancel(job_id)
         # Guard against joining ourselves when stop() is reached from the
-        # scheduler thread.
-        if threading.current_thread() is not self.scheduler:
+        # scheduler thread, and against a stop() that precedes start().
+        if (
+            self.scheduler.is_alive()
+            and threading.current_thread() is not self.scheduler
+        ):
             self.scheduler.join(timeout=2)

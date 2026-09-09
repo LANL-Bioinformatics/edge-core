@@ -5,28 +5,26 @@ ToolDefinition contract using fixture tools defined here. Application tool
 definitions are tested in their own repositories.
 """
 
-import json
 import os
 import shutil
 import sys
 import tempfile
-import threading
 import time
 import unittest
 from http import HTTPStatus
 from pathlib import Path
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+
+from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from edge_job_runner import (  # noqa: E402
     JobExecutor,
-    JobRunnerServer,
     JobStore,
     RequestError,
     ToolDefinition,
     ToolRegistry,
+    create_app,
 )
 
 
@@ -391,39 +389,25 @@ class JobApiTests(unittest.TestCase):
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
-        self.root = Path(self.directory.name)
+        self.root = Path(self.directory.name).resolve()
         self.store = JobStore(str(self.root / "jobs.sqlite3"))
         self.tool = EchoTool([self.directory.name])
         self.executor = JobExecutor(self.store, self.tool, 1)
-        self.server = JobRunnerServer(
-            ("127.0.0.1", 0), self.store, self.executor, self.tool, "test-token"
-        )
-        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.app = create_app(self.store, self.executor, self.tool, "test-token")
+        # TestClient drives the ASGI app directly, so no socket or thread is
+        # needed. The executor still runs for real, in its own threads.
+        self.client = TestClient(self.app, raise_server_exceptions=False)
         self.executor.start()
-        self.thread.start()
-        self.base_url = f"http://127.0.0.1:{self.server.server_address[1]}"
-        self.addCleanup(self.teardown_server)
-
-    def teardown_server(self):
-        self.executor.stop()
-        self.server.shutdown()
-        self.server.server_close()
-        self.thread.join(timeout=2)
+        self.addCleanup(self.executor.stop)
 
     def request(self, method, path, payload=None, token="test-token", key=None):
-        data = json.dumps(payload).encode("utf-8") if payload else None
-        headers = {"Content-Type": "application/json"}
+        headers = {}
         if token:
             headers["Authorization"] = f"Bearer {token}"
         if key:
             headers["Idempotency-Key"] = key
-        request = Request(f"{self.base_url}{path}", data=data, method=method,
-                          headers=headers)
-        try:
-            with urlopen(request, timeout=3) as response:
-                return response.status, json.loads(response.read())
-        except HTTPError as error:
-            return error.code, json.loads(error.read())
+        response = self.client.request(method, path, json=payload, headers=headers)
+        return response.status_code, response.json()
 
     def body(self, job_id="job-1", **overrides):
         payload = payload_for(self.root)
@@ -506,6 +490,60 @@ class JobApiTests(unittest.TestCase):
         )
         self.assertEqual(status, HTTPStatus.ACCEPTED)
         self.assertTrue(job["jobId"])
+
+    def test_an_unknown_route_keeps_the_error_body_shape(self):
+        # Starlette's default is {"detail": ...}; the web server reads "error".
+        status, body = self.request("POST", "/v1/nope", self.body())
+        self.assertEqual(status, HTTPStatus.NOT_FOUND)
+        self.assertEqual(body, {"error": "Not found"})
+
+    def test_validation_failures_are_400_not_422(self):
+        # FastAPI defaults to 422, which the web server would classify as
+        # permanent anyway, but the contract specifies 400.
+        for body in (
+            {"jobId": "job-1", "input": payload_for(self.root)},
+            {"jobId": "job-1", "projectId": "project-1"},
+        ):
+            status, response = self.request("POST", "/v1/jobs", body)
+            self.assertEqual(status, HTTPStatus.BAD_REQUEST)
+            self.assertIn("error", response)
+
+    def test_field_messages_are_actionable(self):
+        cases = [
+            ({"jobId": "job-1", "input": payload_for(self.root)},
+             "projectId is invalid"),
+            ({"jobId": "job-1", "projectId": "project-1", "input": "nope"},
+             "input must be an object"),
+            ({"jobId": "bad id!", "projectId": "project-1",
+              "input": payload_for(self.root)}, "jobId is invalid"),
+        ]
+        for body, expected in cases:
+            _, response = self.request("POST", "/v1/jobs", body)
+            self.assertEqual(response["error"], expected)
+
+    def test_an_oversized_body_is_rejected(self):
+        response = self.client.request(
+            "POST", "/v1/jobs", json=self.body(),
+            headers={"Authorization": "Bearer test-token",
+                     "Content-Length": str(2 * 1024 * 1024)},
+        )
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+    def test_schema_endpoints_are_disabled(self):
+        # /health is the only intended unauthenticated surface.
+        for path in ("/docs", "/redoc", "/openapi.json"):
+            self.assertEqual(
+                self.client.get(path).status_code, HTTPStatus.NOT_FOUND
+            )
+
+    def test_a_tool_failure_during_submission_is_a_client_error(self):
+        # build_command raising RequestError must not become a 500, which the
+        # web server would retry forever.
+        status, response = self.request(
+            "POST", "/v1/jobs", self.body(outputPath="/etc")
+        )
+        self.assertEqual(status, HTTPStatus.BAD_REQUEST)
+        self.assertIn("allowed roots", response["error"])
 
     def test_cancelling_a_queued_job_reports_cancelled(self):
         self.request("POST", "/v1/jobs", self.body("job-cancel"), key="job-cancel")

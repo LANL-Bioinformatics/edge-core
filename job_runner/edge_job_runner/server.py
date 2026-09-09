@@ -1,4 +1,4 @@
-"""The HTTP job API.
+"""The HTTP job API, built on FastAPI.
 
 Endpoints:
 
@@ -6,20 +6,25 @@ Endpoints:
 * ``POST   /v1/jobs``         -- submit (idempotent)
 * ``GET    /v1/jobs/<jobId>`` -- poll
 * ``DELETE /v1/jobs/<jobId>`` -- cancel
+
+The wire contract is fixed by the EDGE web server, which treats ``4xx`` as
+permanent and ``5xx`` as retryable. FastAPI's defaults are overridden where they
+would break that contract: a validation failure must be ``400`` with an
+``{"error": ...}`` body, not FastAPI's ``422`` with ``{"detail": ...}``.
 """
 
 from __future__ import annotations
 
 import hmac
-import json
-import re
-import signal
-import threading
 import uuid
 from http import HTTPStatus
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
-from urllib.parse import urlparse
+
+from fastapi import Depends, FastAPI, Header, Request, Response
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, field_validator
 
 from .errors import RequestError
 from .executor import JobExecutor
@@ -29,147 +34,205 @@ from .tooling import JOB_ID_PATTERN, PROJECT_ID_PATTERN, ToolDefinition
 # Bounds the request body so a malformed Content-Length cannot exhaust memory.
 MAX_REQUEST_BYTES = 1024 * 1024
 
-
-class JobRunnerServer(ThreadingHTTPServer):
-    """Threading HTTP server carrying the runner's collaborators."""
-
-    daemon_threads = True
-
-    def __init__(
-        self,
-        address: tuple[str, int],
-        store: JobStore,
-        executor: JobExecutor,
-        tool: ToolDefinition,
-        api_token: str,
-    ):
-        super().__init__(address, JobRequestHandler)
-        self.store = store
-        self.executor = executor
-        self.tool = tool
-        self.api_token = api_token
+# Messages returned for a rejected field. Pydantic's defaults ("Field required",
+# "Input should be a valid dictionary") are less actionable, and these strings
+# are written to the project log the user reads.
+FIELD_MESSAGES = {
+    "projectId": "projectId is invalid",
+    "input": "input must be an object",
+    "jobId": "jobId is invalid",
+}
 
 
-class JobRequestHandler(BaseHTTPRequestHandler):
-    """Request handler for the job API."""
+class UnauthorizedError(Exception):
+    """Raised by the auth dependency so a handler can shape the response."""
 
-    server: JobRunnerServer
 
-    def log_message(self, message_format: str, *args: Any) -> None:
-        print(f"[job-runner] {self.address_string()} {message_format % args}")
+class JobSubmission(BaseModel):
+    """A validated ``POST /v1/jobs`` body.
 
-    def _json(self, status: HTTPStatus, body: dict[str, Any]) -> None:
-        encoded = json.dumps(body).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(encoded)))
-        self.end_headers()
-        self.wfile.write(encoded)
+    ``input`` stays an untyped mapping on purpose: its shape is defined by the
+    tool, and each :class:`~edge_job_runner.tooling.ToolDefinition` validates it.
+    Declaring a schema here would force the library to know about every tool.
+    """
 
-    def _authorized(self) -> bool:
-        """Check the bearer token.
+    projectId: str  # noqa: N815 - wire contract is camelCase
+    input: dict[str, Any]
+    jobId: str | None = None  # noqa: N815 - wire contract is camelCase
+
+    @field_validator("projectId")
+    @classmethod
+    def _check_project_id(cls, value: str) -> str:
+        if not PROJECT_ID_PATTERN.fullmatch(value):
+            raise ValueError("projectId is invalid")
+        return value
+
+    @field_validator("jobId")
+    @classmethod
+    def _check_job_id(cls, value: str | None) -> str | None:
+        # An absent or empty jobId means "generate one"; only reject a bad one.
+        if value in (None, ""):
+            return None
+        if not JOB_ID_PATTERN.fullmatch(value):
+            raise ValueError("jobId is invalid")
+        return value
+
+
+def _error(status: int, message: str) -> JSONResponse:
+    """Build the error body the EDGE web server expects."""
+    return JSONResponse(status_code=status, content={"error": message})
+
+
+def _first_message(exc: RequestValidationError) -> str:
+    """Extract one readable message from a validation error.
+
+    The web server only reads ``error``, so a nested ``detail`` array would
+    surface as an unhelpful string in the project log. Field-level messages are
+    preferred over pydantic's generic wording.
+    """
+    for entry in exc.errors():
+        location = [part for part in entry.get("loc", ()) if isinstance(part, str)]
+        field = location[-1] if location else ""
+        if field in FIELD_MESSAGES:
+            return FIELD_MESSAGES[field]
+        message = str(entry.get("msg", ""))
+        # Pydantic prefixes messages raised from a custom validator.
+        for prefix in ("Value error, ", "Assertion failed, "):
+            if message.startswith(prefix):
+                message = message[len(prefix) :]
+        if message:
+            return message
+    return "Request is invalid"
+
+
+def create_app(
+    store: JobStore,
+    executor: JobExecutor,
+    tool: ToolDefinition,
+    api_token: str,
+) -> FastAPI:
+    """Build the ASGI application.
+
+    Returned rather than module-global so tests can construct isolated instances
+    and a process can serve exactly one tool.
+    """
+    # No interactive docs: this is a private machine-to-machine API, and the
+    # schema routes would be unauthenticated surface alongside /health.
+    app = FastAPI(
+        title="EDGE job runner",
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+    )
+    app.state.store = store
+    app.state.executor = executor
+    app.state.tool = tool
+    app.state.api_token = api_token
+
+    def require_authorization(authorization: str = Header(default="")) -> None:
+        """Reject a request whose bearer token does not match.
 
         An unset token disables auth, for single-host deployments where the
         runner is not reachable off-box. Comparison is constant-time to avoid
         leaking the token through response timing.
         """
-        if not self.server.api_token:
-            return True
-        return hmac.compare_digest(
-            self.headers.get("Authorization", ""),
-            f"Bearer {self.server.api_token}",
-        )
+        if not app.state.api_token:
+            return
+        expected = f"Bearer {app.state.api_token}"
+        if not hmac.compare_digest(authorization, expected):
+            raise UnauthorizedError
 
-    def _require_authorization(self) -> bool:
-        if self._authorized():
-            return True
-        self._json(HTTPStatus.UNAUTHORIZED, {"error": "Unauthorized"})
-        return False
+    @app.exception_handler(UnauthorizedError)
+    async def _unauthorized(request: Request, exc: Exception) -> JSONResponse:
+        del request, exc
+        return _error(HTTPStatus.UNAUTHORIZED, "Unauthorized")
 
-    def _job_id(self) -> str | None:
-        match = re.fullmatch(r"/v1/jobs/([^/]+)", urlparse(self.path).path)
-        return match.group(1) if match else None
+    @app.exception_handler(StarletteHTTPException)
+    async def _http_exception(
+        request: Request, exc: StarletteHTTPException
+    ) -> JSONResponse:
+        """Reshape FastAPI's ``{"detail": ...}`` into ``{"error": ...}``.
 
-    def do_GET(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler API
-        path = urlparse(self.path).path
-        # Unauthenticated so container health checks need no credentials.
-        if path == "/health":
-            self._json(HTTPStatus.OK, {"status": "ok", "tool": self.server.tool.name})
-            return
-        if not self._require_authorization():
-            return
-        job_id = self._job_id()
-        if job_id is None:
-            self._json(HTTPStatus.NOT_FOUND, {"error": "Not found"})
-            return
-        job = self.server.store.get_job(job_id)
-        if job is None:
-            self._json(HTTPStatus.NOT_FOUND, {"error": "Job not found"})
-            return
-        self._json(HTTPStatus.OK, job)
+        Routing failures (an unknown path or method) are raised by Starlette, and
+        the web server only reads ``error``.
+        """
+        del request
+        # Starlette says "Not Found"; the previous implementation said
+        # "Not found". Keep the original casing so log lines stay comparable.
+        detail = "Not found" if exc.status_code == HTTPStatus.NOT_FOUND else str(exc.detail)
+        return _error(exc.status_code, detail)
 
-    def do_POST(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler API
-        if urlparse(self.path).path != "/v1/jobs":
-            self._json(HTTPStatus.NOT_FOUND, {"error": "Not found"})
-            return
-        if not self._require_authorization():
-            return
+    @app.exception_handler(RequestValidationError)
+    async def _validation_failed(
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
+        # 400 rather than FastAPI's 422: the web server keys its permanent /
+        # transient decision on the status class.
+        del request
+        return _error(HTTPStatus.BAD_REQUEST, _first_message(exc))
+
+    @app.middleware("http")
+    async def limit_body_size(request: Request, call_next: Any) -> Response:
+        """Reject an oversized body before it is buffered."""
+        declared = request.headers.get("content-length")
+        if declared and declared.isdigit() and int(declared) > MAX_REQUEST_BYTES:
+            return _error(HTTPStatus.BAD_REQUEST, "Request body is too large")
+        return await call_next(request)
+
+    @app.get("/health")
+    async def health() -> dict[str, str]:
+        """Liveness probe. Unauthenticated so container health checks work."""
+        return {"status": "ok", "tool": app.state.tool.name}
+
+    @app.post("/v1/jobs", dependencies=[Depends(require_authorization)])
+    async def submit(
+        submission: JobSubmission,
+        response: Response,
+        idempotency_key: str = Header(default="", alias="Idempotency-Key"),
+    ) -> Any:
+        job_id = submission.jobId or str(uuid.uuid4())
         try:
-            content_length = int(self.headers.get("Content-Length", "0"))
-            if content_length <= 0 or content_length > MAX_REQUEST_BYTES:
-                raise RequestError("Request body is empty or too large")
-            request = json.loads(self.rfile.read(content_length))
-            project_id = request.get("projectId")
-            if not isinstance(project_id, str) or not PROJECT_ID_PATTERN.fullmatch(
-                project_id
-            ):
-                raise RequestError("projectId is invalid")
-            job_id = request.get("jobId") or str(uuid.uuid4())
-            if not isinstance(job_id, str) or not JOB_ID_PATTERN.fullmatch(job_id):
-                raise RequestError("jobId is invalid")
-            payload = request.get("input")
-            if not isinstance(payload, dict):
-                raise RequestError("input must be an object")
-            payload = self.server.tool.validate_auxiliary_paths(payload)
-            command = self.server.tool.build_command(payload)
+            payload = app.state.tool.validate_auxiliary_paths(submission.input)
+            command = app.state.tool.build_command(payload)
             # Default the key to the job id so a caller that omits the header
             # still gets replay protection.
-            idempotency_key = self.headers.get("Idempotency-Key", job_id).strip()
-            if not idempotency_key or len(idempotency_key) > 256:
+            key = (idempotency_key or job_id).strip()
+            if not key or len(key) > 256:
                 raise RequestError("Idempotency-Key is invalid")
-            job, created = self.server.store.create_job(
+            job, created = app.state.store.create_job(
                 job_id,
-                idempotency_key,
-                project_id,
-                self.server.tool.name,
+                key,
+                submission.projectId,
+                app.state.tool.name,
                 payload,
                 command,
             )
-            # 202 for a new job, 200 for a replay, so callers can tell them apart.
-            self._json(HTTPStatus.ACCEPTED if created else HTTPStatus.OK, job)
-        except (json.JSONDecodeError, RequestError, TypeError) as error:
-            # 4xx: the webapp treats these as permanent and fails the job.
-            self._json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
-        except Exception as error:  # noqa: BLE001 - keep the API process alive
-            # 5xx: the webapp retries these, so never leak details here.
-            self.log_error("Job submission failed: %s", error)
-            self._json(
-                HTTPStatus.INTERNAL_SERVER_ERROR,
-                {"error": "Internal job-runner error"},
-            )
+        except (RequestError, TypeError, ValueError) as error:
+            # 4xx: the web server treats these as permanent and fails the job.
+            return _error(HTTPStatus.BAD_REQUEST, str(error))
+        # 202 for a new job, 200 for a replay, so callers can tell them apart.
+        response.status_code = HTTPStatus.ACCEPTED if created else HTTPStatus.OK
+        return job
 
-    def do_DELETE(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler API
-        if not self._require_authorization():
-            return
-        job_id = self._job_id()
-        if job_id is None:
-            self._json(HTTPStatus.NOT_FOUND, {"error": "Not found"})
-            return
-        job = self.server.executor.cancel(job_id)
+    @app.get("/v1/jobs/{job_id}", dependencies=[Depends(require_authorization)])
+    async def poll(job_id: str) -> Any:
+        job = app.state.store.get_job(job_id)
         if job is None:
-            self._json(HTTPStatus.NOT_FOUND, {"error": "Job not found"})
-            return
-        self._json(HTTPStatus.ACCEPTED, job)
+            return _error(HTTPStatus.NOT_FOUND, "Job not found")
+        return job
+
+    @app.delete(
+        "/v1/jobs/{job_id}",
+        dependencies=[Depends(require_authorization)],
+        status_code=HTTPStatus.ACCEPTED,
+    )
+    async def cancel(job_id: str) -> Any:
+        job = app.state.executor.cancel(job_id)
+        if job is None:
+            return _error(HTTPStatus.NOT_FOUND, "Job not found")
+        return job
+
+    return app
 
 
 def serve(
@@ -180,21 +243,20 @@ def serve(
     tool: ToolDefinition,
     api_token: str,
 ) -> None:
-    """Run the API until SIGTERM or SIGINT, then shut down cleanly."""
-    server = JobRunnerServer((host, port), store, executor, tool, api_token)
+    """Run the API under uvicorn until SIGTERM or SIGINT.
+
+    uvicorn installs its own signal handlers and drains in-flight requests, so
+    the executor only needs stopping once the server loop returns.
+    """
+    import uvicorn
+
+    app = create_app(store, executor, tool, api_token)
     executor.start()
-
-    def stop_server(_signum: int, _frame: Any) -> None:
-        executor.stop()
-        # shutdown() blocks until serve_forever returns, so it cannot be called
-        # from the signal handler itself.
-        threading.Thread(target=server.shutdown, daemon=True).start()
-
-    signal.signal(signal.SIGTERM, stop_server)
-    signal.signal(signal.SIGINT, stop_server)
+    server = uvicorn.Server(
+        uvicorn.Config(app, host=host, port=port, log_level="info")
+    )
     print(f"[job-runner] {tool.name} runner listening on {host}:{port}")
     try:
-        server.serve_forever(poll_interval=0.5)
+        server.run()
     finally:
         executor.stop()
-        server.server_close()

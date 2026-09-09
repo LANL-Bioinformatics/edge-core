@@ -48,10 +48,11 @@ EDGE Core is a full-stack application consisting of:
 - **Date Handling**: Moment.js
 
 ### Job runner
-- **Runtime**: Python 3.8+, standard library only (no third-party packages)
-- **State**: SQLite via `sqlite3`
-- **API**: `http.server`
-- **Testing**: pytest, or `python -m unittest discover -s tests`
+- **Runtime**: Python 3.10+ (required by FastAPI and uvicorn)
+- **API**: FastAPI served by uvicorn
+- **Validation**: Pydantic models
+- **State**: SQLite via `sqlite3` (standard library)
+- **Testing**: pytest with `fastapi.testclient`
 
 ### Workflows
 - **Nextflow**: Scalable workflow engine for genomics
@@ -104,8 +105,10 @@ edge-core/
 - **MongoDB** Community Edition or compatible
 - **npm** (comes with Node.js)
 - **pm2** (for production deployment)
-- **Python** 3.8 or higher, only to run or test the job-runner library in
-  [`job_runner/`](./job_runner). The web application itself does not need it.
+- **Python** 3.10 or higher plus the dependencies in
+  [`job_runner/requirements.txt`](./job_runner/requirements.txt), only to run or
+  test the job-runner library in [`job_runner/`](./job_runner). The web
+  application itself does not need either.
 
 ### Quick Start
 
@@ -299,7 +302,8 @@ java -jar cromwell.jar run workflows/Cromwell/sra2fastq/main.wdl
 Workflows can run either in the web server's own process or in a separate
 container that owns the scientific tool. The second path uses a durable HTTP job
 runner, whose shared half lives in [`job_runner/`](./job_runner) and is
-documented in [`job_runner/README.md`](./job_runner/README.md).
+documented in [`job_runner/README.md`](./job_runner/README.md). It is a FastAPI
+application served by uvicorn.
 
 Downstream applications supply only a `ToolDefinition` describing how their own
 command line is built. Durable state, process supervision, idempotent
@@ -391,16 +395,14 @@ npm test -- --coverage
 
 ### Run Job Runner Tests
 
-The job-runner library has its own suite. It needs no dependencies beyond the
-Python standard library, so it does not require an install step.
-
 ```bash
 cd job_runner
+pip install -r requirements.txt
 python3 -m pytest tests/
-
-# or, without pytest installed
-python3 -m unittest discover -s tests
 ```
+
+The API tests drive the ASGI application through `fastapi.testclient`, so they
+bind no sockets.
 
 These cover the store, executor, HTTP API, and the `ToolDefinition` contract
 using fixture tools. Application tool definitions are tested in their own

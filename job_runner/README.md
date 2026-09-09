@@ -9,9 +9,27 @@ own tool definitions; everything else lives here.
 | --- | --- |
 | `store.py` | Crash-safe job state in SQLite: idempotent submission, atomic claim, cancellation, restart recovery |
 | `executor.py` | Claims queued jobs, supervises child processes, handles cancellation and the `.done` flag |
-| `server.py` | The HTTP job API and bearer-token auth |
+| `server.py` | The HTTP job API (FastAPI) and bearer-token auth |
 | `tooling.py` | `ToolDefinition` (the extension point) and `ToolRegistry` |
 | `cli.py` | Environment-driven startup shared by application runner scripts |
+
+## Dependencies
+
+The API is served by FastAPI under uvicorn:
+
+```bash
+pip install -r requirements.txt
+```
+
+`httpx` is listed for `fastapi.testclient` and is needed only to run the tests;
+the runtime needs `fastapi` and `uvicorn` alone. uvicorn is installed without
+the `[standard]` extras, which would add native wheels this API does not use.
+
+Everything else comes from the standard library, including `sqlite3`.
+
+Because the runner now has third-party dependencies, an image must be rebuilt
+after a library change; bind-mounting an updated copy into an already-published
+image is no longer sufficient on its own.
 
 ## The HTTP contract
 
@@ -33,6 +51,16 @@ Status values are `queued`, `running`, `succeeded`, `failed`, and `cancelled`.
 webapp fails the job immediately. `5xx`, timeouts, and network errors are
 transient and are retried. Keep that distinction intact when adding validation --
 raise `RequestError` only for input the caller could correct.
+
+Two FastAPI defaults are deliberately overridden to hold that contract:
+
+* a request-validation failure returns `400`, not FastAPI's `422`;
+* every error body is `{"error": "..."}`, not `{"detail": ...}`, including the
+  routing failures Starlette raises.
+
+The interactive docs and `openapi.json` are disabled. This is a private
+machine-to-machine API, and those routes would be unauthenticated surface
+alongside `/health`.
 
 ## Adding a tool
 
@@ -83,8 +111,12 @@ hostname the webapp connects to, which the webapp configures separately.
 ## Tests
 
 ```
+pip install -r requirements.txt
 python3 -m pytest tests/
 ```
+
+The API tests drive the ASGI application through `fastapi.testclient`, so they
+bind no sockets.
 
 These cover the store, executor, HTTP API, and the `ToolDefinition` contract
 using fixture tools. Application tool definitions are tested in their own
